@@ -5,21 +5,26 @@
    [cljfmt.core :as cljfmt]))
 
 
-(deftype ClojureDocumentRangeFormattingEditProvider []
+(deftype ClojureDocumentRangeFormattingEditProvider [output]
   Object
   (provideDocumentRangeFormattingEdits [_ document range options token]
-    (let [text (.getText document range)
-          pretty (cljfmt/reformat-string text {:remove-consecutive-blank-lines? false})
-          edit (vscode/TextEdit.replace range pretty)]
-      #js [edit])))
+    (let [text    (.getText document range)
+
+          pretty  (try
+                    (cljfmt/reformat-string text {:remove-consecutive-blank-lines? false})
+                    (catch js/Error e
+                      (.appendLine output (.-message e))
+                      nil))]
+
+      (when pretty
+        #js [(vscode/TextEdit.replace range pretty)]))))
 
 
 (defn activate [^js context]
-  (let [scheme   #js {:language "clojure"
-                      :scheme   "file"}
+  (let [scheme      #js {:language "clojure" :scheme "file"}
+        output      (vscode/window.createOutputChannel "cljfmt")
+        provider    (ClojureDocumentRangeFormattingEditProvider. output)]
 
-        provider (ClojureDocumentRangeFormattingEditProvider.)
+    (.push context.subscriptions (vscode/Disposable.from output))
 
-        disposable (vscode/languages.registerDocumentRangeFormattingEditProvider scheme provider)]
-
-    (.push context.subscriptions disposable)))
+    (.push context.subscriptions (vscode/languages.registerDocumentRangeFormattingEditProvider scheme provider))))

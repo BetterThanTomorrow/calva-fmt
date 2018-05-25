@@ -4,3 +4,5 @@ node_modules
 .shadow-cljs/
 .nrepl-port
 extension.js
+pom.xml
+*.idea/
