@@ -1,5 +1,5 @@
 (ns vscode-cljfmt.core
-(:require
+  (:require
    ["vscode" :as vscode]
 
    [cljfmt.core :as cljfmt]))
@@ -15,11 +15,11 @@
 
 
 (defn activate [^js context]
-(let [scheme   #js {:language "clojure" 
-                    :scheme   "file"}
-                    
-          provider (ClojureDocumentRangeFormattingEditProvider.)
-          
-          disposable (vscode/languages.registerDocumentRangeFormattingEditProvider scheme provider)]
+  (let [scheme   #js {:language "clojure"
+                      :scheme   "file"}
 
-(.push context.subscriptions disposable)))
+        provider (ClojureDocumentRangeFormattingEditProvider.)
+
+        disposable (vscode/languages.registerDocumentRangeFormattingEditProvider scheme provider)]
+
+    (.push context.subscriptions disposable)))
