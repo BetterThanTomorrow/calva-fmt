@@ -22,10 +22,11 @@
     "main": "./extension",
     "contributes": {},
     "scripts": {
+        "clean": "rm -rf .shadow-cljs/",
         "watch": "npx shadow-cljs watch :extension",
         "compile": "npx shadow-cljs compile :extension",
-        "clean": "rm -rf .shadow-cljs/",
-        "vscode:prepublish": "npm run clean && npx shadow-cljs release :extension",
+        "release": "npx shadow-cljs release :extension",
+        "vscode:prepublish": "npm run clean && npm run release",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
     },
