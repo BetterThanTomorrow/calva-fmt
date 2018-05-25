@@ -1,0 +1,10 @@
+{:dependencies [[rewrite-cljs "0.4.4" :exclusions [[org.clojure/clojurescript]]]
+                [cljfmt "0.5.7"]]
+
+ :source-paths ["src"]
+
+ :builds
+ {:extension
+  {:target :node-library
+   :exports {:activate vscode-cljfmt.core/activate}
+   :output-to "extension.js"}}}
