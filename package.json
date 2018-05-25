@@ -11,6 +11,7 @@
         "Programming Languages",
         "Formatters"
     ],
+    "icon": "images/icon.png",
     "activationEvents": [
         "onLanguage:clojure"
     ],
