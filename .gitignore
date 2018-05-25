@@ -6,3 +6,4 @@ node_modules
 extension.js
 pom.xml
 *.idea/
+*.DS_Store
