@@ -18,7 +18,8 @@
     "contributes": {},
     "scripts": {
         "watch": "npx shadow-cljs watch :extension",
-        "vscode:prepublish": "shadow-cljs release :extension",
+        "clean": "rm -rf .shadow-cljs/",
+        "vscode:prepublish": "npm run clean && npx shadow-cljs release :extension",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
     },
