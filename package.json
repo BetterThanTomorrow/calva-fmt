@@ -39,7 +39,7 @@
                     "cljfmt.removeTrailingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should remove trailing whitespace in lines. This will convert (foo) \n to (foo)\n."
+                        "description": "true if cljfmt should remove trailing whitespace in lines. This will convert (foo) \\n to (foo)\\n."
                     },
                     "cljfmt.insertMissingWhitespace": {
                         "type": "boolean",
@@ -49,7 +49,7 @@
                     "cljfmt.removeConsecutiveBlankLines": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should collapse consecutive blank lines. This will convert (foo)\n\n\n(bar) to (foo)\n\n(bar)."
+                        "description": "true if cljfmt should collapse consecutive blank lines. This will convert (foo)\\n\\n\\n(bar) to (foo)\\n\\n(bar)."
                     }
                 }
             }
