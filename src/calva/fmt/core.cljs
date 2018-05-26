@@ -1,4 +1,4 @@
-(ns vscode-cljfmt.core
+(ns calva.fmt.core
   (:require
    ["vscode" :as vscode]
 

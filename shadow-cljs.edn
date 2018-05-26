@@ -4,5 +4,5 @@
  :source-paths ["src"]
 
  :builds       {:extension {:target    :node-library
-                            :exports   {:activate vscode-cljfmt.core/activate}
+                            :exports   {:activate calva.fmt.core/activate}
                             :output-to "extension.js"}}}
