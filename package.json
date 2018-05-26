@@ -29,27 +29,27 @@
                     "calva.fmt.indentation": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should correct the indentation of your code."
+                        "description": "true if calva-fmt should correct the indentation of your code."
                     },
                     "calva.fmt.removeSurroundingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should remove whitespace surrounding inner forms. This will convert ( foo ) to (foo)."
+                        "description": "true if calva-fmt should remove whitespace surrounding inner forms. This will convert ( foo ) to (foo)."
                     },
                     "calva.fmt.removeTrailingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should remove trailing whitespace in lines. This will convert (foo) \\n to (foo)\\n."
+                        "description": "true if calva-fmt should remove trailing whitespace in lines. This will convert (foo) \\n to (foo)\\n."
                     },
                     "calva.fmt.insertMissingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
+                        "description": "true if calva-fmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
                     },
                     "calva.fmt.removeConsecutiveBlankLines": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should collapse consecutive blank lines. This will convert (foo)\\n\\n\\n(bar) to (foo)\\n\\n(bar)."
+                        "description": "true if calva-fmt should collapse consecutive blank lines. This will convert (foo)\\n\\n\\n(bar) to (foo)\\n\\n(bar)."
                     }
                 }
             }
