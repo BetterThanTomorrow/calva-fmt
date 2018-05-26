@@ -1,4 +1,4 @@
-(ns vscode-cljfmt.core
+(ns calva.fmt.core
   (:require
    ["vscode" :as vscode]
 
@@ -18,7 +18,7 @@
   (provideDocumentRangeFormattingEdits [_ document range options token]
     (let [{:keys [catch*]} m
 
-          configuration (parse-configuration (vscode/workspace.getConfiguration "cljfmt"))
+          configuration (parse-configuration (vscode/workspace.getConfiguration "calva.fmt"))
 
           text          (.getText document range)
 
