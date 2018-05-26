@@ -20,7 +20,41 @@
         "onLanguage:clojure"
     ],
     "main": "./extension",
-    "contributes": {},
+    "contributes": {
+        "configuration": [
+            {
+                "title": "cljfmt",
+                "type": "object",
+                "properties": {
+                    "cljfmt.indentation": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "true if cljfmt should correct the indentation of your code."
+                    },
+                    "cljfmt.removeSurroundingWhitespace": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "true if cljfmt should remove whitespace surrounding inner forms. This will convert ( foo ) to (foo)."
+                    },
+                    "cljfmt.removeTrailingWhitespace": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "true if cljfmt should remove trailing whitespace in lines. This will convert (foo) \\n to (foo)\\n."
+                    },
+                    "cljfmt.insertMissingWhitespace": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "true if cljfmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
+                    },
+                    "cljfmt.removeConsecutiveBlankLines": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "true if cljfmt should collapse consecutive blank lines. This will convert (foo)\\n\\n\\n(bar) to (foo)\\n\\n(bar)."
+                    }
+                }
+            }
+        ]
+    },
     "scripts": {
         "clean": "rm -rf .shadow-cljs/",
         "watch": "npx shadow-cljs watch :extension",
