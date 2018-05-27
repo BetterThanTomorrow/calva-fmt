@@ -3,7 +3,7 @@
     "displayName": "Calva Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
     "version": "0.0.6",
-    "publisher": "pedrorgirardi",
+    "publisher": "cospaia",
     "engines": {
         "vscode": "^1.23.0"
     },
@@ -11,11 +11,32 @@
         "Programming Languages",
         "Formatters"
     ],
-    "icon": "assets/calva.png",
+    "keywords": [
+        "Clojure",
+        "ClojureScript",
+        "EDN"
+    ],
+    "icon": "assets/calva-fmt.png",
     "repository": {
         "type": "git",
         "url": "https://github.com/BetterThanTomorrow/calva-fmt.git"
     },
+    "galleryBanner": {
+        "color": "#344D81",
+        "theme": "dark"
+    },
+    "badges": [
+        {
+            "url": "https://img.shields.io/badge/clojurians-editors-blue.svg?logo=slack",
+            "href": "https://clojurians.slack.com/messages/editors/",
+            "description": "Let's talk in the #editors channel on the Clojurians Slack"
+        },
+        {
+            "url": "https://img.shields.io/badge/vscode--dev--community-clojure-blue.svg?logo=slack",
+            "href": "https://vscode-dev-community.slack.com/messages/clojure/",
+            "description": "See you in the #clojure channel on the VS Code Dev Slack"
+        }
+    ],
     "activationEvents": [
         "onLanguage:clojure"
     ],
