@@ -34,7 +34,7 @@
 
 (defn activate [^js context]
   (let [scheme        #js {:language "clojure" :scheme "file"}
-        output        (vscode/window.createOutputChannel "cljfmt")
+        output        (vscode/window.createOutputChannel "Calva Formatter")
         provider      (ClojureDocumentRangeFormattingEditProvider. {:catch* (fn [e]
                                                                               (.appendLine output (.-message e)))})]
 
