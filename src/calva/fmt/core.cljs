@@ -32,5 +32,4 @@
 (defn activate [^js context]
   (let [scheme        #js {:language "clojure" :scheme "file"}
         provider      (ClojureDocumentRangeFormattingEditProvider.)]
-
     (.push context.subscriptions (vscode/languages.registerDocumentRangeFormattingEditProvider scheme provider))))
