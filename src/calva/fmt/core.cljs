@@ -13,20 +13,17 @@
    :remove-consecutive-blank-lines? (.get configuration "removeConsecutiveBlankLines")})
 
 
-(deftype ClojureDocumentRangeFormattingEditProvider [m]
+(deftype ClojureDocumentRangeFormattingEditProvider []
   Object
   (provideDocumentRangeFormattingEdits [_ document range options token]
-    (let [{:keys [catch*]} m
-
-          configuration (parse-configuration (vscode/workspace.getConfiguration "calva.fmt"))
+    (let [configuration (parse-configuration (vscode/workspace.getConfiguration "calva.fmt"))
 
           text          (.getText document range)
 
           pretty        (try
                           (cljfmt/reformat-string text configuration)
                           (catch js/Error e
-                            (catch* e)
-                            nil))]
+                            (js/console.log (.-message e))))]
 
       (when pretty
         #js [(vscode/TextEdit.replace range pretty)]))))
@@ -34,10 +31,6 @@
 
 (defn activate [^js context]
   (let [scheme        #js {:language "clojure" :scheme "file"}
-        output        (vscode/window.createOutputChannel "Calva Formatter")
-        provider      (ClojureDocumentRangeFormattingEditProvider. {:catch* (fn [e]
-                                                                              (.appendLine output (.-message e)))})]
-
-    (.push context.subscriptions (vscode/Disposable.from output))
+        provider      (ClojureDocumentRangeFormattingEditProvider.)]
 
     (.push context.subscriptions (vscode/languages.registerDocumentRangeFormattingEditProvider scheme provider))))
