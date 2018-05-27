@@ -1,6 +1,6 @@
 # calva-fmt
 
-This is the [Calva formatter](https://marketplace.visualstudio.com/items?itemName=pedrorgirardi.calva-fmt) - a Clojure and ClojureScript formatter for Visual Studio Code.
+This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemName=pedrorgirardi.calva-fmt) - a Clojure and ClojureScript formatter for Visual Studio Code.
 
 ## Raison d´être
 
