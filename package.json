@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.6",
+    "version": "0.0.1",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.23.0"
@@ -44,7 +44,7 @@
     "contributes": {
         "configuration": [
             {
-                "title": "Calva",
+                "title": "calva-fmt",
                 "type": "object",
                 "properties": {
                     "calva.fmt.indentation": {
@@ -66,11 +66,6 @@
                         "type": "boolean",
                         "default": true,
                         "description": "true if calva-fmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
-                    },
-                    "calva.fmt.removeConsecutiveBlankLines": {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "true if calva-fmt should collapse consecutive blank lines. This will convert (foo)\\n\\n\\n(bar) to (foo)\\n\\n(bar)."
                     }
                 }
             }
