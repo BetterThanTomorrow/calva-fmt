@@ -1,9 +1,9 @@
 {
-    "name": "vscode-cljfmt",
-    "displayName": "cljfmt",
-    "description": "An extension for formatting Clojure & ClojureScript code",
-    "version": "0.0.5",
-    "publisher": "pedrorgirardi",
+    "name": "calva-fmt",
+    "displayName": "Calva Formatter",
+    "description": "Clojure and ClojureScript formatter for Visual Studio Code",
+    "version": "0.0.2",
+    "publisher": "cospaia",
     "engines": {
         "vscode": "^1.23.0"
     },
@@ -11,11 +11,32 @@
         "Programming Languages",
         "Formatters"
     ],
-    "icon": "images/icon.png",
+    "keywords": [
+        "Clojure",
+        "ClojureScript",
+        "EDN"
+    ],
+    "icon": "assets/calva-fmt.png",
     "repository": {
         "type": "git",
-        "url": "https://github.com/pedrorgirardi/vscode-cljfmt.git"
+        "url": "https://github.com/BetterThanTomorrow/calva-fmt.git"
     },
+    "galleryBanner": {
+        "color": "#344D81",
+        "theme": "dark"
+    },
+    "badges": [
+        {
+            "url": "https://img.shields.io/badge/clojurians-editors-blue.svg?logo=slack",
+            "href": "https://clojurians.slack.com/messages/editors/",
+            "description": "Let's talk in the #editors channel on the Clojurians Slack"
+        },
+        {
+            "url": "https://img.shields.io/badge/vscode--dev--community-clojure-blue.svg?logo=slack",
+            "href": "https://vscode-dev-community.slack.com/messages/clojure/",
+            "description": "See you in the #clojure channel on the VS Code Dev Slack"
+        }
+    ],
     "activationEvents": [
         "onLanguage:clojure"
     ],
@@ -23,33 +44,28 @@
     "contributes": {
         "configuration": [
             {
-                "title": "cljfmt",
+                "title": "calva-fmt",
                 "type": "object",
                 "properties": {
-                    "cljfmt.indentation": {
+                    "calva.fmt.indentation": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should correct the indentation of your code."
+                        "description": "true if calva-fmt should correct the indentation of your code."
                     },
-                    "cljfmt.removeSurroundingWhitespace": {
+                    "calva.fmt.removeSurroundingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should remove whitespace surrounding inner forms. This will convert ( foo ) to (foo)."
+                        "description": "true if calva-fmt should remove whitespace surrounding inner forms. This will convert ( foo ) to (foo)."
                     },
-                    "cljfmt.removeTrailingWhitespace": {
+                    "calva.fmt.removeTrailingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should remove trailing whitespace in lines. This will convert (foo) \\n to (foo)\\n."
+                        "description": "true if calva-fmt should remove trailing whitespace in lines. This will convert (foo) \\n to (foo)\\n."
                     },
-                    "cljfmt.insertMissingWhitespace": {
+                    "calva.fmt.insertMissingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
-                    },
-                    "cljfmt.removeConsecutiveBlankLines": {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "true if cljfmt should collapse consecutive blank lines. This will convert (foo)\\n\\n\\n(bar) to (foo)\\n\\n(bar)."
+                        "description": "true if calva-fmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
                     }
                 }
             }
