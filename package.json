@@ -66,10 +66,36 @@
                         "type": "boolean",
                         "default": true,
                         "description": "true if calva-fmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
+                    },
+                    "calva.fmt.autoAdjustIndentOnNewLines": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Should calva-fmt auto-adjust indents wehn new lines are created?"
                     }
                 }
             }
-        ]
+        ],
+        "commands": [
+            {
+                "command": "calva.fmt.toggleAutoAdjustIndent",
+                "title": "Toggle auto adjusting of indent for new lines",
+                "category": "Calva"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "calva.fmt.toggleAutoAdjustIndent",
+                "key": "ctrl+alt+v i"
+            }
+        ],
+        "configurationDefaults": {
+            "[clojure]": {
+                "editor.wordSeparators": "\t ()\"':,;~@#$%^&{}[]`",
+                "editor.formatOnType": true,
+                "editor.autoIndent": true,
+                "editor.formatOnPaste": true
+            }
+        }
     },
     "scripts": {
         "clean": "rm -rf .shadow-cljs/",
