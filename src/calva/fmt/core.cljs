@@ -6,11 +6,15 @@
    [calva.fmt.language-config :as language-config]))
 
 (defn activate [^js context]
-  ;;Set the language configuration for vscode when using this extension
+  ;; Languae configuration
   (vscode/languages.setLanguageConfiguration "clojure", (language-config/ClojureLanguageConfiguration.))
 
+  ;; Commands
   (.push (.-subscriptions context) (vscode/commands.registerCommand "calva.fmt.toggleAutoAdjustIndent" ontype-formatting/toggleAutoAdjustIndentCommand))
-  (.push (.-subscriptions context) (vscode/languages.registerDocumentRangeFormattingEditProvider "clojure" (range-formatting/RangeEditProvider.)))
-  (.push (.-subscriptions context) (vscode/languages.registerDocumentRangeFormattingEditProvider "clojure" (ontype-formatting/OnTypeEditProvider.) "\n"))
 
+  ;; Providers
+  (.push (.-subscriptions context) (vscode/languages.registerDocumentRangeFormattingEditProvider "clojure" (range-formatting/RangeEditProvider.)))
+  (.push (.-subscriptions context) (vscode/languages.registerOnTypeFormattingEditProvider "clojure" (ontype-formatting/OnTypeEditProvider.) "\n"))
+
+  ;; Inititalization
   (ontype-formatting/init))

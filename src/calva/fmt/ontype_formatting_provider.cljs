@@ -50,8 +50,13 @@
 
 (deftype OnTypeEditProvider []
   Object
-  (provideOnTypeFormattingEdits [document, position, ch, options]
-    (assert false position)
+  (provideOnTypeFormattingEdits [_ document position ch options token]
+    (assert false "ontype!")))
+
+
+(deftype OnTypeEditProviderZ []
+  Object
+  (provideOnTypeFormattingEdits [_ document position ch options token]
     (let [configuration (vscode/workspace.getConfiguration "calva.fmt")
           should-adjust-indent? (should-adjust-indent-on-newline? configuration)]
       (if should-adjust-indent?
@@ -63,6 +68,6 @@
           (if-not (= (.-character end-position) indent)
             (if (> (.character end-position) indent)
               #js [(.delete vscode/TextEdit (vscode.Range. (.with end-position (.-line end-position) indent) end-position))]
-              #js [(.insert vscode/TextEdit start-position, (apply str (repeat (- indent (.character end-position)))))])
+              #js [(.insert vscode/TextEdit start-position (apply str (repeat (- indent (.character end-position)))))])
             nil))
         nil))))
