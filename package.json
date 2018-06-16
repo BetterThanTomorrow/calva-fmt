@@ -40,7 +40,7 @@
     "activationEvents": [
         "onLanguage:clojure"
     ],
-    "main": "./extension",
+    "main": "./out/src/extension",
     "contributes": {
         "configuration": [
             {
@@ -100,9 +100,9 @@
     "scripts": {
         "clean": "rm -rf .shadow-cljs/",
         "watch": "npx shadow-cljs watch :extension",
-        "compile": "npx shadow-cljs compile :extension",
+        "compile": "npx shadow-cljs compile :extension && tsc -watch -p ./",
         "release": "npx shadow-cljs release :extension",
-        "vscode:prepublish": "npm run clean && npm run release",
+        "vscode:prepublish": "npm run clean && npm run release && tsc -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
     },

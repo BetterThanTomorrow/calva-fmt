@@ -1,6 +1,6 @@
-import vscode from 'vscode';
-import * as state from '../state';
-import status from '../status';
+import * as vscode from 'vscode';
+//import * as state from '../state';
+//import status from '../status';
 
 // Adapted from the Atom clojure-indent extension: https://github.com/Ciebiada/clojure-indent
 
@@ -64,37 +64,36 @@ function calculateIndent(lines) {
 }
 
 
-class ClojureOnTypeFormattingEditProvider {
+export class ClojureOnTypeFormattingEditProvider {
     constructor() {
-        this.state = state;
-    }
-
-    static toggleAutoAdjustIndentCommand() {
-        state.cursor.set("autoAdjustIndent", !state.deref().get("autoAdjustIndent"));
-        status.update();
+        // this.state = state;
     }
 
     provideOnTypeFormattingEdits(document, position, ch, options) {
-        if (this.state.deref().get("autoAdjustIndent")) {
-            let rangeUptoHere = new vscode.Range(new vscode.Position(0, 0), position),
-                lines = document.getText(rangeUptoHere).split('\n'),
-                indent = calculateIndent(lines),
-                startPosition = position.with(position.line, 0),
-                endPosition = position;
+        // if (this.state.deref().get("autoAdjustIndent")) {
+        let rangeUptoHere = new vscode.Range(new vscode.Position(0, 0), position),
+            lines = document.getText(rangeUptoHere).split('\n'),
+            indent = calculateIndent(lines),
+            startPosition = position.with(position.line, 0),
+            endPosition = position;
 
-            if (endPosition.character != indent) {
-                if (endPosition.character > indent) {
-                    return [vscode.TextEdit.delete(new vscode.Range(endPosition.with(endPosition.line, indent), endPosition))];
-                } else {
-                    return [vscode.TextEdit.insert(startPosition, ' '.repeat(indent - endPosition.character))];
-                }
+        if (endPosition.character != indent) {
+            if (endPosition.character > indent) {
+                return [vscode.TextEdit.delete(new vscode.Range(endPosition.with(endPosition.line, indent), endPosition))];
             } else {
-                return null;
+                return [vscode.TextEdit.insert(startPosition, ' '.repeat(indent - endPosition.character))];
             }
         } else {
             return null;
         }
+        // } else {
+        //     return null;
+        // }
     }
 }
 
-export default ClojureOnTypeFormattingEditProvider;
+export function toggleAutoAdjustIndentCommand() {
+    console.log("toggle toggle");
+    // state.cursor.set("autoAdjustIndent", !state.deref().get("autoAdjustIndent"));
+    // status.update();
+}
