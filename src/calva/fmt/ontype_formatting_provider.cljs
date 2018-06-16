@@ -60,9 +60,7 @@
               start-position (.with position (.-line position) 0)]
           (if-not (= (.-character position) indent)
             (if (> (.-character position) indent)
-              (js/console.log "delete" [(vscode/TextEdit.delete (vscode.Range. (.with position (.-line position) indent) position))])
-              (js/console.log "insert" [(vscode/TextEdit.insert start-position (apply str (repeat (- indent (.-character position)))))]))
-              ;;#js [(vscode/TextEdit.delete (vscode.Range. (.with position (.-line position) indent) position))]
-              ;;#js [(vscode/TextEdit.insert start-position (apply str (repeat (- indent (.-character position)))))])
+              #js [(vscode/TextEdit.delete (vscode.Range. (.with position (.-line position) indent) position))]
+              #js [(vscode/TextEdit.insert start-position (apply str (repeat (- indent (.-character position)))))])
             nil))
         nil))))
