@@ -3,7 +3,7 @@ node_modules
 *.vsix
 .shadow-cljs/
 .nrepl-port
-extension.js
 pom.xml
 *.idea/
 *.DS_Store
+cljc_out/

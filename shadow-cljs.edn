@@ -4,5 +4,7 @@
  :source-paths ["src"]
 
  :builds       {:extension {:target    :node-library
-                            :exports   {:activate calva.fmt.core/activate}
-                            :output-to "extension.js"}}}
+                            :exports   {:formatText calva.fmt.formatter/format-text
+                                        :jsify calva.js-utils/jsify
+                                        :cljify calva.js-utils/cljify}
+                            :output-to "cljc_out/calva_formatter.js"}}}

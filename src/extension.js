@@ -1,14 +1,18 @@
-'use strict';
+const vscode = require('vscode');
+const onTypeFormatter = require('./providers/ontype_formatter');
+const rangeFormatter = require('./providers/range_formatter');
+
 //import { StatusBar } from './status_bar';
-import * as vscode from 'vscode';
-import * as ontype from './providers/ontype_formatter';
 
-
-export function activate(context: vscode.ExtensionContext) {
-    context.subscriptions.push(vscode.commands.registerCommand("calva.fmt.toggleAutoAdjustIndent", ontype.toggleAutoAdjustIndentCommand));
-    context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new ontype.ClojureOnTypeFormattingEditProvider, "\n"));
+function activate(context) {
+    context.subscriptions.push(vscode.commands.registerCommand("calva.fmt.toggleAutoAdjustIndent", onTypeFormatter.toggleAutoAdjustIndentCommand));
+    context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new onTypeFormatter.OnTypeEditProvider, "\n"));
+    context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new rangeFormatter.RangeEditProvider));
 }
 
+module.exports = {
+    activate
+}
 // (defn activate[^ js context]
 // ;; Languae configuration
 //     (vscode / languages.setLanguageConfiguration "clojure", (language - config / ClojureLanguageConfiguration.))
