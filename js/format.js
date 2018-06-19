@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const { formatText, cljify, jsify } = require('../cljc_out/calva_formatter');
+const { formatText, cljify, jsify } = require('../out/calva_fmt');
 
 function readConfiguration() {
     let workspaceConfig = vscode.workspace.getConfiguration("calva.fmt")

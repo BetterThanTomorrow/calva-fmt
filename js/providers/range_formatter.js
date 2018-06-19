@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const formatter = require('../formatter');
+const formatter = require('../format');
 
 class RangeEditProvider {
     provideDocumentRangeFormattingEdits(document, range, options, token) {

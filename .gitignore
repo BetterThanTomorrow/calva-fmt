@@ -6,4 +6,4 @@ node_modules
 pom.xml
 *.idea/
 *.DS_Store
-cljc_out/
+out/
