@@ -7,3 +7,4 @@ pom.xml
 *.idea/
 *.DS_Store
 out/
+cljc_out/
