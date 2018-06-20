@@ -98,7 +98,7 @@
         }
     },
     "scripts": {
-        "clean": "rm -rf .shadow-cljs/ ./out",
+        "clean": "rm -rf .shadow-cljs/ ./out ./cljc_out",
         "watch-cljc": "npx shadow-cljs watch :extension",
         "watch-ts": "tsc -watch -p ./",
         "compile": "npx shadow-cljs compile :extension && tsc -p ./",
