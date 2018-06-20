@@ -1,11 +1,17 @@
 import * as vscode from 'vscode';
-import { OnTypeEditProvider, toggleAutoAdjustIndentCommand } from './providers/ontype_formatter';
+import { OnTypeEditProvider } from './providers/ontype_formatter';
 import { RangeEditProvider } from './providers/range_formatter';
 
-//import { StatusBar } from './status_bar';
+const ClojureLanguageConfiguration = {
+    wordPattern: /[^\s()[\]{};"\\]+/,
+    indentationRules: {
+        increaseIndentPattern: /[[({]/,
+        decreaseIndentPattern: undefined
+    }
+}
 
-function activate(context) {
-    context.subscriptions.push(vscode.commands.registerCommand("calva.fmt.toggleAutoAdjustIndent", toggleAutoAdjustIndentCommand));
+function activate(context: vscode.ExtensionContext) {
+    vscode.languages.setLanguageConfiguration("clojure", ClojureLanguageConfiguration);
     context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new OnTypeEditProvider, "\n"));
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new RangeEditProvider));
 }
@@ -13,16 +19,3 @@ function activate(context) {
 module.exports = {
     activate
 }
-// (defn activate[^ js context]
-// ;; Languae configuration
-//     (vscode / languages.setLanguageConfiguration "clojure", (language - config / ClojureLanguageConfiguration.))
-
-//     ;; Commands
-//         (.push(.-subscriptions context)(vscode / commands.registerCommand "calva.fmt.toggleAutoAdjustIndent" ontype - formatting / toggleAutoAdjustIndentCommand))
-
-//     ;; Providers
-//         (.push(.-subscriptions context)(vscode / languages.registerDocumentRangeFormattingEditProvider "clojure"(range - formatting / RangeEditProvider.)))
-//         (.push(.-subscriptions context)(vscode / languages.registerOnTypeFormattingEditProvider "clojure"(ontype - formatting / OnTypeEditProvider.) "\n"))
-
-//     ;; Inititalization
-//         (ontype - formatting / init))

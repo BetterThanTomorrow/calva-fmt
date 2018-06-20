@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.3-SNAPSHOT",
+    "version": "0.0.3",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.23.0"
@@ -98,12 +98,15 @@
         }
     },
     "scripts": {
-        "clean": "rm -rf .shadow-cljs/ ./out ./cljc_out",
-        "watch-cljc": "npx shadow-cljs watch :extension",
+        "mkdirs": "mkdir -p ./out && mkdir -p ./cljc_out",
+        "linkdirs": "cd out && ln -s ../cljc_out/ && cd ..",
+        "copydirs": "cp -r ./cljc_out ./out/",
+        "clean": "rm -rf .shadow-cljs/ ./out ./cljc_out && npm run mkdirs",
+        "watch-cljc": "npm run clean && npm run linkdirs && npx shadow-cljs watch :extension",
         "watch-ts": "tsc -watch -p ./",
+        "release": "npm run clean && npx shadow-cljs release :extension && npm run copydirs && tsc -p ./",
         "compile": "npx shadow-cljs compile :extension && tsc -p ./",
-        "release": "npx shadow-cljs release :extension  && tsc -p ./",
-        "vscode:prepublish": "npm run clean && npm run release  && tsc -p ./",
+        "vscode:prepublish": "npm run release",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
     },

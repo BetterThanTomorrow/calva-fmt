@@ -64,12 +64,7 @@ function calculateIndent(lines) {
 
 
 export class OnTypeEditProvider {
-    constructor() {
-        // this.state = state;
-    }
-
     provideOnTypeFormattingEdits(document, position, ch, options) {
-        // if (this.state.deref().get("autoAdjustIndent")) {
         let rangeUptoHere = new vscode.Range(new vscode.Position(0, 0), position),
             lines = document.getText(rangeUptoHere).split('\n'),
             indent = calculateIndent(lines),
@@ -85,14 +80,5 @@ export class OnTypeEditProvider {
         } else {
             return null;
         }
-        // } else {
-        //     return null;
-        // }
     }
-}
-
-export function toggleAutoAdjustIndentCommand() {
-    console.log("toggle toggle");
-    // state.cursor.set("autoAdjustIndent", !state.deref().get("autoAdjustIndent"));
-    // status.update();
 }
