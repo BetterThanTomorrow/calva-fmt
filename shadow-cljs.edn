@@ -7,4 +7,4 @@
                             :exports   {:formatText calva.fmt.formatter/format-text
                                         :jsify calva.js-utils/jsify
                                         :cljify calva.js-utils/cljify}
-                            :output-to "out/calva_fmt.js"}}}
+                            :output-to "cljc_out/calva_fmt.js"}}}

@@ -1,4 +1,4 @@
-const vscode = require('vscode');
+import * as vscode from 'vscode';
 const onTypeFormatter = require('./providers/ontype_formatter');
 const rangeFormatter = require('./providers/range_formatter');
 

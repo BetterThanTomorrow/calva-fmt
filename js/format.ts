@@ -1,5 +1,5 @@
-const vscode = require('vscode');
-const { formatText, cljify, jsify } = require('../out/calva_fmt');
+import * as vscode from 'vscode';
+const { formatText, cljify, jsify } = require('../cljc_out/calva_fmt');
 
 function readConfiguration() {
     let workspaceConfig = vscode.workspace.getConfiguration("calva.fmt")
@@ -17,9 +17,8 @@ function getConfig() {
     return config;
 }
 
-function format(text) {
-    config = getConfig();
-    let d = { "text": text, "config": config };
+export function format(text) {
+    let d = { "text": text, "config": getConfig() };
     d = formatText(cljify(d));
     d = jsify(d);
     if (!d["error"]) {
@@ -29,8 +28,4 @@ function format(text) {
         console.log(d["error"]);
         return text;
     }
-}
-
-module.exports = {
-    format
 }
