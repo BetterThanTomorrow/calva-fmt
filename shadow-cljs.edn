@@ -1,8 +1,10 @@
 {:dependencies [[rewrite-cljs "0.4.4" :exclusions [[org.clojure/clojurescript]]]
                 [cljfmt "0.5.7" :exclusions [[rewrite-cljs]]]]
 
- :source-paths ["src"]
+ :source-paths ["cljc"]
 
  :builds       {:extension {:target    :node-library
-                            :exports   {:activate vscode-cljfmt.core/activate}
-                            :output-to "extension.js"}}}
+                            :exports   {:formatText calva.fmt.formatter/format-text
+                                        :jsify calva.js-utils/jsify
+                                        :cljify calva.js-utils/cljify}
+                            :output-to "cljc_out/calva_fmt.js"}}}

@@ -2,10 +2,12 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es6",
+        "outDir": "out",
         "lib": [
-            "es6"
+            "es7"
         ],
-        "sourceMap": true
+        "sourceMap": true,
+        "rootDir": "."
     },
     "exclude": [
         "node_modules",

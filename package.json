@@ -1,9 +1,9 @@
 {
-    "name": "vscode-cljfmt",
-    "displayName": "cljfmt",
-    "description": "An extension for formatting Clojure & ClojureScript code",
-    "version": "0.0.5",
-    "publisher": "pedrorgirardi",
+    "name": "calva-fmt",
+    "displayName": "Calva Formatter",
+    "description": "Clojure and ClojureScript formatter for Visual Studio Code",
+    "version": "0.0.3",
+    "publisher": "cospaia",
     "engines": {
         "vscode": "^1.23.0"
     },
@@ -11,65 +11,111 @@
         "Programming Languages",
         "Formatters"
     ],
-    "icon": "images/icon.png",
+    "keywords": [
+        "Clojure",
+        "ClojureScript",
+        "EDN"
+    ],
+    "icon": "assets/calva-fmt.png",
     "repository": {
         "type": "git",
-        "url": "https://github.com/pedrorgirardi/vscode-cljfmt.git"
+        "url": "https://github.com/BetterThanTomorrow/calva-fmt.git"
     },
+    "galleryBanner": {
+        "color": "#344D81",
+        "theme": "dark"
+    },
+    "badges": [
+        {
+            "url": "https://img.shields.io/badge/clojurians-editors-blue.svg?logo=slack",
+            "href": "https://clojurians.slack.com/messages/editors/",
+            "description": "Let's talk in the #editors channel on the Clojurians Slack"
+        },
+        {
+            "url": "https://img.shields.io/badge/vscode--dev--community-clojure-blue.svg?logo=slack",
+            "href": "https://vscode-dev-community.slack.com/messages/clojure/",
+            "description": "See you in the #clojure channel on the VS Code Dev Slack"
+        }
+    ],
     "activationEvents": [
         "onLanguage:clojure"
     ],
-    "main": "./extension",
+    "main": "./out/js/extension",
     "contributes": {
         "configuration": [
             {
-                "title": "cljfmt",
+                "title": "calva-fmt",
                 "type": "object",
                 "properties": {
-                    "cljfmt.indentation": {
+                    "calva.fmt.indentation": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should correct the indentation of your code."
+                        "description": "true if calva-fmt should correct the indentation of your code."
                     },
-                    "cljfmt.removeSurroundingWhitespace": {
+                    "calva.fmt.removeSurroundingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should remove whitespace surrounding inner forms. This will convert ( foo ) to (foo)."
+                        "description": "true if calva-fmt should remove whitespace surrounding inner forms. This will convert ( foo ) to (foo)."
                     },
-                    "cljfmt.removeTrailingWhitespace": {
+                    "calva.fmt.removeTrailingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should remove trailing whitespace in lines. This will convert (foo) \\n to (foo)\\n."
+                        "description": "true if calva-fmt should remove trailing whitespace in lines. This will convert (foo) \\n to (foo)\\n."
                     },
-                    "cljfmt.insertMissingWhitespace": {
+                    "calva.fmt.insertMissingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
+                        "description": "true if calva-fmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
                     },
-                    "cljfmt.removeConsecutiveBlankLines": {
+                    "calva.fmt.autoAdjustIndentOnNewLines": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if cljfmt should collapse consecutive blank lines. This will convert (foo)\\n\\n\\n(bar) to (foo)\\n\\n(bar)."
+                        "description": "Should calva-fmt auto-adjust indents wehn new lines are created?"
                     }
                 }
             }
-        ]
+        ],
+        "commands": [
+            {
+                "command": "calva.fmt.toggleAutoAdjustIndent",
+                "title": "Toggle auto adjusting of indent for new lines",
+                "category": "Calva"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "calva.fmt.toggleAutoAdjustIndent",
+                "key": "ctrl+alt+v i"
+            }
+        ],
+        "configurationDefaults": {
+            "[clojure]": {
+                "editor.wordSeparators": "\t ()\"':,;~@#$%^&{}[]`",
+                "editor.formatOnType": true,
+                "editor.autoIndent": true,
+                "editor.formatOnPaste": true
+            }
+        }
     },
     "scripts": {
-        "clean": "rm -rf .shadow-cljs/",
-        "watch": "npx shadow-cljs watch :extension",
-        "compile": "npx shadow-cljs compile :extension",
-        "release": "npx shadow-cljs release :extension",
-        "vscode:prepublish": "npm run clean && npm run release",
+        "mkdirs": "mkdir -p ./out && mkdir -p ./cljc_out",
+        "linkdirs": "cd out && ln -s ../cljc_out/ && cd ..",
+        "copydirs": "cp -r ./cljc_out ./out/",
+        "clean": "rm -rf .shadow-cljs/ ./out ./cljc_out && npm run mkdirs",
+        "watch-cljc": "npm run clean && npm run linkdirs && npx shadow-cljs watch :extension",
+        "watch-ts": "tsc -watch -p ./",
+        "release": "npm run clean && npx shadow-cljs release :extension && npm run copydirs && tsc -p ./",
+        "compile": "npx shadow-cljs compile :extension && tsc -p ./",
+        "vscode:prepublish": "npm run release",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
         "@types/mocha": "^2.2.42",
-        "@types/node": "^7.0.43",
+        "@types/node": "^7.0.66",
         "eslint": "^4.11.0",
-        "shadow-cljs": "^2.3.23",
-        "typescript": "^2.6.1",
+        "shadow-cljs": "^2.4.2",
+        "typescript": "^2.9.2",
         "vscode": "^1.1.6"
     }
 }
