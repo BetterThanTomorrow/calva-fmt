@@ -114,7 +114,7 @@
         "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.66",
         "eslint": "^4.11.0",
-        "shadow-cljs": "^2.4.2",
+        "shadow-cljs": "^2.4.8",
         "typescript": "^2.9.2",
         "vscode": "^1.1.6"
     }

@@ -1,10 +1,12 @@
 {:dependencies [[rewrite-cljs "0.4.4" :exclusions [[org.clojure/clojurescript]]]
-                [cljfmt "0.5.7" :exclusions [[rewrite-cljs]]]]
+                [cljfmt "0.5.7" :exclusions [[rewrite-cljs]]]
+                [ysera "1.2.0"]]
 
  :source-paths ["cljc"]
 
  :builds       {:extension {:target    :node-library
                             :exports   {:formatText calva.fmt.formatter/format-text
                                         :jsify calva.js-utils/jsify
-                                        :cljify calva.js-utils/cljify}
+                                        :cljify calva.js-utils/cljify
+                                        :indentForPosition calva.fmt.indent/indent-for-position}
                             :output-to "cljc_out/calva_fmt.js"}}}

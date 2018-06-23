@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-//import status from '../status';
+import * as formatter from '../format';
 
 // Adapted from the Atom clojure-indent extension: https://github.com/Ciebiada/clojure-indent
 
@@ -63,7 +63,7 @@ function calculateIndent(lines) {
 }
 
 
-export class OnTypeEditProvider {
+export class OnTypeEditProviderZ {
     provideOnTypeFormattingEdits(document, position, ch, options) {
         let rangeUptoHere = new vscode.Range(new vscode.Position(0, 0), position),
             lines = document.getText(rangeUptoHere).split('\n'),
@@ -80,5 +80,22 @@ export class OnTypeEditProvider {
         } else {
             return null;
         }
+    }
+}
+
+export class OnTypeEditProvider {
+    provideOnTypeFormattingEdits(document: vscode.TextDocument, position: vscode.Position, _ch, _options) {
+        let indent = formatter.calculateIndent(document, position),
+            startPosition = position.with(position.line, 0);
+        if (position.character != indent) {
+            if (position.character > indent) {
+                return [vscode.TextEdit.delete(new vscode.Range(position.with(position.line, indent), position))];
+            } else {
+                return [vscode.TextEdit.insert(startPosition, ' '.repeat(indent - position.character))];
+            }
+        } else {
+            return null;
+        }
+
     }
 }
