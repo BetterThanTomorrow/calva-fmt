@@ -6,6 +6,7 @@
                        [goog.string.format :as gformat]
                        [calva.fmt.formatter :refer [format-text]])]))
 
+
 (defn- log [o]
   (println o)
   o)
