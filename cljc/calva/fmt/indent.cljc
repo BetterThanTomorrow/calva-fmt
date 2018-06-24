@@ -7,8 +7,12 @@
                        [calva.fmt.formatter :refer [format-text]])]))
 
 
-(defn- log [o]
-  (println o)
+(defn- log
+  {:test (fn []
+           (is= (log {:text ""} :text)
+                {:text ""}))}
+  [o & exlude-kws]
+  (println (pr-str (if (map? o) (apply dissoc o exlude-kws) o)))
   o)
 
 
@@ -112,12 +116,15 @@
          (map? pos)
          (or (map? config) (nil? config))]}
   (try
-    (assoc m :indent (-> m
-                         (gen-indent-symbol)
-                         (localize-pos)
-                         (inject-indent-symbol)
-                         (format-text)
-                         (find-indent)
-                         (+ (:character (:start range)))))
+    (assoc m :indent (if (= "" (:text m))
+                       (:character (:pos m))
+                       (-> m
+                           (assoc-in [:config :remove-surrounding-whitespace?] false)
+                           (gen-indent-symbol)
+                           (localize-pos)
+                           (inject-indent-symbol)
+                           (format-text)
+                           (find-indent)
+                           (+ (:character (:start range))))))
     (catch #?(:cljs js/Error :clj Exception) e
       {:error e})))
