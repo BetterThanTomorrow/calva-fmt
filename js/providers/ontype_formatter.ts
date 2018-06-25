@@ -1,17 +1,29 @@
 import * as vscode from 'vscode';
 import * as config from '../config';
 const { indentForPosition, cljify, jsify } = require('../../cljc_out/calva_fmt');
-
-let paredit = require('paredit.js');
+const paredit = require('paredit.js');
 
 function minimalRangeForIndenting(document: vscode.TextDocument, pos: vscode.Position): vscode.Range {
     let allText: string = document.getText(),
         ast: object = paredit.parse(allText),
-        peRange: object = paredit.navigator.rangeForDefun(ast, document.offsetAt(pos));
-    if (peRange) {
-        return new vscode.Range(document.positionAt(peRange[0]), document.positionAt(peRange[1]));
+        range: number[] = paredit.navigator.sexpRange(ast, document.offsetAt(pos));
+    if (range) {
+        let vsRange: vscode.Range = vsRangeFromTuple(range),
+            text: string = "";
+        do {
+            range = paredit.navigator.sexpRangeExpansion(ast, range[0], range[1]);
+            if (range) {
+                vsRange = vsRangeFromTuple(range);
+                text = document.getText(vsRange);
+            }
+        } while (range && !text.match(/^[[({"]/));
+        return vsRange;
     } else {
         return new vscode.Range(pos, pos);
+    }
+
+    function vsRangeFromTuple(range: number[]): vscode.Range {
+        return new vscode.Range(document.positionAt(range[0]), document.positionAt(range[1]));
     }
 }
 

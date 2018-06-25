@@ -70,19 +70,19 @@
 
 
 (defn- inject-indent-symbol
-  "Add indent symbol in text"
+  "Inject indent symbol in text. (To give the formatter has something to indent.)"
   {:test (fn []
-           (is= "(foo\n  FOO\n bar)"
+           (is= "(foo\n  FOO \n bar)"
                 (:text (inject-indent-symbol {:text "(foo\n  \n bar)"
                                               :indent-symbol "FOO"
                                               :pos {:line 1 :character 2}})))
-           (is= " FOO "
+           (is= " FOO  "
                 (:text (inject-indent-symbol {:text "  "
                                               :indent-symbol "FOO"
                                               :pos {:line 0 :character 1}}))))}
   [{:keys [indent-symbol] :as m}]
   (let [{:keys [pre post]} (split-at-pos m)]
-    (assoc m :text (str pre indent-symbol post))))
+    (assoc m :text (str pre indent-symbol " " post))))
 
 
 (defn- find-indent
