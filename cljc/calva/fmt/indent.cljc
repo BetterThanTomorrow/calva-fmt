@@ -4,7 +4,9 @@
       :cljs [(:require [ysera.test :include-macros true :refer [is= is is-not]]
                        [goog.string :as gstring]
                        [goog.string.format :as gformat]
-                       [calva.fmt.formatter :refer [format-text]])]))
+                       [calva.fmt.formatter :refer [format-text]]
+                       [calva.js-utils :refer [cljify]]
+                       ["paredit.js" :as paredit])]))
 
 
 (defn- log
@@ -19,6 +21,25 @@
 (defn- sprintf [fmt s]
   #?(:clj  (clojure.core/format fmt s)
      :cljs (gstring/format fmt s)))
+
+
+(defn- minimal-range
+  "Expands the range from pos up to any enclosing list/vector/map/string"
+  {:test (fn []
+           (is= [22 25] ;"[x]"
+                (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 22}))
+           (is= [10 10] ;""
+                (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 10})))}
+  [{:keys [all-text idx]}]
+  (let [ast (paredit/parse all-text)
+        range (.sexpRange  (.-navigator paredit) ast idx)]
+    (if (some? range)
+      (loop [range range]
+        (let [text (apply subs all-text range)]
+          (if (and (some? range) (not (contains? (set "{[(") (first text))))
+            (recur (.sexpRangeExpansion (.-navigator paredit) ast (first range) (last range)))
+            range)))
+      [idx idx])))
 
 
 (defn- gen-indent-symbol
