@@ -75,7 +75,7 @@
 
 
 (defn- indent-before-range
-  "Extracts the text for the range"
+  "Figures out how much extra indentation to add based on the length of the line before the range"
   {:test (fn []
            (is= 10
                 (indent-before-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))"
