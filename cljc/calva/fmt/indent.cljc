@@ -114,7 +114,7 @@
     (foo
 
     bar)))"
-                                      :idx 45})))}
+                                   :idx 45})))}
   [{:keys [all-text idx config] :as m}]
   {:pre [(string? all-text)
          (number? idx)
