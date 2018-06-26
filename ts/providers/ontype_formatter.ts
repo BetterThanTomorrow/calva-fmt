@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as config from '../config';
-const { indentForIndex, cljify, jsify } = require('../../cljc_out/calva_fmt');
+const { indentForIndex, cljify, jsify } = require('../../cljs_out/calva_fmt');
 
 
 function calculateIndent(document: vscode.TextDocument, pos: vscode.Position): number {

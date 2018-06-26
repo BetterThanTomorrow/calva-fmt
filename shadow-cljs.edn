@@ -2,11 +2,17 @@
                 [cljfmt "0.5.7" :exclusions [[rewrite-cljs]]]
                 [ysera "1.2.0"]]
 
- :source-paths ["cljc"]
+ :source-paths ["cljs"]
 
- :builds       {:extension {:target    :node-library
-                            :exports   {:formatText calva.fmt.formatter/format-text
-                                        :jsify calva.js-utils/jsify
-                                        :cljify calva.js-utils/cljify
-                                        :indentForIndex calva.fmt.indent/indent-for-index}
-                            :output-to "cljc_out/calva_fmt.js"}}}
+ :builds       {:calva-fmt-lib
+                {:target    :node-library
+                 :exports   {:formatText calva.fmt.formatter/format-text
+                             :jsify calva.js-utils/jsify
+                             :cljify calva.js-utils/cljify
+                             :indentForIndex calva.fmt.indent/indent-for-index}
+                 :output-to "cljs_out/calva_fmt.js"}
+                :test
+                {:target    :node-test
+                 :output-to "tests-out/tests.js"
+                 :ns-regexp ".*"
+                 :autorun   true}}}

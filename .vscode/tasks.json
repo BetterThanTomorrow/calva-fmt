@@ -4,9 +4,19 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Watch CLJC",
+      "label": "Watch CLJS",
       "type": "npm",
-      "script": "watch-cljc",
+      "script": "watch-cljs",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Watch CLJS-TESTS",
+      "type": "npm",
+      "script": "watch-cljs-tests",
       "group": {
         "kind": "build",
         "isDefault": true

@@ -7,4 +7,5 @@ pom.xml
 *.idea/
 *.DS_Store
 out/
-cljc_out/
+cljs_out/
+tests-out/

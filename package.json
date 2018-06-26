@@ -40,7 +40,7 @@
     "activationEvents": [
         "onLanguage:clojure"
     ],
-    "main": "./out/js/extension",
+    "main": "./out/ts/extension",
     "contributes": {
         "configuration": [
             {
@@ -98,14 +98,15 @@
         }
     },
     "scripts": {
-        "mkdirs": "mkdir -p ./out && mkdir -p ./cljc_out",
-        "linkdirs": "cd out && ln -s ../cljc_out/ && cd ..",
-        "copydirs": "cp -r ./cljc_out ./out/",
-        "clean": "rm -rf .shadow-cljs/ ./out ./cljc_out && npm run mkdirs",
-        "watch-cljc": "npm run clean && npm run linkdirs && npx shadow-cljs watch :extension",
+        "mkdirs": "mkdir -p ./out ./tests-out ./cljs_out",
+        "linkdirs": "cd out && ln -s ../cljs_out/ && cd ..",
+        "copydirs": "cp -r ./cljs_out ./out/",
+        "clean": "rm -rf .shadow-cljs/ ./out ./tests-out ./cljs_out && npm run mkdirs",
+        "watch-cljs": "npm run clean && npm run linkdirs && npx shadow-cljs watch :calva-fmt-lib",
+        "watch-cljs-tests": "npx shadow-cljs watch :test",
         "watch-ts": "tsc -watch -p ./",
-        "release": "npm run clean && npx shadow-cljs release :extension && npm run copydirs && tsc -p ./",
-        "compile": "npx shadow-cljs compile :extension && tsc -p ./",
+        "release": "npm run clean && npx shadow-cljs release :calva-fmt-lib && npm run copydirs && tsc -p ./",
+        "compile": "npx shadow-cljs compile :calva-fmt-lib && tsc -p ./",
         "vscode:prepublish": "npm run release",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"

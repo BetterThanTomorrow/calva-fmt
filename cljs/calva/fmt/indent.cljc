@@ -54,10 +54,10 @@
 (defn- split
   "Splits text at idx"
   {:test (fn []
-           (is= ["(foo\n " "\n bar)"]
-                (split "(foo\n  \n bar)" 6))
            (is= [" " " "]
-                (split "  " 1)))}
+                (split "  " 1))
+           (is= ["(foo\n " "\n bar)"]
+                (split "(foo\n  \n bar)" 6)))}
   [text idx]
   [(subs text 0 idx) (subs text idx)])
 
@@ -136,3 +136,4 @@
                           (find-indent)))
     (catch #?(:cljs js/Error :clj Exception) e
       {:error e})))
+
