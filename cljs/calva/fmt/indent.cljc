@@ -1,7 +1,7 @@
 (ns calva.fmt.indent
-  #?@(:clj  [(:require [ysera.test :refer [is= is is-not]]
+  #?@(:clj  [(:require [clojure.test :refer [is]]
                        [calva.fmt.formatter :refer [format-text]])]
-      :cljs [(:require [ysera.test :include-macros true :refer [is= is is-not]]
+      :cljs [(:require [cljs.test :include-macros true :refer [is]]
                        [goog.string :as gstring]
                        [goog.string.format :as gformat]
                        [calva.fmt.formatter :refer [format-text]]
@@ -11,8 +11,8 @@
 
 (defn- log
   {:test (fn []
-           (is= (log {:text ""} :text)
-                {:text ""}))}
+           (is (= (log {:text ""} :text)
+                  {:text ""})))}
   [o & exlude-kws]
   (println (pr-str (if (map? o) (apply dissoc o exlude-kws) o)))
   o)
@@ -26,10 +26,10 @@
 (defn- minimal-range
   "Expands the range from pos up to any enclosing list/vector/map/string"
   {:test (fn []
-           (is= [22 25] ;"[x]"
-                (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 22})))
-           (is= [10 10] ;""
-                (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 10}))))}
+           (is (= [22 25] ;"[x]"
+                  (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 22}))))
+           (is (= [10 10] ;""
+                  (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 10})))))}
   [{:keys [all-text idx] :as m}]
   (assoc m :range
          (let [ast (paredit/parse all-text)
@@ -54,10 +54,10 @@
 (defn- split
   "Splits text at idx"
   {:test (fn []
-           (is= [" " " "]
-                (split "  " 1))
-           (is= ["(foo\n " "\n bar)"]
-                (split "(foo\n  \n bar)" 6)))}
+           (is (= [" " " "]
+                  (split "  " 1)))
+           (is (= ["(foo\n " "\n bar)"]
+                  (split "(foo\n  \n bar)" 6))))}
   [text idx]
   [(subs text 0 idx) (subs text idx)])
 
@@ -65,10 +65,10 @@
 (defn- inject-indent-symbol
   "Inject indent symbol in text. (To give the formatter has something to indent.)"
   {:test (fn []
-           (is= "(foo\n  FOO \n bar)"
-                (:text (inject-indent-symbol {:text "(foo\n  \n bar)"
-                                              :indent-symbol "FOO"
-                                              :local-idx 7}))))}
+           (is (= "(foo\n  FOO \n bar)"
+                  (:text (inject-indent-symbol {:text "(foo\n  \n bar)"
+                                                :indent-symbol "FOO"
+                                                :local-idx 7})))))}
   [{:keys [text local-idx indent-symbol] :as m}]
   (let [[head tail] (split text local-idx)]
     (assoc m :text (str head indent-symbol " " tail))))
@@ -77,9 +77,9 @@
 (defn- indent-before-range
   "Figures out how much extra indentation to add based on the length of the line before the range"
   {:test (fn []
-           (is= 10
-                (indent-before-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))"
-                                      :range [11 11]})))}
+           (is (= 10
+                  (indent-before-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))"
+                                        :range [11 11]}))))}
   [{:keys [all-text range]}]
   (-> (subs all-text 0 (first range))
       (clojure.string/split #"\r?\n" -1)
@@ -90,11 +90,11 @@
 (defn- find-indent
   ""
   {:test (fn []
-           (is= 4
-                (find-indent {:all-text "(defn foo [x]\n  (let [bar 1]\n  FOO bar))"
-                              :text "(let [bar 1] \n  FOO bar)"
-                              :range [16 40]
-                              :indent-symbol "FOO"})))}
+           (is (= 4
+                  (find-indent {:all-text "(defn foo [x]\n  (let [bar 1]\n  FOO bar))"
+                                :text "(let [bar 1] \n  FOO bar)"
+                                :range [16 40]
+                                :indent-symbol "FOO"}))))}
   [{:keys [text indent-symbol] :as m}]
   (let [local-indent  (-> "([ \t]*)"
                           (str indent-symbol)
@@ -107,19 +107,19 @@
 
 (defn indent-for-index
   {:test (fn []
-           (is= 5
-                (:indent (indent-for-index {:all-text "(def a 1)
+           (is (= 5
+                  (:indent (indent-for-index {:all-text "(def a 1)
 (defn a [b]
   (let [c 1]
     (foo
 
     bar)))"
-                                            :idx 45})))
-           (is= 9
-                (:indent (indent-for-index {:all-text "(foo-bar a
+                                              :idx 45}))))
+           (is (= 9
+                  (:indent (indent-for-index {:all-text "(foo-bar a
 
 )"
-                                            :idx 11}))))}
+                                              :idx 11})))))}
   [{:keys [all-text idx config] :as m}]
   {:pre [(string? all-text)
          (number? idx)
@@ -137,3 +137,4 @@
     (catch #?(:cljs js/Error :clj Exception) e
       {:error e})))
 
+(meta #'indent-for-index)
