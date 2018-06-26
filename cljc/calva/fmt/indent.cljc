@@ -27,19 +27,20 @@
   "Expands the range from pos up to any enclosing list/vector/map/string"
   {:test (fn []
            (is= [22 25] ;"[x]"
-                (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 22}))
+                (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 22})))
            (is= [10 10] ;""
-                (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 10})))}
-  [{:keys [all-text idx]}]
-  (let [ast (paredit/parse all-text)
-        range (.sexpRange  (.-navigator paredit) ast idx)]
-    (if (some? range)
-      (loop [range range]
-        (let [text (apply subs all-text range)]
-          (if (and (some? range) (not (contains? (set "{[(") (first text))))
-            (recur (.sexpRangeExpansion (.-navigator paredit) ast (first range) (last range)))
-            range)))
-      [idx idx])))
+                (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 10}))))}
+  [{:keys [all-text idx] :as m}]
+  (assoc m :range
+         (let [ast (paredit/parse all-text)
+               range (.sexpRange  (.-navigator paredit) ast idx)]
+           (if (some? range)
+             (loop [range range]
+               (let [text (apply subs all-text range)]
+                 (if (and (some? range) (not (contains? (set "{[(") (first text))))
+                   (recur (.sexpRangeExpansion (.-navigator paredit) ast (first range) (last range)))
+                   range)))
+             [idx idx]))))
 
 
 (defn- gen-indent-symbol
@@ -50,44 +51,15 @@
   (assoc m :indent-symbol (str "indent-symbol-" (sprintf "%012d" (rand-int 10000000)))))
 
 
-(defn- localize-pos
-  "Localizes the position within the range"
+(defn- split
+  "Splits text at idx"
   {:test (fn []
-           (is= {:line 2
-                 :character 20}
-                (:pos (localize-pos {:range {:start {:line 2 :character 0}
-                                             :end   {:line 3 :character 50}}
-                                     :pos {:line 4 :character 20}})))
-           (is= {:line 0
-                 :character 0}
-                (:pos (localize-pos {:range {:start {:line 2 :character 20}
-                                             :end   {:line 3 :character 50}}
-                                     :pos {:line 2 :character 20}}))))}
-  [{:keys [range pos] :as m}]
-  (let [local-line (- (:line pos) (get-in range [:start :line]))
-        local-character (if (= local-line 0)
-                          (- (:character pos) (get-in range [:start :character]))
-                          (:character pos))]
-    (assoc m :pos {:line local-line
-                   :character local-character})))
-
-
-(defn- split-at-pos
-  "Splits the text at the position"
-  {:test (fn []
-           (is= {:pre "(foo\n " :post "\n bar)"}
-                (split-at-pos {:text "(foo\n \n bar)"
-                               :pos {:line 1 :character 1}}))
-           (is= {:pre " " :post " "}
-                (split-at-pos {:text "  "
-                               :pos {:line 0 :character 1}})))}
-  [{:keys [text pos]}]
-  (let [lines (clojure.string/split-lines text)
-        line (nth lines (:line pos))
-        line-pre (subs line 0 (:character pos))
-        line-post (subs line (:character pos))]
-    {:pre (clojure.string/join "\n" (conj (vec (take (:line pos) lines)) line-pre))
-     :post (clojure.string/join "\n" (cons line-post (drop (inc (:line pos)) lines)))}))
+           (is= ["(foo\n " "\n bar)"]
+                (split "(foo\n  \n bar)" 6))
+           (is= [" " " "]
+                (split "  " 1)))}
+  [text idx]
+  [(subs text 0 idx) (subs text idx)])
 
 
 (defn- inject-indent-symbol
@@ -96,56 +68,65 @@
            (is= "(foo\n  FOO \n bar)"
                 (:text (inject-indent-symbol {:text "(foo\n  \n bar)"
                                               :indent-symbol "FOO"
-                                              :pos {:line 1 :character 2}})))
-           (is= " FOO  "
-                (:text (inject-indent-symbol {:text "  "
-                                              :indent-symbol "FOO"
-                                              :pos {:line 0 :character 1}}))))}
-  [{:keys [indent-symbol] :as m}]
-  (let [{:keys [pre post]} (split-at-pos m)]
-    (assoc m :text (str pre indent-symbol " " post))))
+                                              :idx 7}))))}
+  [{:keys [text idx indent-symbol] :as m}]
+  (let [[head tail] (split text idx)]
+    (assoc m :text (str head indent-symbol " " tail))))
+
+
+(defn- indent-before-range
+  "Extracts the text for the range"
+  {:test (fn []
+           (is= 10
+                (indent-before-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))"
+                                      :range [11 11]})))}
+  [{:keys [all-text range]}]
+  (-> (subs all-text 0 (first range))
+      (clojure.string/split #"\r?\n" -1)
+      (last)
+      (count)))
 
 
 (defn- find-indent
   ""
   {:test (fn []
-           (is= 3
-                (find-indent {:text "  (foo\n   FOO\nbar)"
-                              :range {:start {:line 2 :character 0}
-                                      :end   {:line 24 :character 50}}
-                              :pos {:line 3 :character 0}
+           (is= 4
+                (find-indent {:all-text "(defn foo [x]\n  (let [bar 1]\n  FOO bar))"
+                              :text "(let [bar 1] \n  FOO bar)"
+                              :range [16 40]
                               :indent-symbol "FOO"})))}
-  [{:keys [text indent-symbol]}]
-  (-> "([ \t]*)"
-      (str indent-symbol)
-      (re-pattern)
-      (re-find text)
-      (last)
-      (count)))
+  [{:keys [text indent-symbol] :as m}]
+  (let [local-indent  (-> "([ \t]*)"
+                          (str indent-symbol)
+                          (re-pattern)
+                          (re-find text)
+                          (last)
+                          (count))]
+    (+ local-indent (indent-before-range m))))
 
 
-(defn indent-for-position
+(defn indent-for-index
   {:test (fn []
            (is= {:indent 5}
-                (indent-for-position {:text "(foo\n\nbar)"
-                                      :range {:start {:line 2 :character 4}
-                                              :end   {:line 24 :character 50}}
-                                      :pos {:line 3 :character 0}})))}
-  [{:keys [text range pos config] :as m}]
-  {:pre [(string? text)
-         (map? range)
-         (map? pos)
+                (indent-for-index {:all-text "(def a 1)
+(defn a [b]
+  (let [c 1]
+    (foo
+
+    bar)))"
+                                      :idx 45})))}
+  [{:keys [all-text idx config] :as m}]
+  {:pre [(string? all-text)
+         (number? idx)
          (or (map? config) (nil? config))]}
   (try
-    (assoc m :indent (if (= "" (:text m))
-                       (:character (:pos m))
-                       (-> m
-                           (assoc-in [:config :remove-surrounding-whitespace?] false)
-                           (gen-indent-symbol)
-                           (localize-pos)
-                           (inject-indent-symbol)
-                           (format-text)
-                           (find-indent)
-                           (+ (:character (:start range))))))
+    (assoc m :indent  (-> m
+                          (assoc-in [:config :remove-surrounding-whitespace?] false)
+                          (gen-indent-symbol)
+                          (minimal-range)
+                          (#(assoc % :text (apply subs (:all-text %) (:range %))))
+                          (inject-indent-symbol)
+                          (format-text)
+                          (find-indent)))
     (catch #?(:cljs js/Error :clj Exception) e
       {:error e})))

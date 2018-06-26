@@ -8,5 +8,5 @@
                             :exports   {:formatText calva.fmt.formatter/format-text
                                         :jsify calva.js-utils/jsify
                                         :cljify calva.js-utils/cljify
-                                        :indentForPosition calva.fmt.indent/indent-for-position}
+                                        :indentForIndex calva.fmt.indent/indent-for-index}
                             :output-to "cljc_out/calva_fmt.js"}}}
