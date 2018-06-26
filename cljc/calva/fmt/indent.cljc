@@ -68,9 +68,9 @@
            (is= "(foo\n  FOO \n bar)"
                 (:text (inject-indent-symbol {:text "(foo\n  \n bar)"
                                               :indent-symbol "FOO"
-                                              :idx 7}))))}
-  [{:keys [text idx indent-symbol] :as m}]
-  (let [[head tail] (split text idx)]
+                                              :local-idx 7}))))}
+  [{:keys [text local-idx indent-symbol] :as m}]
+  (let [[head tail] (split text local-idx)]
     (assoc m :text (str head indent-symbol " " tail))))
 
 
@@ -107,14 +107,19 @@
 
 (defn indent-for-index
   {:test (fn []
-           (is= {:indent 5}
-                (indent-for-index {:all-text "(def a 1)
+           (is= 5
+                (:indent (indent-for-index {:all-text "(def a 1)
 (defn a [b]
   (let [c 1]
     (foo
 
     bar)))"
-                                   :idx 45})))}
+                                            :idx 45})))
+           (is= 9
+                (:indent (indent-for-index {:all-text "(foo-bar a
+
+)"
+                                            :idx 11}))))}
   [{:keys [all-text idx config] :as m}]
   {:pre [(string? all-text)
          (number? idx)
@@ -125,6 +130,7 @@
                           (gen-indent-symbol)
                           (minimal-range)
                           (#(assoc % :text (apply subs (:all-text %) (:range %))))
+                          (#(assoc % :local-idx (- idx (first (:range %)))))
                           (inject-indent-symbol)
                           (format-text)
                           (find-indent)))
