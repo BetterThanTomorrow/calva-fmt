@@ -14,16 +14,6 @@
       "problemMatcher": []
     },
     {
-      "label": "Watch CLJS-TESTS",
-      "type": "npm",
-      "script": "watch-cljs-tests",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "problemMatcher": []
-    },
-    {
       "label": "Watch TS",
       "type": "npm",
       "script": "watch-ts",
