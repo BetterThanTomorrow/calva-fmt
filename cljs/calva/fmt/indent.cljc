@@ -1,7 +1,7 @@
 (ns calva.fmt.indent
   #?@(:clj  [(:require [clojure.test :refer [is]]
                        [calva.fmt.formatter :refer [format-text]])]
-      :cljs [(:require [cljs.test :include-macros true :refer [is]]
+      :cljs [(:require [cljs.test :include-macros true :refer [deftest is]]
                        [goog.string :as gstring]
                        [goog.string.format :as gformat]
                        [calva.fmt.formatter :refer [format-text]]
@@ -27,7 +27,10 @@
   "Expands the range from pos up to any enclosing list/vector/map/string"
   {:test (fn []
            (is (= [22 25] ;"[x]"
-                  (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 22}))))
+                  (-> {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 22}
+                      (minimal-range)
+                      (:range)
+                      (cljify))))
            (is (= [10 10] ;""
                   (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 10})))))}
   [{:keys [all-text idx] :as m}]
@@ -50,7 +53,6 @@
   [m]
   (assoc m :indent-symbol (str "indent-symbol-" (sprintf "%012d" (rand-int 10000000)))))
 
-
 (defn- split
   "Splits text at idx"
   {:test (fn []
@@ -60,7 +62,6 @@
                   (split "(foo\n  \n bar)" 6))))}
   [text idx]
   [(subs text 0 idx) (subs text idx)])
-
 
 (defn- inject-indent-symbol
   "Inject indent symbol in text. (To give the formatter has something to indent.)"
@@ -136,5 +137,3 @@
                           (find-indent)))
     (catch #?(:cljs js/Error :clj Exception) e
       {:error e})))
-
-(meta #'indent-for-index)
