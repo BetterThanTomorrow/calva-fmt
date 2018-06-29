@@ -4,10 +4,6 @@ import { RangeEditProvider } from './providers/range_formatter';
 
 const ClojureLanguageConfiguration = {
     wordPattern: /[^\s()[\]{};"\\]+/,
-    indentationRules: {
-        increaseIndentPattern: /[[({]/,
-        decreaseIndentPattern: undefined
-    }
 }
 
 function activate(context: vscode.ExtensionContext) {

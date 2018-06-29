@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.23.0"
@@ -14,7 +14,9 @@
     "keywords": [
         "Clojure",
         "ClojureScript",
-        "EDN"
+        "EDN",
+        "Formatting",
+        "Pretty"
     ],
     "icon": "assets/calva-fmt.png",
     "repository": {
@@ -40,7 +42,7 @@
     "activationEvents": [
         "onLanguage:clojure"
     ],
-    "main": "./out/js/extension",
+    "main": "./out/ts/extension",
     "contributes": {
         "configuration": [
             {
@@ -92,20 +94,20 @@
             "[clojure]": {
                 "editor.wordSeparators": "\t ()\"':,;~@#$%^&{}[]`",
                 "editor.formatOnType": true,
-                "editor.autoIndent": true,
+                "editor.autoIndent": false,
                 "editor.formatOnPaste": true
             }
         }
     },
     "scripts": {
-        "mkdirs": "mkdir -p ./out && mkdir -p ./cljc_out",
-        "linkdirs": "cd out && ln -s ../cljc_out/ && cd ..",
-        "copydirs": "cp -r ./cljc_out ./out/",
-        "clean": "rm -rf .shadow-cljs/ ./out ./cljc_out && npm run mkdirs",
-        "watch-cljc": "npm run clean && npm run linkdirs && npx shadow-cljs watch :extension",
+        "mkdirs": "mkdir -p ./out ./tests-out ./cljs_out",
+        "linkdirs": "cd out && ln -s ../cljs_out/ && cd ..",
+        "copydirs": "cp -r ./cljs_out ./out/",
+        "clean": "rm -rf .shadow-cljs/ ./out ./tests-out ./cljs_out && npm run mkdirs",
+        "watch-cljs": "npm run clean && npm run linkdirs && npx shadow-cljs watch :test :calva-fmt-lib",
         "watch-ts": "tsc -watch -p ./",
-        "release": "npm run clean && npx shadow-cljs release :extension && npm run copydirs && tsc -p ./",
-        "compile": "npx shadow-cljs compile :extension && tsc -p ./",
+        "release": "npm run clean && npx shadow-cljs release :calva-fmt-lib && npm run copydirs && tsc -p ./",
+        "compile": "npx shadow-cljs compile :calva-fmt-lib && tsc -p ./",
         "vscode:prepublish": "npm run release",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
@@ -114,8 +116,13 @@
         "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.66",
         "eslint": "^4.11.0",
-        "shadow-cljs": "^2.4.2",
+        "shadow-cljs": "^2.4.8",
         "typescript": "^2.9.2",
         "vscode": "^1.1.6"
-    }
+    },
+    "dependencies": {
+        "npm": "^6.1.0",
+        "paredit.js": "^0.3.3"
+    },
+    "license": "MIT"
 }

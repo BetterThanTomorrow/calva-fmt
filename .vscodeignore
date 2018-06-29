@@ -9,7 +9,7 @@ vsc-extension-quickstart.md
 .vscode-test/**
 test/**
 cljc/**
-cljc_out/**
+cljs_out/**
 test_js/**
 .shadow-cljs/**
 js/**

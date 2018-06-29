@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-const { formatText, cljify, jsify } = require('../cljc_out/calva_fmt');
 
 function readConfiguration() {
     let workspaceConfig = vscode.workspace.getConfiguration("calva.fmt")
@@ -11,21 +10,8 @@ function readConfiguration() {
     };
 }
 
-function getConfig() {
+export function getConfig() {
     let config = readConfiguration();
     config["remove-consecutive-blank-lines?"] = false; // Until we understand its behaviour better
     return config;
-}
-
-export function format(text) {
-    let d = { "text": text, "config": getConfig() };
-    d = formatText(cljify(d));
-    d = jsify(d);
-    if (!d["error"]) {
-        return d["new-text"];
-    }
-    else {
-        console.log(d["error"]);
-        return text;
-    }
 }
