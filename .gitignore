@@ -9,3 +9,4 @@ pom.xml
 out/
 cljs_out/
 tests-out/
+.vscode/settings.json
