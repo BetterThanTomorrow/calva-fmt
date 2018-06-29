@@ -12,6 +12,7 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 * Formats according to the community [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) plus giving you some options to tweak this style.
 * Is the formater used for the VSCode *Format Selection* and *Format Document* commands.
 * Is intended to be used alongside and by other Clojure extensions.
+* Adjusts the cursor position when entering new lines, so that most often you don't have to do this yourself
 
 ## How to use
 
@@ -27,8 +28,8 @@ Built with [Shadow CLJS](http://shadow-cljs.org/).
 
 ## By the Calva team
 
-* Pedro Girardi 
 * Peter Strömberg
+* Pedro Girardi
 * You?
 
 ## Something is not working?
@@ -37,7 +38,10 @@ File issues or send pull requests. You can also find us in the #editors and #vsc
 
 ## How to contribute
 
-It follows the same workflow as [Calva development](https://github.com/BetterThanTomorrow/calva/wiki/How-to-Contribute)
+
+Calva Formater is written in TypeScript and ClojureScript. It is setup so that the formatting ”decisions” are made by a library written in ClojureScript and then TypeScript is used to integrate these decisions into VS Code. This is so that the ClojureScript code can be kept shielded from the object oriented world that VS Code sets up.
+
+See [How to Contribute](https://github.com/BetterThanTomorrow/calva-fmt/wiki/How-to-Contribute) on the project wiki for instructions.
 
 ## The Future of calva-fmt
 We'll see what kind of feedback people give us before deciding where we will take this extension. But at least this is currently on our mind:
