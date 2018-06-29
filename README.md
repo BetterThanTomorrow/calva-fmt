@@ -45,4 +45,4 @@ See [How to Contribute](https://github.com/BetterThanTomorrow/calva-fmt/wiki/How
 
 ## The Future of calva-fmt
 We'll see what kind of feedback people give us before deciding where we will take this extension. But at least this is currently on our mind:
-1. We want to support those who think that formatting of code should happen as you type, that there should seldom be a reason for the coder to be intentionally formatting it.
+1. We want to support formatting of code as-you-type even further. There should seldom be a reason for the coder to be intentionally formatting it.
