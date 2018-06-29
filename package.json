@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.4-WIP-B3",
+    "version": "0.0.4",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.23.0"
@@ -14,7 +14,9 @@
     "keywords": [
         "Clojure",
         "ClojureScript",
-        "EDN"
+        "EDN",
+        "Formatting",
+        "Pretty"
     ],
     "icon": "assets/calva-fmt.png",
     "repository": {
@@ -121,5 +123,6 @@
     "dependencies": {
         "npm": "^6.1.0",
         "paredit.js": "^0.3.3"
-    }
+    },
+    "license": "MIT"
 }
