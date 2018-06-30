@@ -133,6 +133,7 @@
                           (#(assoc % :text (apply subs (:all-text %) (:range %))))
                           (#(assoc % :local-idx (- idx (first (:range %)))))
                           (inject-indent-symbol)
+                          (log :all-text)
                           (format-text)
                           (find-indent)))
     (catch #?(:cljs js/Error :clj Exception) e

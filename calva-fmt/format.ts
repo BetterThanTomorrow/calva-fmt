@@ -1,5 +1,5 @@
 import * as config from './config';
-const { formatText, cljify, jsify } = require('../cljs_out/calva_fmt');
+const { formatText, cljify, jsify } = require('../lib/calva_fmt');
 
 export function format(text: string) {
     let d = { "text": text, "config": config.getConfig() };

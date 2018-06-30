@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.4",
+    "version": "0.0.5-WIP",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.23.0"
@@ -42,7 +42,7 @@
     "activationEvents": [
         "onLanguage:clojure"
     ],
-    "main": "./out/ts/extension",
+    "main": "./out/calva-fmt/extension",
     "contributes": {
         "configuration": [
             {
@@ -100,10 +100,10 @@
         }
     },
     "scripts": {
-        "mkdirs": "mkdir -p ./out ./tests-out ./cljs_out",
-        "linkdirs": "cd out && ln -s ../cljs_out/ && cd ..",
-        "copydirs": "cp -r ./cljs_out ./out/",
-        "clean": "rm -rf .shadow-cljs/ ./out ./tests-out ./cljs_out && npm run mkdirs",
+        "mkdirs": "mkdir -p ./out ./test-out ./lib",
+        "linkdirs": "(cd out && ln -s ../lib/)",
+        "copydirs": "cp -r ./lib ./out/",
+        "clean": "rm -rf .shadow-cljs/ ./out ./test-out ./lib && npm run mkdirs",
         "watch-cljs": "npm run clean && npm run linkdirs && npx shadow-cljs watch :test :calva-fmt-lib",
         "watch-ts": "tsc -watch -p ./",
         "release": "npm run clean && npx shadow-cljs release :calva-fmt-lib && npm run copydirs && tsc -p ./",
