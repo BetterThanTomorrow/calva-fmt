@@ -13,7 +13,7 @@ function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new RangeEditProvider));
 
     const api = {
-        formatText: formatter.format,
+        formatPosition: formatter.formatPosition,
         formatRange: formatter.formatRange,
     };
 

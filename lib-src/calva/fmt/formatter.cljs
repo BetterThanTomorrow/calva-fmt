@@ -1,7 +1,7 @@
 (ns calva.fmt.formatter
   (:require [cljs.test :include-macros true :refer [is]]
             [cljfmt.core :as cljfmt]
-            [calva.fmt.util :refer [indent-before-range log]]))
+            [calva.fmt.util :refer [indent-before-range minimal-range log]]))
 
 
 (defn format-text
@@ -35,6 +35,19 @@
                   (:text (format-text-at-range {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))}
   [{:keys [all-text range config] :as m}]
   (-> m
-    (assoc :text (subs all-text (first range) (last range)))
-    (format-text)
-    (normalize-indents)))
+      (assoc :text (subs all-text (first range) (last range)))
+      (format-text)
+      (normalize-indents)))
+
+(defn format-text-at-idx
+  "Formats a minimal range of text surrounding idx"
+  {:test (fn []
+           (let [formatted (format-text-at-idx {:all-text "  (foo)\n  (defn bar\n[x]\nbaz)" :idx 11})
+                 formatted {:text (:text formatted) :range (:range formatted)}]
+             (is (= formatted
+                    {:text "(defn bar\n    [x]\n    baz)"
+                     :range [10 28]}))))}
+  [{:keys [all-text idx] :as m}]
+  (-> m
+      (minimal-range)
+      (format-text-at-range)))
