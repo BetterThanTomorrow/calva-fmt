@@ -6,9 +6,10 @@
  :builds       {:calva-fmt-lib
                 {:target    :node-library
                  :exports   {:formatText calva.fmt.formatter/format-text
+                             :formatTextAtRange calva.fmt.formatter/format-text-at-range
                              :jsify calva.js-utils/jsify
                              :cljify calva.js-utils/cljify
-                             :indentForIndex calva.fmt.indent/indent-for-index}
+                             :indentForIndex calva.fmt.indenter/indent-for-index}
                  :output-to "lib/calva_fmt.js"}
                 :test
                 {:target    :node-test

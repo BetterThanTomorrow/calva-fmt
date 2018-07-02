@@ -1,57 +1,18 @@
-(ns calva.fmt.indent
-  #?@(:clj  [(:require [clojure.test :refer [is]]
-                       [calva.fmt.formatter :refer [format-text]])]
-      :cljs [(:require [cljs.test :include-macros true :refer [deftest is]]
-                       [goog.string :as gstring]
-                       [goog.string.format :as gformat]
-                       [calva.fmt.formatter :refer [format-text]]
-                       [calva.js-utils :refer [cljify]]
-                       ["paredit.js" :as paredit])]))
-
-
-(defn- log
-  {:test (fn []
-           (is (= (log {:text ""} :text)
-                  {:text ""})))}
-  [o & exlude-kws]
-  (println (pr-str (if (map? o) (apply dissoc o exlude-kws) o)))
-  o)
-
-
-(defn- sprintf [fmt s]
-  #?(:clj  (clojure.core/format fmt s)
-     :cljs (gstring/format fmt s)))
-
-
-(defn- minimal-range
-  "Expands the range from pos up to any enclosing list/vector/map/string"
-  {:test (fn []
-           (is (= [22 25] ;"[x]"
-                  (-> {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 22}
-                      (minimal-range)
-                      (:range)
-                      (cljify))))
-           (is (= [10 10] ;""
-                  (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 10})))))}
-  [{:keys [all-text idx] :as m}]
-  (assoc m :range
-         (let [ast (paredit/parse all-text)
-               range (.sexpRange  (.-navigator paredit) ast idx)]
-           (if (some? range)
-             (loop [range range]
-               (let [text (apply subs all-text range)]
-                 (if (and (some? range) (not (contains? (set "{[(") (first text))))
-                   (recur (.sexpRangeExpansion (.-navigator paredit) ast (first range) (last range)))
-                   range)))
-             [idx idx]))))
+(ns calva.fmt.indenter
+  (:require [cljs.test :include-macros true :refer [deftest is]]
+            [calva.fmt.util :refer [minimal-range indent-before-range log]]
+            [calva.fmt.formatter :refer [format-text]]
+            [calva.js-utils :refer [cljify]]
+            ["paredit.js" :as paredit]))
 
 
 (defn- gen-indent-symbol
-  "Generates a random Clojure symbol"
+  "Adds a random Clojure symbol to m"
   {:test (fn []
            (is (some? (:indent-symbol (gen-indent-symbol {})))))}
   [m]
-  (assoc m :indent-symbol (str "indent-symbol-" (sprintf "%012d" (rand-int 10000000)))))
+  (assoc m :indent-symbol (gensym "indent-symbol")))
+
 
 (defn- split
   "Splits text at idx"
@@ -62,6 +23,7 @@
                   (split "(foo\n  \n bar)" 6))))}
   [text idx]
   [(subs text 0 idx) (subs text idx)])
+
 
 (defn- inject-indent-symbol
   "Inject indent symbol in text. (To give the formatter has something to indent.)"
@@ -75,20 +37,7 @@
     (assoc m :text (str head indent-symbol " " tail))))
 
 
-(defn- indent-before-range
-  "Figures out how much extra indentation to add based on the length of the line before the range"
-  {:test (fn []
-           (is (= 10
-                  (indent-before-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))"
-                                        :range [11 11]}))))}
-  [{:keys [all-text range]}]
-  (-> (subs all-text 0 (first range))
-      (clojure.string/split #"\r?\n" -1)
-      (last)
-      (count)))
-
-
-(defn- find-indent
+(defn find-indent
   ""
   {:test (fn []
            (is (= 4
@@ -135,5 +84,5 @@
                           (inject-indent-symbol)
                           (format-text)
                           (find-indent)))
-    (catch #?(:cljs js/Error :clj Exception) e
+    (catch js/Error e
       {:error e})))

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { OnTypeEditProvider } from './providers/ontype_formatter';
-import { RangeEditProvider, formatRange } from './providers/range_formatter';
+import { RangeEditProvider } from './providers/range_formatter';
+import * as formatter from './format';
 
 const ClojureLanguageConfiguration = {
     wordPattern: /[^\s()[\]{};"\\]+/,
@@ -12,7 +13,8 @@ function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new RangeEditProvider));
 
     const api = {
-        formatRange: formatRange
+        formatText: formatter.format,
+        formatRange: formatter.formatRange,
     };
 
     return api;
