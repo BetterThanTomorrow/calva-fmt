@@ -79,7 +79,7 @@
                           (assoc-in [:config :remove-surrounding-whitespace?] false)
                           (gen-indent-symbol)
                           (minimal-range)
-                          (#(assoc % :text (apply subs (:all-text %) (:range %))))
+                          (#(assoc % :text (apply subs all-text (:range %))))
                           (#(assoc % :local-idx (- idx (first (:range %)))))
                           (inject-indent-symbol)
                           (format-text)
