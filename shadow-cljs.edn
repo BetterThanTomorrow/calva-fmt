@@ -1,17 +1,19 @@
 {:dependencies [[rewrite-cljs "0.4.4" :exclusions [[org.clojure/clojurescript]]]
                 [cljfmt "0.5.7" :exclusions [[rewrite-cljs]]]]
 
- :source-paths ["cljs"]
+ :source-paths ["lib-src"]
 
  :builds       {:calva-fmt-lib
                 {:target    :node-library
                  :exports   {:formatText calva.fmt.formatter/format-text
+                             :formatTextAtRange calva.fmt.formatter/format-text-at-range
+                             :formatTextAtIdx calva.fmt.formatter/format-text-at-idx
                              :jsify calva.js-utils/jsify
                              :cljify calva.js-utils/cljify
-                             :indentForIndex calva.fmt.indent/indent-for-index}
-                 :output-to "cljs_out/calva_fmt.js"}
+                             :indentForIndex calva.fmt.indenter/indent-for-index}
+                 :output-to "lib/calva_fmt.js"}
                 :test
                 {:target    :node-test
-                 :output-to "tests-out/tests.js"
+                 :output-to "test-out/tests.js"
                  :ns-regexp ".*"
                  :autorun   true}}}

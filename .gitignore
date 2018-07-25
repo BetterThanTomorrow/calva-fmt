@@ -7,6 +7,6 @@ pom.xml
 *.idea/
 *.DS_Store
 out/
-cljs_out/
-tests-out/
+lib/
+test-out/
 .vscode/settings.json
