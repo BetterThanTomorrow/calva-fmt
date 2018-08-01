@@ -6,6 +6,7 @@
 
 (defn format-text
   {:test (fn []
+           ;; TODO: Fix this bug (gazonk should be indented twice)
            (is (= "  (foo\n   bar\n   baz)\n  gazonk"
                   (:text (format-text {:text "  (foo   \nbar\n      baz)\ngazonk"})))))}
   [{:keys [text config] :as m}]
@@ -42,11 +43,10 @@
 (defn format-text-at-idx
   "Formats a minimal range of text surrounding idx"
   {:test (fn []
-           (let [formatted (format-text-at-idx {:all-text "  (foo)\n  (defn bar\n[x]\nbaz)" :idx 11})
-                 formatted {:text (:text formatted) :range (:range formatted)}]
-             (is (= formatted
-                    {:text "(defn bar\n    [x]\n    baz)"
-                     :range [10 28]}))))}
+           (is (= "(defn bar\n    [x]\n    baz)"
+                  (:text (format-text-at-idx {:all-text "  (foo)\n  (defn bar\n[x]\nbaz)" :idx 11}))))
+           (is (= [10 28]
+                  (:range (format-text-at-idx {:all-text "  (foo)\n  (defn bar\n[x]\nbaz)" :idx 11})))))}
   [{:keys [all-text idx] :as m}]
   (-> m
       (minimal-range)
