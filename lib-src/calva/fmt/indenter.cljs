@@ -38,8 +38,16 @@
 
 
 (defn find-indent
-  ""
+  "Looks for indent symbol in text and reports how it is indented"
   {:test (fn []
+           (is (= 0
+                  (find-indent {:all-text "(defn foo [x] 
+  (let [bar 1] 
+    bar))
+FOO"
+                                :text "FOO"
+                                :indent-symbol "FOO"
+                                :range [45 45]})))
            (is (= 4
                   (find-indent {:all-text "(defn foo [x]\n  (let [bar 1]\n  FOO bar))"
                                 :text "(let [bar 1] \n  FOO bar)"
@@ -65,6 +73,13 @@
 
     bar)))"
                                               :idx 45}))))
+           (is (= 0
+                  (:indent (indent-for-index {:all-text "(defn a
+  []
+  do-some-stuff)
+
+(def a :b)"
+                                              :idx 30}))))
            (is (= 9
                   (:indent (indent-for-index {:all-text "(foo-bar a
 

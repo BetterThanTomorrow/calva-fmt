@@ -16,16 +16,20 @@
 (defn indent-before-range
   "Figures out how much extra indentation to add based on the length of the line before the range"
   {:test (fn []
-           (is (= 10
+           (is (= 11
                   (indent-before-range {:all-text "(def a 1)
 
 (defn foo [x] (let [bar 1] bar))"
                                         :range [22 25]}))))}
   [{:keys [all-text range]}]
-  (-> (subs all-text 0 (first range))
-      (clojure.string/split #"\r?\n" -1)
-      (last)
-      (count)))
+  (let [start (first range)
+        end (last range)]
+    (if (= start end)
+      0
+      (-> (subs all-text 0 (first range))
+          (clojure.string/split #"\r?\n" -1)
+          (last)
+          (count)))))
 
 
 (defn minimal-range
