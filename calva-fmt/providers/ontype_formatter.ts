@@ -19,17 +19,20 @@ function calculateIndent(document: vscode.TextDocument, pos: vscode.Position): n
 
 export class OnTypeEditProvider {
     provideOnTypeFormattingEdits(document: vscode.TextDocument, position: vscode.Position, _ch, _options) {
-        let indent = calculateIndent(document, position),
-            startPosition = position.with(position.line, 0);
-        if (position.character != indent) {
-            if (position.character > indent) {
-                return [vscode.TextEdit.delete(new vscode.Range(position.with(position.line, indent), position))];
+        if (config.getConfig()["adjust-cursor-position?"]) {
+            let indent = calculateIndent(document, position),
+                startPosition = position.with(position.line, 0);
+            if (position.character) {
+                if (position.character > indent) {
+                    return [vscode.TextEdit.delete(new vscode.Range(position.with(position.line, indent), position))];
+                } else {
+                    return [vscode.TextEdit.insert(startPosition, ' '.repeat(indent - position.character))];
+                }
             } else {
-                return [vscode.TextEdit.insert(startPosition, ' '.repeat(indent - position.character))];
+                return null;
             }
         } else {
             return null;
         }
-
     }
 }

@@ -28,21 +28,26 @@ Built with [Shadow CLJS](http://shadow-cljs.org/).
 
 ## By the Calva team
 
-* Peter Strömberg
-* Pedro Girardi
-* You?
+That's currently just me, Peter Strömberg. I'd be happy to get some more people on board, committed to make the Clojure experience in VS Code nice and pruductive.
 
 ## Something is not working?
 
 File issues or send pull requests. You can also find us in the #editors and #vscode channels of Clojurains Slack.
 
-## How to contribute
 
+## Parinfer and Auto-adjust cursor on new lines
+
+Calva Format and Parinfer is mostly friends, but they can conflict when this extension tries to adjust the cursor position when a new line is entered. If you are using Parinfer you probably don't need this feature of Calva Format, and can disable it in your user settings:
+
+```json
+    "calva.fmt.autoAdjustIndentOnNewLines": false
+```
+
+## How to contribute
 
 Calva Formater is written in TypeScript and ClojureScript. It is setup so that the formatting ”decisions” are made by a library written in ClojureScript and then TypeScript is used to integrate these decisions into VS Code. This is so that the ClojureScript code can be kept shielded from the object oriented world that VS Code sets up.
 
 See [How to Contribute](https://github.com/BetterThanTomorrow/calva-fmt/wiki/How-to-Contribute) on the project wiki for instructions.
 
 ## The Future of calva-fmt
-We'll see what kind of feedback people give us before deciding where we will take this extension. But at least this is currently on our mind:
-1. We want to support formatting of code as-you-type even further. There should seldom be a reason for the coder to be intentionally formatting it.
+We'll see what kind of feedback people give us before deciding where we will take this extension.
