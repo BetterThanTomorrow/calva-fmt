@@ -35,9 +35,9 @@ That's currently just me, Peter Strömberg. I'd be happy to get some more people
 File issues or send pull requests. You can also find us in the #editors and #vscode channels of Clojurains Slack.
 
 
-## Parinfer and Auto-adjust cursor on new lines
+## Parinfer and auto-adjust cursor on new lines
 
-Calva Format and Parinfer is mostly friends, but they can conflict when this extension tries to adjust the cursor position when a new line is entered. If you are using Parinfer you probably don't need this feature of Calva Format, and can disable it in your user settings:
+Calva Format and Parinfer are mostly friends, but they can conflict when this extension tries to adjust the cursor position when a new line is entered. The good news is that if you are using Parinfer you probably don't need this feature of Calva Format, and can disable it in your user settings:
 
 ```json
     "calva.fmt.autoAdjustIndentOnNewLines": false
