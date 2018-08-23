@@ -22,7 +22,7 @@ export class OnTypeEditProvider {
         if (config.getConfig()["adjust-cursor-position?"]) {
             let indent = calculateIndent(document, position),
                 startPosition = position.with(position.line, 0);
-            if (position.character) {
+            if (position.character !== undefined) {
                 if (position.character > indent) {
                     return [vscode.TextEdit.delete(new vscode.Range(position.with(position.line, indent), position))];
                 } else {
