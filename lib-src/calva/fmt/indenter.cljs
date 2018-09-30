@@ -41,8 +41,8 @@
   "Looks for indent symbol in text and reports how it is indented"
   {:test (fn []
            (is (= 0
-                  (find-indent {:all-text "(defn foo [x] 
-  (let [bar 1] 
+                  (find-indent {:all-text "(defn foo [x]
+  (let [bar 1]
     bar))
 FOO"
                                 :text "FOO"

@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.6",
+    "version": "0.0.8",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -72,22 +72,9 @@
                     "calva.fmt.autoAdjustIndentOnNewLines": {
                         "type": "boolean",
                         "default": true,
-                        "description": "Should calva-fmt auto-adjust indents wehn new lines are created?"
+                        "description": "Should calva-fmt auto-adjust cursor position when new lines are created?"
                     }
                 }
-            }
-        ],
-        "commands": [
-            {
-                "command": "calva.fmt.toggleAutoAdjustIndent",
-                "title": "Toggle auto adjusting of indent for new lines",
-                "category": "Calva"
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "calva.fmt.toggleAutoAdjustIndent",
-                "key": "ctrl+alt+v i"
             }
         ],
         "configurationDefaults": {
@@ -121,7 +108,7 @@
         "vscode": "^1.1.6"
     },
     "dependencies": {
-        "npm": "^6.1.0",
+        "npm": "^6.3.0",
         "paredit.js": "^0.3.3"
     },
     "license": "MIT"
