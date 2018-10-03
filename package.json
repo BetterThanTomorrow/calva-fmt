@@ -44,6 +44,19 @@
     ],
     "main": "./out/calva-fmt/extension",
     "contributes": {
+        "commands": [
+            {
+                "command": "calva-fmt.formatCurrentForm",
+                "title": "Format current form",
+                "category": "Calva Format"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "calva-fmt.formatCurrentForm",
+                "key": "ctrl+tab"
+            }
+        ],
         "configuration": [
             {
                 "title": "calva-fmt",

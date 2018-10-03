@@ -13,15 +13,22 @@ export function formatRangeEdits(document: vscode.TextDocument, range: vscode.Ra
 export function formatRange(document: vscode.TextDocument, range: vscode.Range) {
     let wsEdit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
     wsEdit.set(document.uri, formatRangeEdits(document, range));
-    vscode.workspace.applyEdit(wsEdit);
+    return vscode.workspace.applyEdit(wsEdit);
 }
 
 export function formatPosition(document: vscode.TextDocument, index: vscode.Position) {
     const formatted: { "text": string, "range": number[] } = _formatIndex(document.getText(), document.offsetAt(index)),
         range: vscode.Range = new vscode.Range(document.positionAt(formatted.range[0]), document.positionAt(formatted.range[1]));
-    formatRange(document, range);
+    return formatRange(document, range);
 }
 
+export function formatPositionCommand(editor: vscode.TextEditor) {
+    const doc: vscode.TextDocument = editor.document;
+    const pos: vscode.Position = editor.selection.active;
+    formatPosition(doc, pos).then(() => {
+        editor.selection = new vscode.Selection(pos, pos);
+    });
+}
 
 function _formatIndex(allText: string, index: number): { "text": string, "range": number[] } {
     const d = cljify({
