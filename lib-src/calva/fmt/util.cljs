@@ -11,6 +11,20 @@
   o)
 
 
+(defn escapeRegExp
+  "Escapes regexp characters in `s`"
+  [s]
+  (clojure.string/replace s #"([.*+?^${}()|\[\]\\])" "\\$1"))
+
+
+(defn re-pos-first
+  "Find position of first match of `re` in `s`"
+  [re s]
+  (if-let [m (.match s re)]
+    (.-index m)
+    -1))
+
+
 (defn indent-before-range
   "Figures out how much extra indentation to add based on the length of the line before the range"
   [{:keys [all-text range]}]

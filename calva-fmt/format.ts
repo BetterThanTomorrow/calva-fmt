@@ -16,23 +16,26 @@ export function formatRange(document: vscode.TextDocument, range: vscode.Range) 
     return vscode.workspace.applyEdit(wsEdit);
 }
 
-export function formatPosition(document: vscode.TextDocument, index: vscode.Position) {
-    const formatted: { "text": string, "range": number[] } = _formatIndex(document.getText(), document.offsetAt(index)),
+export function formatPosition(document: vscode.TextDocument, index: vscode.Position) : [Thenable<boolean>, number] {
+    const formatted: { "text": string, "range": number[], "new-index": number } = _formatIndex(document.getText(), document.offsetAt(index)),
         range: vscode.Range = new vscode.Range(document.positionAt(formatted.range[0]), document.positionAt(formatted.range[1]));
-    return formatRange(document, range);
+    let wsEdit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
+    wsEdit.set(document.uri, [vscode.TextEdit.replace(range, formatted.text)]);
+    return [vscode.workspace.applyEdit(wsEdit), document.offsetAt(range.start) + formatted["new-index"]];
 }
 
 export function formatPositionCommand(editor: vscode.TextEditor) {
     const doc: vscode.TextDocument = editor.document;
     const pos: vscode.Position = editor.selection.active;
-    formatPosition(doc, pos).then((editsWherePerfomed) => {
+    const [promise, index] = formatPosition(doc, pos);
+    promise.then((editsWherePerfomed) => {
         if (editsWherePerfomed) {
-            editor.selection = new vscode.Selection(pos, pos);
+            editor.selection = new vscode.Selection(doc.positionAt(index), doc.positionAt(index));
         }
     });
 }
 
-function _formatIndex(allText: string, index: number): { "text": string, "range": number[] } {
+function _formatIndex(allText: string, index: number): { "text": string, "range": number[], "new-index": number } {
     const d = cljify({
         "all-text": allText,
         "idx": index,

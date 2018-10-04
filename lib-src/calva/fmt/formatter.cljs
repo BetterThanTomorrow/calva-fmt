@@ -1,7 +1,7 @@
 (ns calva.fmt.formatter
   (:require [cljs.test :include-macros true :refer [is]]
             [cljfmt.core :as cljfmt]
-            [calva.fmt.util :refer [indent-before-range enclosing-range log]]))
+            [calva.fmt.util :as util]))
 
 
 (defn format-text
@@ -15,30 +15,34 @@
 (defn- normalize-indents
   "Normalizes indents based on where the text starts on the first line"
   [{:keys [text] :as m}]
-  (let [indent-before (apply str (repeat (indent-before-range m) " "))
+  (let [indent-before (apply str (repeat (util/indent-before-range m) " "))
         lines (clojure.string/split text #"\r?\n" -1)]
     (update-in m [:text] #(clojure.string/join (str "\n" indent-before) lines))))
 
 
+(defn index-for-tail-in-text
+  "Find index for the `tail` in `text` disregarding whitespace"
+  [text tail]
+  (let [tail-pattern (-> tail
+                         (util/escapeRegExp)
+                         (clojure.string/replace  #"\s+" "\\s*")
+                         (str  "$"))]
+    (util/re-pos-first tail-pattern text)))
+
+
 (defn format-text-at-range
   "Formats text from all-text at the range"
-  [{:keys [all-text range config] :as m}]
-  (-> m
-      (assoc :text (subs all-text (first range) (last range)))
-      (format-text)
-      (normalize-indents)))
-
-(defn tail-text-wo-whitespace [text idx]
-  "Extracts tail of `text` from `idx` and squashes away any whitespace"
-  (-> text
-      (subs idx)
-      (clojure.string/replace #"\s*" "")))
+  [{:keys [all-text range idx config] :as m}]
+  (let [range-text (subs all-text (first range) (last range))
+        tail (subs range-text (- idx (first range)))
+        formatted-m (format-text (assoc m :text range-text))
+        normalized-m (normalize-indents formatted-m)]
+    (assoc normalized-m :new-index (index-for-tail-in-text (:text normalized-m) tail))))
 
 
 (defn format-text-at-idx
   "Formats the enclosing range of text surrounding idx"
   [{:keys [all-text idx] :as m}]
-  (let [tail-text (subs all-text idx)])
   (-> m
-      (enclosing-range)
+      (util/enclosing-range)
       (format-text-at-range)))
