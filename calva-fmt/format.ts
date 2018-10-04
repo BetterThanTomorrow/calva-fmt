@@ -25,8 +25,10 @@ export function formatPosition(document: vscode.TextDocument, index: vscode.Posi
 export function formatPositionCommand(editor: vscode.TextEditor) {
     const doc: vscode.TextDocument = editor.document;
     const pos: vscode.Position = editor.selection.active;
-    formatPosition(doc, pos).then(() => {
-        editor.selection = new vscode.Selection(pos, pos);
+    formatPosition(doc, pos).then((editsWherePerfomed) => {
+        if (editsWherePerfomed) {
+            editor.selection = new vscode.Selection(pos, pos);
+        }
     });
 }
 

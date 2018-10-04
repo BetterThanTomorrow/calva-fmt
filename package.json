@@ -54,7 +54,8 @@
         "keybindings": [
             {
                 "command": "calva-fmt.formatCurrentForm",
-                "key": "ctrl+tab"
+                "key": "tab",
+                "when": "editorTextFocus && editorLangId == clojure"
             }
         ],
         "configuration": [
