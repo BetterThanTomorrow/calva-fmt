@@ -22,3 +22,7 @@
          (:text (sut/format-text-at-idx {:all-text "  (foo)\n  (defn bar\n[x]\nbaz)" :idx 11}))))
   (is (= [10 28]
          (:range (sut/format-text-at-idx {:all-text "  (foo)\n  (defn bar\n[x]\nbaz)" :idx 11})))))
+
+(deftest tail-text-wo-whitespace
+  (is (= "obar"
+         (sut/tail-text-wo-whitespace " fo oba r " 3))))

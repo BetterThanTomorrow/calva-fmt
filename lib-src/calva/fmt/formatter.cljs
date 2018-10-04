@@ -1,7 +1,7 @@
 (ns calva.fmt.formatter
   (:require [cljs.test :include-macros true :refer [is]]
             [cljfmt.core :as cljfmt]
-            [calva.fmt.util :refer [indent-before-range minimal-range log]]))
+            [calva.fmt.util :refer [indent-before-range enclosing-range log]]))
 
 
 (defn format-text
@@ -28,9 +28,17 @@
       (format-text)
       (normalize-indents)))
 
+(defn tail-text-wo-whitespace [text idx]
+  "Extracts tail of `text` from `idx` and squashes away any whitespace"
+  (-> text
+      (subs idx)
+      (clojure.string/replace #"\s*" "")))
+
+
 (defn format-text-at-idx
-  "Formats a minimal range of text surrounding idx"
+  "Formats the enclosing range of text surrounding idx"
   [{:keys [all-text idx] :as m}]
+  (let [tail-text (subs all-text idx)])
   (-> m
-      (minimal-range)
+      (enclosing-range)
       (format-text-at-range)))
