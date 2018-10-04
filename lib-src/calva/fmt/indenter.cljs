@@ -1,6 +1,6 @@
 (ns calva.fmt.indenter
   (:require [cljs.test :include-macros true :refer [deftest is]]
-            [calva.fmt.util :refer [minimal-range indent-before-range log]]
+            [calva.fmt.util :refer [enclosing-range indent-before-range log]]
             [calva.fmt.formatter :refer [format-text]]
             [calva.js-utils :refer [cljify]]
             ["paredit.js" :as paredit]))
@@ -47,7 +47,7 @@
     (assoc m :indent  (-> m
                           (assoc-in [:config :remove-surrounding-whitespace?] false)
                           (gen-indent-symbol)
-                          (minimal-range)
+                          (enclosing-range)
                           (#(assoc % :text (apply subs all-text (:range %))))
                           (#(assoc % :local-idx (- idx (first (:range %)))))
                           (inject-indent-symbol)

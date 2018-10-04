@@ -21,16 +21,16 @@ bar))")
          (sut/indent-before-range {:all-text all-text :range [22 25]}))))
 
 
-(deftest minimal-range
+(deftest enclosing-range
   (is (= [22 25] ;"[x]"
-         (:range (sut/minimal-range {:all-text all-text :idx 23}))))
+         (:range (sut/enclosing-range {:all-text all-text :idx 23}))))
   (is (= [12 45] ;"enclosing form"
-         (:range (sut/minimal-range {:all-text all-text :idx 21}))))
+         (:range (sut/enclosing-range {:all-text all-text :idx 21}))))
   (is (= [0 9] ; after top level form
-         (:range (sut/minimal-range {:all-text all-text :idx 9}))))
+         (:range (sut/enclosing-range {:all-text all-text :idx 9}))))
   (is (= [0 9] ; before top level form
-         (:range (sut/minimal-range {:all-text all-text :idx 0}))))
+         (:range (sut/enclosing-range {:all-text all-text :idx 0}))))
   (is (= [26 44] ; before top level form
-         (:range (sut/minimal-range {:all-text all-text :idx 39}))))
+         (:range (sut/enclosing-range {:all-text all-text :idx 39}))))
   (is (= [10 10] ; void (between top level forms)
-         (:range (sut/minimal-range {:all-text all-text :idx 10})))))
+         (:range (sut/enclosing-range {:all-text all-text :idx 10})))))

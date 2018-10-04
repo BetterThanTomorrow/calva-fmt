@@ -24,7 +24,7 @@
           (count)))))
 
 
-(defn minimal-range
+(defn enclosing-range
   "Expands the range from pos up to any enclosing list/vector/map/string"
   [{:keys [all-text idx] :as m}]
   (assoc m :range
