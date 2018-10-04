@@ -5,10 +5,6 @@
 
 
 (defn format-text
-  {:test (fn []
-           ;; TODO: Fix this bug (gazonk should be indented twice)
-           (is (= "  (foo\n   bar\n   baz)\n  gazonk"
-                  (:text (format-text {:text "  (foo   \nbar\n      baz)\ngazonk"})))))}
   [{:keys [text config] :as m}]
   (try
     (assoc m :text (cljfmt/reformat-string text config))
@@ -18,11 +14,6 @@
 
 (defn- normalize-indents
   "Normalizes indents based on where the text starts on the first line"
-  {:test (fn []
-           (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
-                  (:text (normalize-indents {:all-text "  (foo)\n(defn bar\n[x]\nbaz)"
-                                             :range [2 26]
-                                             :text "(foo)\n(defn bar\n  [x]\n  baz)"})))))}
   [{:keys [text] :as m}]
   (let [indent-before (apply str (repeat (indent-before-range m) " "))
         lines (clojure.string/split text #"\r?\n" -1)]
@@ -31,9 +22,6 @@
 
 (defn format-text-at-range
   "Formats text from all-text at the range"
-  {:test (fn []
-           (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
-                  (:text (format-text-at-range {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))}
   [{:keys [all-text range config] :as m}]
   (-> m
       (assoc :text (subs all-text (first range) (last range)))
@@ -42,11 +30,6 @@
 
 (defn format-text-at-idx
   "Formats a minimal range of text surrounding idx"
-  {:test (fn []
-           (is (= "(defn bar\n    [x]\n    baz)"
-                  (:text (format-text-at-idx {:all-text "  (foo)\n  (defn bar\n[x]\nbaz)" :idx 11}))))
-           (is (= [10 28]
-                  (:range (format-text-at-idx {:all-text "  (foo)\n  (defn bar\n[x]\nbaz)" :idx 11})))))}
   [{:keys [all-text idx] :as m}]
   (-> m
       (minimal-range)

@@ -1,12 +1,11 @@
 (ns calva.fmt.util-test
   (:require [cljs.test :include-macros true :refer [deftest is]]
-            [calva.js-utils :refer [cljify]]
             [calva.fmt.util :as sut]))
 
 
-(deftest log
-  (is (= (sut/log {:text ""} :text)
-         {:text ""})))
+#_(deftest log
+    (is (= (with-out-str (sut/log {:text ""} :text))
+           {:text ""})))
 
 
 (def all-text "(def a 1)
