@@ -5,9 +5,7 @@
 
 
 (defn log
-  {:test (fn []
-           (is (= (log {:text ""} :text)
-                  {:text ""})))}
+  "logs out the object `o` excluding any keywords in `exclude-kws`"
   [o & exlude-kws]
   (println (pr-str (if (map? o) (apply dissoc o exlude-kws) o)))
   o)
@@ -15,12 +13,6 @@
 
 (defn indent-before-range
   "Figures out how much extra indentation to add based on the length of the line before the range"
-  {:test (fn []
-           (is (= 11
-                  (indent-before-range {:all-text "(def a 1)
-
-(defn foo [x] (let [bar 1] bar))"
-                                        :range [22 25]}))))}
   [{:keys [all-text range]}]
   (let [start (first range)
         end (last range)]
@@ -34,23 +26,10 @@
 
 (defn minimal-range
   "Expands the range from pos up to any enclosing list/vector/map/string"
-  {:test (fn []
-           (is (= [12 44] ;"[x]"
-                  (:range (minimal-range {:all-text "(def a 1)
-
-
-(defn foo [x] (let [bar 1] bar))" :idx 22}))))
-           (is (= [12 44] ;"[x]"
-                  (:range (minimal-range {:all-text "(def a 1)
-
-
-(defn foo [x] (let [bar 1] bar))" :idx 21}))))
-           (is (= [10 10] ;""
-                  (:range (minimal-range {:all-text "(def a 1)\n\n\n(defn foo [x] (let [bar 1] bar))" :idx 10})))))}
   [{:keys [all-text idx] :as m}]
   (assoc m :range
          (let [ast (paredit/parse all-text)
-               range (.sexpRange  (.-navigator paredit) ast idx)]
+               range ((.. paredit -navigator -sexpRange) ast idx)]
            (if (some? range)
              (loop [range range]
                (let [text (apply subs all-text range)]
@@ -58,6 +37,9 @@
                           (or (= idx (first range))
                               (= idx (last range))
                               (not (contains? (set "{[(") (first text)))))
-                   (recur (.sexpRangeExpansion (.-navigator paredit) ast (first range) (last range)))
+                   (let [expanded-range ((.. paredit -navigator -sexpRangeExpansion) ast (first range) (last range))]
+                     (if (and (some? expanded-range) (not= expanded-range range))
+                       (recur expanded-range)
+                       (cljify range)))
                    (cljify range))))
              [idx idx]))))

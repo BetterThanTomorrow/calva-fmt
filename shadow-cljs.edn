@@ -1,7 +1,7 @@
 {:dependencies [[rewrite-cljs "0.4.4" :exclusions [[org.clojure/clojurescript]]]
                 [cljfmt "0.5.7" :exclusions [[rewrite-cljs]]]]
 
- :source-paths ["lib-src"]
+ :source-paths ["lib-src" "lib-test"]
 
  :builds       {:calva-fmt-lib
                 {:target    :node-library
@@ -15,5 +15,5 @@
                 :test
                 {:target    :node-test
                  :output-to "test-out/tests.js"
-                 :ns-regexp ".*"
+                 :ns-regexp "-test$"
                  :autorun   true}}}
