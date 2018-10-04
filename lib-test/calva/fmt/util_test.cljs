@@ -39,6 +39,8 @@ bar))")
 (deftest re-pos-one
   (is (= 6
          (sut/re-pos-first "\\s*x\\s*t$" "foo te x t")))
+  (is (= 6
+         (sut/re-pos-first "\\s*x\\s*t$" "foo te x t")))
   (is (= 5
          (sut/re-pos-first "\\s*e\\s*xt\\s*$" "foo te xt")))
   (is (= 173

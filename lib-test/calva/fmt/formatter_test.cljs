@@ -35,8 +35,8 @@ baz)")
 
 
 (deftest index-for-tail-in-text
-  (is (= 6
-         (sut/index-for-tail-in-text "foo te x t" " x t")))
+  (is (= 7
+         (sut/index-for-tail-in-text "foo te x t" "   x t")))
   (is (= 173
          (sut/index-for-tail-in-text "(create-state \"\"
                                  \"###  \"

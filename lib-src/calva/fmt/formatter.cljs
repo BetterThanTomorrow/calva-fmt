@@ -25,7 +25,8 @@
   [text tail]
   (let [tail-pattern (-> tail
                          (util/escapeRegExp)
-                         (clojure.string/replace  #"\s+" "\\s*")
+                         (clojure.string/replace #"^[ \t]+" "")
+                         (clojure.string/replace #"\s+" "\\s*")
                          (str  "$"))]
     (util/re-pos-first tail-pattern text)))
 
