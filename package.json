@@ -55,7 +55,7 @@
             {
                 "command": "calva-fmt.formatCurrentForm",
                 "key": "tab",
-                "when": "editorTextFocus && editorLangId == clojure"
+                "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly"
             }
         ],
         "configuration": [
