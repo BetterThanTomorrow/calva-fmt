@@ -10,13 +10,14 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 ## Features
 
 * Formats according to the community [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) plus giving you some options to tweak this style.
+* Has a command for formatting the enclosing form, default key binding is `tab`.
 * Is the formater used for the VSCode *Format Selection* and *Format Document* commands.
 * Is intended to be used alongside and by other Clojure extensions.
 * Adjusts the cursor position when entering new lines, so that most often you don't have to do this yourself
 
 ## How to use
 
-Install it and edit away. Configure it to format the code intentionally or automatically on save, knowing that your code follows community guidelines. Search the settings for `calva-fmt` to see how you can tweak it.
+Install it and edit away. Configure it to format the code intentionally or automatically on save, knowing that your code follows community guidelines. Search the settings for `calva-fmt` to see how you can tweak it. Change the shortcut for formatting the current form if `tab` does not suit you.
 
 ## You might not need to install it
 
@@ -42,6 +43,10 @@ Calva Format and Parinfer are mostly friends, but they can conflict when this ex
 ```json
     "calva.fmt.autoAdjustIndentOnNewLines": false
 ```
+
+## Calva Paredit recommended
+
+It might seem a bit crazy to default to using `tab` for getting the current form indented, and maybe it is and you will change the shortcut to something else. But I recommend sticking with it a while and install [Calva Paredit](https://marketplace.visualstudio.com/items?itemName=cospaia.paredit-revived) to get great structural editing support (I am especially fond of the *slurp* and *barf* commands). Together these two extensions will make you forget about how you might have used the `tab` key before.
 
 ## How to contribute
 

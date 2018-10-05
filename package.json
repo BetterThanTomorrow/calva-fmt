@@ -1,8 +1,8 @@
 {
     "name": "calva-fmt",
-    "displayName": "Calva Formatter",
+    "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
