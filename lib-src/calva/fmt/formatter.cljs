@@ -1,6 +1,5 @@
 (ns calva.fmt.formatter
-  (:require [cljs.test :include-macros true :refer [is]]
-            [cljfmt.core :as cljfmt]
+  (:require [cljfmt.core :as cljfmt]
             [calva.fmt.util :as util]))
 
 

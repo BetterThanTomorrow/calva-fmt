@@ -1,6 +1,5 @@
 (ns calva.fmt.indenter
-  (:require [cljs.test :include-macros true :refer [deftest is]]
-            [calva.fmt.util :refer [enclosing-range indent-before-range log]]
+  (:require [calva.fmt.util :refer [enclosing-range indent-before-range log]]
             [calva.fmt.formatter :refer [format-text]]
             [calva.js-utils :refer [cljify]]
             ["paredit.js" :as paredit]))

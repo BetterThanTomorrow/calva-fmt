@@ -1,6 +1,5 @@
 (ns calva.fmt.util
-  (:require [cljs.test :include-macros true :refer [deftest is]]
-            [calva.js-utils :refer [cljify]]
+  (:require [calva.js-utils :refer [cljify]]
             ["paredit.js" :as paredit]))
 
 
