@@ -27,7 +27,7 @@
                          (util/escapeRegExp)
                          (clojure.string/replace #"^[ \t]+" "")
                          (clojure.string/replace #"\s+" "\\s*"))]
-    (util/re-pos-first (str leading-space tail-pattern "$") text)))
+    (util/re-pos-first (str "(" leading-space ")?" tail-pattern "$") text)))
 
 
 (defn format-text-at-range
