@@ -29,7 +29,6 @@
                          (clojure.string/replace #"\s+" "\\s*"))]
     (util/re-pos-first (str leading-space tail-pattern "$") text)))
 
-(re-find  #"^\s*" "   sss")
 
 (defn format-text-at-range
   "Formats text from all-text at the range"
