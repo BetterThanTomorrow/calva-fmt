@@ -22,21 +22,31 @@
 
 (def all-text "  (foo)
   (defn bar
-[x]
+         [x]
 baz)")
 
 (deftest format-text-at-idx
-  (is (= "(defn bar\n    [x]\n    baz)"
+  (is (= "(defn bar
+    [x]
+    baz)"
          (:text (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= 1
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 11}))))
-  (is (= [10 28]
+  (is (= [10 37]
          (:range (sut/format-text-at-idx {:all-text all-text :idx 11})))))
+
+(deftest new-index
+  (is (= 1
+         (:new-index (sut/format-text-at-idx {:all-text all-text :idx 11}))))
+  (is (= 13
+         (:new-index (sut/format-text-at-idx {:all-text all-text :idx 28}))))
+  (is (= 12
+         (:new-index (sut/format-text-at-idx {:all-text all-text :idx 22})))))
 
 
 (deftest index-for-tail-in-text
   (is (= 7
-         (sut/index-for-tail-in-text "foo te x t" "   x t")))
+         (sut/index-for-tail-in-text "foo te    x t" "   x t")))
   (is (= 173
          (sut/index-for-tail-in-text "(create-state \"\"
                                  \"###  \"

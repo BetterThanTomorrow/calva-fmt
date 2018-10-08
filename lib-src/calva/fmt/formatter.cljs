@@ -22,13 +22,14 @@
 (defn index-for-tail-in-text
   "Find index for the `tail` in `text` disregarding whitespace"
   [text tail]
-  (let [tail-pattern (-> tail
+  (let [leading-space (re-find #"^[ \t]*" tail)
+        tail-pattern (-> tail
                          (util/escapeRegExp)
                          (clojure.string/replace #"^[ \t]+" "")
-                         (clojure.string/replace #"\s+" "\\s*")
-                         (str  "$"))]
-    (util/re-pos-first tail-pattern text)))
+                         (clojure.string/replace #"\s+" "\\s*"))]
+    (util/re-pos-first (str leading-space tail-pattern "$") text)))
 
+(re-find  #"^\s*" "   sss")
 
 (defn format-text-at-range
   "Formats text from all-text at the range"
