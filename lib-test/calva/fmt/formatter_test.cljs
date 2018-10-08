@@ -40,7 +40,7 @@ baz)")
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= 13
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 28}))))
-  (is (= 14
+  (is (= 10
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 22}))))
   (is (= 12
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 27})))))
