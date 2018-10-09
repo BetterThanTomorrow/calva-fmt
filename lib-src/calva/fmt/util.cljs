@@ -24,6 +24,15 @@
     -1))
 
 
+(defn current-line
+  "Finds the text of the current line in `text` from cursor position `index`"
+  [text index]
+  (let [head (subs text 0 index)
+        tail (subs text index)]
+    (str (second (re-find #"\n?(.*)$" head))
+         (second (re-find #"^(.*)\n?" tail)))))
+
+
 (defn localize-index
   "Localize `:idx` in `m` based on `:range`"
   [{:keys [idx range] :as m}]

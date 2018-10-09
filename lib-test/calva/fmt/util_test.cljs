@@ -15,10 +15,28 @@
 
 bar))")
 
+(deftest current-line
+  (is (= "(def a 1)" (sut/current-line all-text 0)))
+  (is (= "(def a 1)" (sut/current-line all-text 4)))
+  (is (= "(def a 1)" (sut/current-line all-text 9)))
+  (is (= "" (sut/current-line all-text 10)))
+  (is (= "" (sut/current-line all-text 11)))
+  (is (= "(defn foo [x] (let [bar 1]" (sut/current-line all-text 12)))
+  (is (= "(defn foo [x] (let [bar 1]" (sut/current-line all-text 27)))
+  (is (= "(defn foo [x] (let [bar 1]" (sut/current-line all-text 38)))
+  (is (= "" (sut/current-line all-text 39)))
+  (is (= "bar))" (sut/current-line all-text (count all-text)))))
+
 
 (deftest indent-before-range
   (is (= 10
          (sut/indent-before-range {:all-text all-text :range [22 25]}))))
+
+
+(deftest localize-index
+  (is (= 0 (:local-idx (sut/localize-index {:range [12 15] :idx 12}))))
+  (is (= 2 (:local-idx (sut/localize-index {:range [12 15] :idx 14}))))
+  (is (= (- 444 12) (:local-idx (sut/localize-index {:range [12 15] :idx 444})))))
 
 
 (deftest enclosing-range
@@ -49,6 +67,7 @@ bar))")
                                  \"  ###\"
                                  \" ### \"
                                  \"  #  \")"))))
+
 
 (deftest escapeRegExp
   (is (= "\\.\\*"
