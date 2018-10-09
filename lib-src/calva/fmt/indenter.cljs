@@ -16,7 +16,7 @@
                           (assoc-in [:config :remove-surrounding-whitespace?] false)
                           (util/gen-indent-symbol)
                           (util/enclosing-range)
-                          (#(assoc % :text (apply subs all-text (:range %))))
+                          (util/range-text)
                           (util/localize-index)
                           (util/inject-indent-symbol)
                           (format-text)

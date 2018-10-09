@@ -43,6 +43,16 @@
     (assoc m :text (str head indent-symbol " " tail))))
 
 
+(defn remove-indent-symbol
+  "Removes the injected indent symbopl from the text"
+  [{:keys [text local-idx indent-symbol] :as m}]
+  (let [head (subs text 0 local-idx)
+        tail (subs text (+ local-idx (count (str indent-symbol))))]
+    (-> m
+        (assoc :text (str head tail))
+        (dissoc :indent-symbol))))
+
+
 (defn indent-before-range
   "Figures out how much extra indentation to add based on the length of the line before the range"
   [{:keys [all-text range]}]
@@ -102,3 +112,9 @@
                        (cljify range)))
                    (cljify range))))
              [idx idx]))))
+
+
+(defn range-text
+  "Sets `:text` from `:range` in `m`"
+  [{:keys [all-text range] :as m}]
+  (assoc m :text (apply subs all-text range)))

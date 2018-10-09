@@ -46,5 +46,10 @@
   (let [current-line (util/current-line all-text idx)
         blank-current-line? (some? (re-find #"^\S*$" current-line))]
     (-> m
+        #_(util/gen-indent-symbol)
         (util/enclosing-range)
-        (format-text-at-range))))
+        #_(util/range-text)
+        #_(util/localize-index)
+        #_(util/inject-indent-symbol)
+        (format-text-at-range)
+        #_(util/remove-indent-symbol))))
