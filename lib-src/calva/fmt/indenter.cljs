@@ -1,5 +1,5 @@
 (ns calva.fmt.indenter
-  (:require [calva.fmt.util :refer [enclosing-range indent-before-range log]]
+  (:require [calva.fmt.util :as util]
             [calva.fmt.formatter :refer [format-text]]
             [calva.js-utils :refer [cljify]]
             ["paredit.js" :as paredit]))
@@ -18,7 +18,7 @@
 
 
 (defn- inject-indent-symbol
-  "Inject indent symbol in text. (To give the formatter has something to indent.)"
+  "Inject indent symbol in text. (To give the formatter something to indent.)"
   [{:keys [text local-idx indent-symbol] :as m}]
   (let [[head tail] (split text local-idx)]
     (assoc m :text (str head indent-symbol " " tail))))
@@ -33,7 +33,7 @@
                           (re-find text)
                           (last)
                           (count))]
-    (+ local-indent (indent-before-range m))))
+    (+ local-indent (util/indent-before-range m))))
 
 
 (defn indent-for-index
@@ -46,9 +46,9 @@
     (assoc m :indent  (-> m
                           (assoc-in [:config :remove-surrounding-whitespace?] false)
                           (gen-indent-symbol)
-                          (enclosing-range)
+                          (util/enclosing-range)
                           (#(assoc % :text (apply subs all-text (:range %))))
-                          (#(assoc % :local-idx (- idx (first (:range %)))))
+                          (util/localize-index)
                           (inject-indent-symbol)
                           (format-text)
                           (find-indent)))

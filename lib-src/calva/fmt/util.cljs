@@ -24,6 +24,12 @@
     -1))
 
 
+(defn localize-index
+  "Localize `:idx` in `m` based on `:range`"
+  [{:keys [idx range] :as m}]
+  (assoc m :local-idx (- idx (first range))))
+
+
 (defn indent-before-range
   "Figures out how much extra indentation to add based on the length of the line before the range"
   [{:keys [all-text range]}]

@@ -29,6 +29,7 @@
                          (clojure.string/replace #"\s+" "\\s*"))]
     (util/re-pos-first (str " {0," leading-space-length "}" tail-pattern "$") text)))
 
+
 (defn format-text-at-range
   "Formats text from all-text at the range"
   [{:keys [all-text range idx config] :as m}]
