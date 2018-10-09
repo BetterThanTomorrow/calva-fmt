@@ -69,6 +69,38 @@ bar))")
                                  \"  #  \")"))))
 
 
+(deftest inject-indent-symbol
+  (is (= "(foo\n  FOO \n bar)"
+         (:text (sut/inject-indent-symbol {:text "(foo\n  \n bar)"
+                                           :indent-symbol "FOO"
+                                           :local-idx 7})))))
+
+
 (deftest escapeRegExp
   (is (= "\\.\\*"
          (sut/escapeRegExp ".*"))))
+
+
+(deftest gen-indent-symbol
+  (is (some? (:indent-symbol (sut/gen-indent-symbol {})))))
+
+(deftest split
+  (is (= [" " " "]
+         (sut/split "  " 1)))
+  (is (= ["(foo\n " " \n bar)"]
+         (sut/split "(foo\n  \n bar)" 6))))
+
+(deftest find-indent
+  (is (= 0
+         (sut/find-indent {:all-text "(defn foo [x]
+  (let [bar 1]
+    bar))
+FOO"
+                           :text "FOO"
+                           :indent-symbol "FOO"
+                           :range [45 45]})))
+  (is (= 4
+         (sut/find-indent {:all-text "(defn foo [x]\n  (let [bar 1]\n  FOO bar))"
+                           :text "(let [bar 1] \n  FOO bar)"
+                           :range [16 40]
+                           :indent-symbol "FOO"}))))

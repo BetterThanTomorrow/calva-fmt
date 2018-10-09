@@ -43,6 +43,8 @@
 (defn format-text-at-idx
   "Formats the enclosing range of text surrounding idx"
   [{:keys [all-text idx] :as m}]
-  (-> m
-      (util/enclosing-range)
-      (format-text-at-range)))
+  (let [current-line (util/current-line all-text idx)
+        blank-current-line? (some? (re-find #"^\S*$" current-line))]
+    (-> m
+        (util/enclosing-range)
+        (format-text-at-range))))
