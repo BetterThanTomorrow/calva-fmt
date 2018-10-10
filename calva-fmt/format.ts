@@ -16,12 +16,18 @@ export function formatRange(document: vscode.TextDocument, range: vscode.Range) 
     return vscode.workspace.applyEdit(wsEdit);
 }
 
-export function formatPosition(document: vscode.TextDocument, index: vscode.Position) : [Thenable<boolean>, number] {
-    const formatted: { "text": string, "range": number[], "new-index": number } = _formatIndex(document.getText(), document.offsetAt(index)),
-        range: vscode.Range = new vscode.Range(document.positionAt(formatted.range[0]), document.positionAt(formatted.range[1]));
-    let wsEdit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
-    wsEdit.set(document.uri, [vscode.TextEdit.replace(range, formatted.text)]);
-    return [vscode.workspace.applyEdit(wsEdit), document.offsetAt(range.start) + formatted["new-index"]];
+export function formatPosition(document: vscode.TextDocument, pos: vscode.Position): [Thenable<boolean>, number] {
+    const index = document.offsetAt(pos),
+        formatted: { "text": string, "range": number[], "new-index": number } = _formatIndex(document.getText(), index),
+        range: vscode.Range = new vscode.Range(document.positionAt(formatted.range[0]), document.positionAt(formatted.range[1])),
+        previousText: string = document.getText(range);
+    if (previousText != formatted.text) {
+        let wsEdit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
+        wsEdit.set(document.uri, [vscode.TextEdit.replace(range, formatted.text)]);
+        return [vscode.workspace.applyEdit(wsEdit), document.offsetAt(range.start) + formatted["new-index"]];
+    } else {
+        return [new Promise(() => { return false }), index];
+    }
 }
 
 export function formatPositionCommand(editor: vscode.TextEditor) {

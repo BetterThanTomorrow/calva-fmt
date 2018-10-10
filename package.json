@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.12",
+    "version": "0.0.13",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -31,12 +31,12 @@
         {
             "url": "https://img.shields.io/badge/clojurians-editors-blue.svg?logo=slack",
             "href": "https://clojurians.slack.com/messages/editors/",
-            "description": "Let's talk in the #editors channel on the Clojurians Slack"
+            "description": "Also find us in the #editors channel"
         },
         {
-            "url": "https://img.shields.io/badge/vscode--dev--community-clojure-blue.svg?logo=slack",
-            "href": "https://vscode-dev-community.slack.com/messages/clojure/",
-            "description": "See you in the #clojure channel on the VS Code Dev Slack"
+            "url": "https://img.shields.io/badge/clojurians-calva--dev-blue.svg?logo=slack",
+            "href": "https://clojurians.slack.com/messages/calva-dev/",
+            "description": "Let's talk in the #calva-dev channel on the Clojurians Slack"
         }
     ],
     "activationEvents": [
@@ -54,8 +54,8 @@
         "keybindings": [
             {
                 "command": "calva-fmt.formatCurrentForm",
-                "key": "tab",
-                "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible"
+                "key": "cmd+k tab",
+                "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly"
             }
         ],
         "configuration": [
