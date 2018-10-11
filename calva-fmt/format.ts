@@ -16,21 +16,28 @@ export function formatRange(document: vscode.TextDocument, range: vscode.Range) 
     return vscode.workspace.applyEdit(wsEdit);
 }
 
-export function formatPosition(document: vscode.TextDocument, index: vscode.Position) : [Thenable<boolean>, number] {
-    const formatted: { "text": string, "range": number[], "new-index": number } = _formatIndex(document.getText(), document.offsetAt(index)),
-        range: vscode.Range = new vscode.Range(document.positionAt(formatted.range[0]), document.positionAt(formatted.range[1]));
-    let wsEdit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
-    wsEdit.set(document.uri, [vscode.TextEdit.replace(range, formatted.text)]);
-    return [vscode.workspace.applyEdit(wsEdit), document.offsetAt(range.start) + formatted["new-index"]];
+export function formatPosition(document: vscode.TextDocument, pos: vscode.Position): [Thenable<boolean>, number] {
+    const index = document.offsetAt(pos),
+        formatted: { "text": string, "range": number[], "new-index": number } = _formatIndex(document.getText(), index),
+        range: vscode.Range = new vscode.Range(document.positionAt(formatted.range[0]), document.positionAt(formatted.range[1])),
+        newIndex: number = document.offsetAt(range.start) + formatted["new-index"],
+        previousText: string = document.getText(range);
+    if (previousText != formatted.text) {
+        let wsEdit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
+        wsEdit.set(document.uri, [vscode.TextEdit.replace(range, formatted.text)]);
+        return [vscode.workspace.applyEdit(wsEdit), newIndex];
+    } else {
+        return [new Promise((resolve) => { return resolve(newIndex != index) }), newIndex];
+    }
 }
 
 export function formatPositionCommand(editor: vscode.TextEditor) {
     const doc: vscode.TextDocument = editor.document;
     const pos: vscode.Position = editor.selection.active;
-    const [promise, index] = formatPosition(doc, pos);
-    promise.then((editsWherePerfomed) => {
-        if (editsWherePerfomed) {
-            editor.selection = new vscode.Selection(doc.positionAt(index), doc.positionAt(index));
+    const [promise, newIndex] = formatPosition(doc, pos);
+    promise.then((shouldAdjustCursor) => {
+        if (shouldAdjustCursor) {
+            editor.selection = new vscode.Selection(doc.positionAt(newIndex), doc.positionAt(newIndex));
         }
     });
 }

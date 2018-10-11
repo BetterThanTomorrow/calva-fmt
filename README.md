@@ -5,23 +5,23 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 ## Raison d´être
 
 1. **Fewer dependencies, less headaches**. You should be able to edit a Clojure file, with full formatting help, without depending on a REPL running or anything else needed to be installed.
-1. **Fewer conflicts, more predictability**. As VSCode gets to be a more serious editor for Clojurians there is a an editing war going on between the various plugins that help with editing Clojure code. calva-fmt is aiming at being the major Clojure formatter, lifting this responsibility from the shoulders of extensions like Calva, Paredit and Parinfer.
+1. **Fewer conflicts, more predictability**. As VSCode gets to be a more serious editor for Clojurians there is a an editing war going on between the various plugins that help with editing Clojure code. Calva Formatter is aiming at being the major Clojure formatter, lifting this responsibility from the shoulders of extensions like Calva, Paredit and other Clojure related extensions.
 
 ## Features
 
 * Formats according to the community [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) plus giving you some options to tweak this style.
-* Has a command for formatting the enclosing form, default key binding is `tab`.
+* Has a command for formatting the enclosing form, default key binding is `cmd+k tab`.
 * Is the formater used for the VSCode *Format Selection* and *Format Document* commands.
 * Is intended to be used alongside and by other Clojure extensions.
 * Adjusts the cursor position when entering new lines, so that most often you don't have to do this yourself
 
 ## How to use
 
-Install it and edit away. Configure it to format the code intentionally or automatically on save, knowing that your code follows community guidelines. Search the settings for `calva-fmt` to see how you can tweak it. Change the shortcut for formatting the current form if `tab` does not suit you.
+Install it and edit away. Configure it to format the code intentionally or automatically on save, knowing that your code follows community guidelines. Search the settings for `calva-fmt` to see how you can tweak it.
 
 ## You might not need to install it
 
-*calva-fmt* comes bundled with both [Calva](https://marketplace.visualstudio.com/items?itemName=cospaia.clojure4vscode)
+*Calva Formatter* comes bundled with [Calva](https://marketplace.visualstudio.com/items?itemName=cospaia.clojure4vscode)
 
 ## Written in ClojureScipt
 
@@ -33,7 +33,7 @@ That's currently just me, Peter Strömberg. I'd be happy to get some more people
 
 ## Something is not working?
 
-File issues or send pull requests. You can also find us in the #editors and #vscode channels of Clojurains Slack.
+File issues or send pull requests. You can also find me in the #editors and #calva-dev channels of Clojurains Slack.
 
 
 ## Parinfer and auto-adjust cursor on new lines
@@ -50,9 +50,17 @@ It might seem a bit crazy to default to using `tab` for getting the current form
 
 ## How to contribute
 
-Calva Formater is written in TypeScript and ClojureScript. It is setup so that the formatting ”decisions” are made by a library written in ClojureScript and then TypeScript is used to integrate these decisions into VS Code. This is so that the ClojureScript code can be kept shielded from the object oriented world that VS Code sets up.
+Calva Formater is written in TypeScript and ClojureScript. It is setup so that the formatting ”decisions” are made by a library written in ClojureScript and then TypeScript is used to integrate these decisions into VS Code. Division of labour.
 
 See [How to Contribute](https://github.com/BetterThanTomorrow/calva-fmt/wiki/How-to-Contribute) on the project wiki for instructions.
 
 ## The Future of calva-fmt
 We'll see what kind of feedback people give us before deciding where we will take this extension.
+
+## Happy Formatting
+
+PRs welcome, file an issue or chat @pez up in the [`#calva-dev` channel](https://clojurians.slack.com/messages/calva-dev/) of the Clojurians Slack. Tweeting [@pappapez](https://twitter.com/pappapez) works too.
+
+[![#calva-dev in Clojurians Slack](https://img.shields.io/badge/clojurians-calva--dev-blue.svg?logo=slack)](https://clojurians.slack.com/messages/calva-dev/)
+
+❤️
