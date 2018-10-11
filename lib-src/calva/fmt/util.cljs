@@ -16,6 +16,14 @@
   (clojure.string/replace s #"([.*+?^${}()|\[\]\\])" "\\$1"))
 
 
+(defn add-head-and-tail
+  "Splits `:all-text` at `:idx` in `:head` and `:tail`"
+  [{:keys [all-text idx] :as m}]
+  (-> m
+      (assoc :head (subs all-text 0 idx)
+             :tail (subs all-text idx))))
+
+
 (defn current-line
   "Finds the text of the current line in `text` from cursor position `index`"
   [text index]
@@ -24,6 +32,13 @@
     (str (second (re-find #"\n?(.*)$" head))
          (second (re-find #"^(.*)\n?" tail)))))
 
+
+(defn current-line-empty?
+  "Figure out if `:current-line` is empty"
+  [{:keys [current-line]}]
+  (some? (re-find #"^\s*$" current-line)))
+
+
 (defn add-current-line
   "Finds the text of the current line in `text` from cursor position `index`"
   [{:keys [head tail] :as m}]
@@ -31,6 +46,7 @@
       (assoc :current-line
              (str (second (re-find #"\n?(.*)$" head))
                   (second (re-find #"^(.*)\n?" tail))))))
+
 
 (defn re-pos-first
   "Find position of first match of `re` in `s`"

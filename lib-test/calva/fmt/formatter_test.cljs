@@ -25,6 +25,7 @@
          [x]
 baz)")
 
+
 (deftest format-text-at-idx
   (is (= "(defn bar
     [x]
@@ -34,6 +35,7 @@ baz)")
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= [10 37]
          (:range (sut/format-text-at-idx {:all-text all-text :idx 11})))))
+
 
 (deftest new-index
   (is (= 1
@@ -55,3 +57,22 @@ baz)")
                                  \"  ###\"
                                  \" ### \"
                                  \"  #  \")" "\"  #  \")"))))
+
+
+(deftest remove-indent-token-if-empty-current-line
+  (is (= {:text "foo\n\nbar"
+          :range [4 4]
+          :current-line ""
+          :new-index 4}
+         (sut/remove-indent-token-if-empty-current-line {:text "foo\n0\nbar"
+                                                         :range [4 5]
+                                                         :new-index 4
+                                                         :current-line ""})))
+  (is (= {:text "foo\n0\nbar"
+          :range [4 5]
+          :current-line "0"
+          :new-index 4}
+         (sut/remove-indent-token-if-empty-current-line {:text "foo\n0\nbar"
+                                                         :range [4 5]
+                                                         :new-index 4
+                                                         :current-line "0"}))))

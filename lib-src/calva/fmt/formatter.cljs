@@ -40,29 +40,32 @@
     (assoc normalized-m :new-index (index-for-tail-in-text (:text normalized-m) tail))))
 
 
-(defn add-head-and-tail
-  [{:keys [all-text idx] :as m}]
-  (-> m
-      (assoc :head (subs all-text 0 idx)
-             :tail (subs all-text idx))))
+(defn add-indent-token-if-empty-current-line
+  "If `:current-line` is empty add an indent token at `:idx`"
+  [{:keys [head tail] :as m}]
+  (let [indent-token "0"]
+    (if (util/current-line-empty? m)
+      (assoc m :all-text (str head indent-token tail))
+      m)))
+
+
+(defn remove-indent-token-if-empty-current-line
+  "If an indent token was added, lets remove it. Not forgetting to shrink `:range`"
+  [{:keys [text range new-index] :as m}]
+  (if (util/current-line-empty? m)
+    (assoc m :text (str (subs text 0 new-index) (subs text (inc new-index)))
+           :range [(first range) (dec (second range))])
+    m))
 
 
 (defn format-text-at-idx
   "Formats the enclosing range of text surrounding idx"
   [{:keys [all-text idx] :as m}]
   (let [m (-> m
-              (add-head-and-tail)
-              (util/add-current-line))
-        current-line-empty? (some? (re-find #"^\s*$" (:current-line m)))]
+              (util/add-head-and-tail)
+              (util/add-current-line))]
     (-> m
-        ((fn [m]
-           (if current-line-empty?
-             (assoc m :all-text (str (:head m) "FOO" (:tail m)))
-             m)))
+        (add-indent-token-if-empty-current-line)
         (util/enclosing-range)
         (format-text-at-range)
-        ((fn [{:keys [text range] :as m}]
-           (if current-line-empty?
-             (assoc m :text (clojure.string/replace text #"FOO" "")
-                    :range [(first range) (- (second range) 3)])
-             m))))))
+        (remove-indent-token-if-empty-current-line))))
