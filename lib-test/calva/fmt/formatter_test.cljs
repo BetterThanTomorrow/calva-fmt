@@ -23,17 +23,19 @@
 (def all-text "  (foo)
   (defn bar
          [x]
+
 baz)")
 
 
 (deftest format-text-at-idx
   (is (= "(defn bar
     [x]
+  
     baz)"
          (:text (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= 1
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 11}))))
-  (is (= [10 37]
+  (is (= [10 38]
          (:range (sut/format-text-at-idx {:all-text all-text :idx 11})))))
 
 
@@ -45,7 +47,9 @@ baz)")
   (is (= 10
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 22}))))
   (is (= 12
-         (:new-index (sut/format-text-at-idx {:all-text all-text :idx 27})))))
+         (:new-index (sut/format-text-at-idx {:all-text all-text :idx 27}))))
+  (is (= 22
+         (:new-index (sut/format-text-at-idx {:all-text all-text :idx 33})))))
 
 
 (deftest index-for-tail-in-text
