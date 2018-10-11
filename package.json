@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -54,8 +54,8 @@
         "keybindings": [
             {
                 "command": "calva-fmt.formatCurrentForm",
-                "key": "cmd+k tab",
-                "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly"
+                "key": "tab",
+                "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             }
         ],
         "configuration": [

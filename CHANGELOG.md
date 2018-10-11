@@ -4,13 +4,15 @@ All notable changes to the "calva-fmt" extension will be documented in this file
 ## Under Consideration
 ### Planning
 - Support for special formatting on a per-symbol basis.
-- Support for honoring the `:cljfmt` setting in Leinigen projects.
 
 ### Thinking About
 - Keep the file formatted as you type. Always.
 
 ## Work in pogress
-- Handle reformat current range when on empty lines better and smarter.
+- Support for honoring the `:cljfmt` setting in Leinigen projects.
+
+## 0.0.14 - 2018-10-11
+- Reformat current form works so nicely that it gets back the default key binding to `tab`
 
 ## 0.0.9 - 2018-10-05
 - Add user command for indenting current form
