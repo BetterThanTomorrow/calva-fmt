@@ -16,6 +16,22 @@
   (clojure.string/replace s #"([.*+?^${}()|\[\]\\])" "\\$1"))
 
 
+(defn current-line
+  "Finds the text of the current line in `text` from cursor position `index`"
+  [text index]
+  (let [head (subs text 0 index)
+        tail (subs text index)]
+    (str (second (re-find #"\n?(.*)$" head))
+         (second (re-find #"^(.*)\n?" tail)))))
+
+(defn add-current-line
+  "Finds the text of the current line in `text` from cursor position `index`"
+  [{:keys [head tail] :as m}]
+  (-> m
+      (assoc :current-line
+             (str (second (re-find #"\n?(.*)$" head))
+                  (second (re-find #"^(.*)\n?" tail))))))
+
 (defn re-pos-first
   "Find position of first match of `re` in `s`"
   [re s]

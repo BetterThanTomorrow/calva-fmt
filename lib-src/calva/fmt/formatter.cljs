@@ -16,7 +16,7 @@
   [{:keys [text] :as m}]
   (let [indent-before (apply str (repeat (util/indent-before-range m) " "))
         lines (clojure.string/split text #"\r?\n" -1)]
-    (update-in m [:text] #(clojure.string/join (str "\n" indent-before) lines))))
+    (assoc m :text (clojure.string/join (str "\n" indent-before) lines))))
 
 
 (defn index-for-tail-in-text
@@ -29,6 +29,7 @@
                          (clojure.string/replace #"\s+" "\\s*"))]
     (util/re-pos-first (str " {0," leading-space-length "}" tail-pattern "$") text)))
 
+
 (defn format-text-at-range
   "Formats text from all-text at the range"
   [{:keys [all-text range idx config] :as m}]
@@ -39,9 +40,29 @@
     (assoc normalized-m :new-index (index-for-tail-in-text (:text normalized-m) tail))))
 
 
+(defn add-head-and-tail
+  [{:keys [all-text idx] :as m}]
+  (-> m
+      (assoc :head (subs all-text 0 idx)
+             :tail (subs all-text idx))))
+
+
 (defn format-text-at-idx
   "Formats the enclosing range of text surrounding idx"
   [{:keys [all-text idx] :as m}]
-  (-> m
-      (util/enclosing-range)
-      (format-text-at-range)))
+  (let [m (-> m
+              (add-head-and-tail)
+              (util/add-current-line))
+        current-line-empty? (some? (re-find #"^\s*$" (:current-line m)))]
+    (-> m
+        ((fn [m]
+           (if current-line-empty?
+             (assoc m :all-text (str (:head m) "FOO" (:tail m)))
+             m)))
+        (util/enclosing-range)
+        (format-text-at-range)
+        ((fn [{:keys [text range] :as m}]
+           (if current-line-empty?
+             (assoc m :text (clojure.string/replace text #"FOO" "")
+                    :range [(first range) (- (second range) 3)])
+             m))))))

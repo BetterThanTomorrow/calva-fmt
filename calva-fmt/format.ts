@@ -20,23 +20,24 @@ export function formatPosition(document: vscode.TextDocument, pos: vscode.Positi
     const index = document.offsetAt(pos),
         formatted: { "text": string, "range": number[], "new-index": number } = _formatIndex(document.getText(), index),
         range: vscode.Range = new vscode.Range(document.positionAt(formatted.range[0]), document.positionAt(formatted.range[1])),
+        newIndex: number = document.offsetAt(range.start) + formatted["new-index"],
         previousText: string = document.getText(range);
     if (previousText != formatted.text) {
         let wsEdit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
         wsEdit.set(document.uri, [vscode.TextEdit.replace(range, formatted.text)]);
-        return [vscode.workspace.applyEdit(wsEdit), document.offsetAt(range.start) + formatted["new-index"]];
+        return [vscode.workspace.applyEdit(wsEdit), newIndex];
     } else {
-        return [new Promise(() => { return false }), index];
+        return [new Promise((resolve) => { return resolve(newIndex != index) }), newIndex];
     }
 }
 
 export function formatPositionCommand(editor: vscode.TextEditor) {
     const doc: vscode.TextDocument = editor.document;
     const pos: vscode.Position = editor.selection.active;
-    const [promise, index] = formatPosition(doc, pos);
-    promise.then((editsWherePerfomed) => {
-        if (editsWherePerfomed) {
-            editor.selection = new vscode.Selection(doc.positionAt(index), doc.positionAt(index));
+    const [promise, newIndex] = formatPosition(doc, pos);
+    promise.then((shouldAdjustCursor) => {
+        if (shouldAdjustCursor) {
+            editor.selection = new vscode.Selection(doc.positionAt(newIndex), doc.positionAt(newIndex));
         }
     });
 }
