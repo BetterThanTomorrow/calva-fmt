@@ -16,7 +16,7 @@
   [{:keys [text] :as m}]
   (let [indent-before (apply str (repeat (util/indent-before-range m) " "))
         lines (clojure.string/split text #"\r?\n" -1)]
-    (update-in m [:text] #(clojure.string/join (str "\n" indent-before) lines))))
+    (assoc m :text (clojure.string/join (str "\n" indent-before) lines))))
 
 
 (defn index-for-tail-in-text
@@ -29,6 +29,7 @@
                          (clojure.string/replace #"\s+" "\\s*"))]
     (util/re-pos-first (str " {0," leading-space-length "}" tail-pattern "$") text)))
 
+
 (defn format-text-at-range
   "Formats text from all-text at the range"
   [{:keys [all-text range idx config] :as m}]
@@ -39,9 +40,32 @@
     (assoc normalized-m :new-index (index-for-tail-in-text (:text normalized-m) tail))))
 
 
+(defn add-indent-token-if-empty-current-line
+  "If `:current-line` is empty add an indent token at `:idx`"
+  [{:keys [head tail] :as m}]
+  (let [indent-token "0"]
+    (if (util/current-line-empty? m)
+      (assoc m :all-text (str head indent-token tail))
+      m)))
+
+
+(defn remove-indent-token-if-empty-current-line
+  "If an indent token was added, lets remove it. Not forgetting to shrink `:range`"
+  [{:keys [text range new-index] :as m}]
+  (if (util/current-line-empty? m)
+    (assoc m :text (str (subs text 0 new-index) (subs text (inc new-index)))
+           :range [(first range) (dec (second range))])
+    m))
+
+
 (defn format-text-at-idx
   "Formats the enclosing range of text surrounding idx"
   [{:keys [all-text idx] :as m}]
-  (-> m
-      (util/enclosing-range)
-      (format-text-at-range)))
+  (let [m (-> m
+              (util/add-head-and-tail)
+              (util/add-current-line))]
+    (-> m
+        (add-indent-token-if-empty-current-line)
+        (util/enclosing-range)
+        (format-text-at-range)
+        (remove-indent-token-if-empty-current-line))))
