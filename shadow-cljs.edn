@@ -8,6 +8,7 @@
                  :exports   {:formatText calva.fmt.formatter/format-text
                              :formatTextAtRange calva.fmt.formatter/format-text-at-range
                              :formatTextAtIdx calva.fmt.formatter/format-text-at-idx
+                             :formatTextAtIdxOnType calva.fmt.formatter/format-text-at-idx-on-type
                              :jsify calva.js-utils/jsify
                              :cljify calva.js-utils/cljify
                              :indentForIndex calva.fmt.indenter/indent-for-index}

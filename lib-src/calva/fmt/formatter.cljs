@@ -69,3 +69,12 @@
         (util/enclosing-range)
         (format-text-at-range)
         (remove-indent-token-if-empty-current-line))))
+
+(defn format-text-at-idx-on-type
+  "Relax formating some when used as an on-type handler"
+  [m]
+  (-> m
+      (assoc-in [:config :remove-surrounding-whitespace?] false)
+      (assoc-in [:config :remove-trailing-whitespace?] false)
+      (assoc-in [:config :remove-consecutive-blank-lines?] false)
+      (format-text-at-idx)))
