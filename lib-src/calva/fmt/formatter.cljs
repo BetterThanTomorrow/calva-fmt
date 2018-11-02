@@ -24,17 +24,22 @@
   [text tail]
   (let [leading-space-length (count (re-find #"^[ \t]*" tail))
         tail-pattern (-> tail
-                         (util/escapeRegExp)
+                         (util/escape-regexp)
                          (clojure.string/replace #"^[ \t]+" "")
-                         (clojure.string/replace #"\s+" "\\s*"))]
-    (util/re-pos-first (str " {0," leading-space-length "}" tail-pattern "$") text)))
+                         (clojure.string/replace #"\s+" "\\s*"))
+        tail-pattern (if (re-find #"^\n" tail)
+                       (str "\n+" tail-pattern)
+                       tail-pattern)
+        pos (util/re-pos-first (str " {0," leading-space-length "}" tail-pattern "$") text)]
+    pos))
 
 
 (defn format-text-at-range
   "Formats text from all-text at the range"
   [{:keys [all-text range idx config] :as m}]
   (let [range-text (subs all-text (first range) (last range))
-        tail (subs range-text (- idx (first range)))
+        range-index (- idx (first range))
+        tail (subs range-text range-index)
         formatted-m (format-text (assoc m :text range-text))
         normalized-m (normalize-indents formatted-m)]
     (assoc normalized-m :new-index (index-for-tail-in-text (:text normalized-m) tail))))
@@ -61,14 +66,14 @@
 (defn format-text-at-idx
   "Formats the enclosing range of text surrounding idx"
   [{:keys [all-text idx] :as m}]
-  (let [m (-> m
-              (util/add-head-and-tail)
-              (util/add-current-line))]
-    (-> m
-        (add-indent-token-if-empty-current-line)
-        (util/enclosing-range)
-        (format-text-at-range)
-        (remove-indent-token-if-empty-current-line))))
+  (-> m
+      (util/add-head-and-tail)
+      (util/add-current-line)
+      (add-indent-token-if-empty-current-line)
+      (util/enclosing-range)
+      (format-text-at-range)
+      (remove-indent-token-if-empty-current-line)))
+
 
 (defn format-text-at-idx-on-type
   "Relax formating some when used as an on-type handler"

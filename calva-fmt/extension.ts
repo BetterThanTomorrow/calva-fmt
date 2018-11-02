@@ -11,7 +11,7 @@ function activate(context: vscode.ExtensionContext) {
     vscode.languages.setLanguageConfiguration("clojure", ClojureLanguageConfiguration);
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.formatCurrentForm', formatter.formatPositionCommand));
     context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new FormaOnTypeEditProvider,
-        "\n", "\t", " ", "(", ")", "[", "]", "{", "}", '"'));
+        "\n"));
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new RangeEditProvider));
 
     const api = {

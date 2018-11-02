@@ -10,7 +10,7 @@
   o)
 
 
-(defn escapeRegExp
+(defn escape-regexp
   "Escapes regexp characters in `s`"
   [s]
   (clojure.string/replace s #"([.*+?^${}()|\[\]\\])" "\\$1"))

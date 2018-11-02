@@ -36,7 +36,9 @@ baz)")
   (is (= 1
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= [10 38]
-         (:range (sut/format-text-at-idx {:all-text all-text :idx 11})))))
+         (:range (sut/format-text-at-idx {:all-text all-text :idx 11}))))
+  (is (= "\"bar \n \n \""
+         (:text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7})))))
 
 
 (deftest new-index
@@ -49,18 +51,41 @@ baz)")
   (is (= 12
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 27}))))
   (is (= 22
-         (:new-index (sut/format-text-at-idx {:all-text all-text :idx 33})))))
+         (:new-index (sut/format-text-at-idx {:all-text all-text :idx 33}))))
+  (is (= 5
+         (:new-index (sut/format-text-at-idx {:all-text "(defn \n  \nfoo)" :idx 6})))))
+
+
+(deftest format-text-at-idx-on-type
+  (comment ;; https://github.com/weavejester/cljfmt/issues/142
+    (is (= "(bar \n \n )"
+           (:text (sut/format-text-at-idx-on-type {:all-text "(bar \n\n)" :idx 7})))))
+  (is (= "\"bar \n \n \""
+         (:text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7})))))
+
+
+(deftest new-index-on-type
+  (is (= 6
+         (:new-index (sut/format-text-at-idx-on-type {:all-text "(defn \n)" :idx 6}))))
+  (is (= 6
+         (:new-index (sut/format-text-at-idx-on-type {:all-text "(defn \n  )" :idx 6}))))
+  (is (= 6
+         (:new-index (sut/format-text-at-idx-on-type {:all-text "(defn \n  \n  )" :idx 6}))))
+  (is (= 6
+         (:new-index (sut/format-text-at-idx-on-type {:all-text "(defn \n\n  )" :idx 6})))))
 
 
 (deftest index-for-tail-in-text
   (is (= 7
-         (sut/index-for-tail-in-text "foo te    x t" "   x t")))
-  (is (= 173
+         (sut/index-for-tail-in-text "foo te    x t"
+                                     "   x t")))
+  (is (= 209
          (sut/index-for-tail-in-text "(create-state \"\"
-                                 \"###  \"
-                                 \"  ###\"
-                                 \" ### \"
-                                 \"  #  \")" "\"  #  \")"))))
+                                          \"###  \"
+                                          \"  ###\"
+                                          \" ### \"
+                                          \"  #  \")"
+                                     "\"  #  \")"))))
 
 
 (deftest remove-indent-token-if-empty-current-line
