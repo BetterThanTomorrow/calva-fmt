@@ -53,7 +53,9 @@ baz)")
   (is (= 22
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 33}))))
   (is (= 5
-         (:new-index (sut/format-text-at-idx {:all-text "(defn \n  \nfoo)" :idx 6})))))
+         (:new-index (sut/format-text-at-idx {:all-text "(defn \n  \nfoo)" :idx 6}))))
+  (is (= 11
+         (:new-index (sut/format-text-at-idx {:all-text "(foo\n (bar)\n )" :idx 11})))))
 
 
 (deftest format-text-at-idx-on-type
@@ -72,20 +74,24 @@ baz)")
   (is (= 6
          (:new-index (sut/format-text-at-idx-on-type {:all-text "(defn \n  \n  )" :idx 6}))))
   (is (= 6
-         (:new-index (sut/format-text-at-idx-on-type {:all-text "(defn \n\n  )" :idx 6})))))
+         (:new-index (sut/format-text-at-idx-on-type {:all-text "(defn \n\n  )" :idx 6}))))
+  (is (= 11
+         (:new-index (sut/format-text-at-idx-on-type {:all-text "(foo\n (bar)\n )" :idx 11})))))
 
 
-(deftest index-for-tail-in-text
+(deftest index-for-tail-in-range
   (is (= 7
-         (sut/index-for-tail-in-text "foo te    x t"
-                                     "   x t")))
-  (is (= 209
-         (sut/index-for-tail-in-text "(create-state \"\"
-                                          \"###  \"
-                                          \"  ###\"
-                                          \" ### \"
-                                          \"  #  \")"
-                                     "\"  #  \")"))))
+         (:new-index (sut/index-for-tail-in-range
+                      {:text "foo te    x t"
+                       :range-tail "   x t"}))))
+  (is (= 169
+         (:new-index (sut/index-for-tail-in-range
+                      {:text "(create-state \"\"
+                                \"###  \"
+                                \"  ###\"
+                                \" ### \"
+                                \"  #  \")"
+                       :range-tail "\"  #  \")"})))))
 
 
 (deftest remove-indent-token-if-empty-current-line
