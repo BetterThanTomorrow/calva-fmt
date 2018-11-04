@@ -1,15 +1,16 @@
 # Change Log
 All notable changes to the "calva-fmt" extension will be documented in this file. (At least when I remember to update it.)
 
-## Under Consideration
-### Planning
-- Support for special formatting on a per-symbol basis.
+## Future
 
 ### Thinking About
 - Keep the file formatted as you type. Always.
 
-## Work in pogress
+### Work in pogress
 - Support for honoring the `:cljfmt` setting in Leinigen projects.
+
+## 0.0.15 - 2018-11-04
+- Format code as new lines are entered, keeping things mostly formatted as you type
 
 ## 0.0.14 - 2018-10-11
 - Reformat current form works so nicely that it gets back the default key binding to `tab`

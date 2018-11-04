@@ -1,18 +1,18 @@
 import * as vscode from 'vscode';
 
 function readConfiguration() {
-    let workspaceConfig = vscode.workspace.getConfiguration("calva.fmt")
+    let workspaceConfig = vscode.workspace.getConfiguration("calva.fmt");
     return {
-        "adjust-cursor-position?": workspaceConfig.get("autoAdjustIndentOnNewLines"),
+        "format-as-you-type": workspaceConfig.get("formatAsYouType"),
         "indentation?": workspaceConfig.get("indentation"),
         "remove-surrounding-whitespace?": workspaceConfig.get("removeSurroundingWhitespace"),
         "remove-trailing-whitespace?": workspaceConfig.get("removeTrailingWhitespace"),
-        "insert-missin-whitespace?": workspaceConfig.get("insertMissingWhitespace")
+        "insert-missing-whitespace?": workspaceConfig.get("insertMissingWhitespace"),
+        "remove-consecutive-blank-lines?": workspaceConfig.get("removeConsecutiveBlankLines")
     };
 }
 
 export function getConfig() {
     let config = readConfiguration();
-    config["remove-consecutive-blank-lines?"] = false; // Until we understand its behaviour better
     return config;
 }

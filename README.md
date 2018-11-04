@@ -13,11 +13,19 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 * Has a command for formatting the enclosing form, default key binding is `cmd+k tab`.
 * Is the formater used for the VSCode *Format Selection* and *Format Document* commands.
 * Is intended to be used alongside and by other Clojure extensions.
-* Adjusts the cursor position when entering new lines, so that most often you don't have to do this yourself
+* Formats the code when new lines are entered, mostly keeping things formated as you type.
 
 ## How to use
 
-Install it and edit away. Configure it to format the code intentionally or automatically on save, knowing that your code follows community guidelines. Search the settings for `calva-fmt` to see how you can tweak it.
+Install it and edit away. It will keep the code fomatted mostly as you type, in a somewhat ”relaxed” way, and will format it more strictly (collecting trailing brackets, for instance) when you hit `tab`. Search the settings for `calva-fmt` to see how you can tweak it.
+
+### Trimming trailing whitespace
+
+Beware that VS Code's built-in trimming of trailing whitespace is not Clojure-aware, but simply trims lines, regardless. This means that it will trim trailing whitespace also in multiline strings, which might be quite disastrous in some cases. To safely trim keep Calva Formatters setting for this enable and disable the built-in one:
+
+```json
+    "editor.trimAutoWhitespace": false
+```
 
 ## You might not need to install it
 
@@ -36,13 +44,9 @@ That's currently just me, Peter Strömberg. I'd be happy to get some more people
 File issues or send pull requests. You can also find me in the #editors and #calva-dev channels of Clojurains Slack.
 
 
-## Parinfer and auto-adjust cursor on new lines
+## Parinfer and format-as-you-type
 
-Calva Format and Parinfer are mostly friends, but they can conflict when this extension tries to adjust the cursor position when a new line is entered. The good news is that if you are using Parinfer you probably don't need this feature of Calva Format, and can disable it in your user settings:
-
-```json
-    "calva.fmt.autoAdjustIndentOnNewLines": false
-```
+Calva Formatter and Parinfer compete on formatting the code, extra much so if you keep `calva.fmt.formatAsYouType` on. I recommend you to not use Parinfer together with Calva, but if you do, rember this conflict.
 
 ## Calva Paredit recommended
 

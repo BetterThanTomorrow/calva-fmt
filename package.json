@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -83,10 +83,15 @@
                         "default": true,
                         "description": "true if calva-fmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
                     },
-                    "calva.fmt.autoAdjustIndentOnNewLines": {
+                    "calva.fmt.removeConsecutiveBlankLines": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "true if calva-fmt should squeeze consecutive blank lines to one."
+                    },
+                    "calva.fmt.formatAsYouType": {
                         "type": "boolean",
                         "default": true,
-                        "description": "Should calva-fmt auto-adjust cursor position when new lines are created?"
+                        "description": "Should calva-fmt auto-adjust indentation and format as you type (only on enter, currently)?"
                     }
                 }
             }

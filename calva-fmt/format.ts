@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as config from './config';
-const { formatTextAtRange, formatTextAtIdx, cljify, jsify } = require('../lib/calva_fmt');
+const { formatTextAtRange, formatTextAtIdx, formatTextAtIdxOnType, cljify, jsify } = require('../lib/calva_fmt');
 
 
 export function formatRangeEdits(document: vscode.TextDocument, range: vscode.Range): vscode.TextEdit[] {
@@ -16,39 +16,38 @@ export function formatRange(document: vscode.TextDocument, range: vscode.Range) 
     return vscode.workspace.applyEdit(wsEdit);
 }
 
-export function formatPosition(document: vscode.TextDocument, pos: vscode.Position): [Thenable<boolean>, number] {
-    const index = document.offsetAt(pos),
-        formatted: { "text": string, "range": number[], "new-index": number } = _formatIndex(document.getText(), index),
-        range: vscode.Range = new vscode.Range(document.positionAt(formatted.range[0]), document.positionAt(formatted.range[1])),
-        newIndex: number = document.offsetAt(range.start) + formatted["new-index"],
-        previousText: string = document.getText(range);
+export function formatPosition(editor: vscode.TextEditor, onType: boolean = false): void {
+    const doc: vscode.TextDocument = editor.document,
+        pos: vscode.Position = editor.selection.active,
+        index = doc.offsetAt(pos),
+        formatted: { "text": string, "range": number[], "new-index": number } = _formatIndex(doc.getText(), index, onType),
+        range: vscode.Range = new vscode.Range(doc.positionAt(formatted.range[0]), doc.positionAt(formatted.range[1])),
+        newIndex: number = doc.offsetAt(range.start) + formatted["new-index"],
+        previousText: string = doc.getText(range);
     if (previousText != formatted.text) {
-        let wsEdit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
-        wsEdit.set(document.uri, [vscode.TextEdit.replace(range, formatted.text)]);
-        return [vscode.workspace.applyEdit(wsEdit), newIndex];
+        editor.edit(textEditorEdit => {
+            textEditorEdit.replace(range, formatted.text);
+        }, { undoStopAfter: false, undoStopBefore: false }).then((_onFulfilled: boolean) => {
+            editor.selection = new vscode.Selection(doc.positionAt(newIndex), doc.positionAt(newIndex));
+        });
     } else {
-        return [new Promise((resolve) => { return resolve(newIndex != index) }), newIndex];
+        if (newIndex != index) {
+            editor.selection = new vscode.Selection(doc.positionAt(newIndex), doc.positionAt(newIndex));
+        }
     }
 }
 
 export function formatPositionCommand(editor: vscode.TextEditor) {
-    const doc: vscode.TextDocument = editor.document;
-    const pos: vscode.Position = editor.selection.active;
-    const [promise, newIndex] = formatPosition(doc, pos);
-    promise.then((shouldAdjustCursor) => {
-        if (shouldAdjustCursor) {
-            editor.selection = new vscode.Selection(doc.positionAt(newIndex), doc.positionAt(newIndex));
-        }
-    });
+    formatPosition(editor);
 }
 
-function _formatIndex(allText: string, index: number): { "text": string, "range": number[], "new-index": number } {
+function _formatIndex(allText: string, index: number, onType: boolean = false): { "text": string, "range": number[], "new-index": number } {
     const d = cljify({
         "all-text": allText,
         "idx": index,
         "config": config.getConfig()
     }),
-        result = jsify(formatTextAtIdx(d));
+        result = jsify(onType ? formatTextAtIdxOnType(d) : formatTextAtIdx(d));
     if (!result["error"]) {
         return result;
     }

@@ -88,6 +88,6 @@ bar))")
                                  \"  #  \")"))))
 
 
-(deftest escapeRegExp
+(deftest escape-regexp
   (is (= "\\.\\*"
-         (sut/escapeRegExp ".*"))))
+         (sut/escape-regexp ".*"))))
