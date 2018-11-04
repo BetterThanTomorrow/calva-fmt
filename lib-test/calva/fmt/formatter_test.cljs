@@ -5,19 +5,19 @@
 ;; TODO: Fix this bug (gazonk should be indented twice)
 #_(deftest format-text
     (is (= "  (foo\n   bar\n   baz)\n  gazonk"
-           (:text (sut/format-text {:text "  (foo   \nbar\n      baz)\ngazonk"})))))
+           (:range-text (sut/format-text {:range-text "  (foo   \nbar\n      baz)\ngazonk"})))))
 
 
 (deftest normalize-indents
   (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
-         (:text (sut/normalize-indents {:all-text "  (foo)\n(defn bar\n[x]\nbaz)"
+         (:range-text (sut/normalize-indents {:all-text "  (foo)\n(defn bar\n[x]\nbaz)"
                                         :range [2 26]
-                                        :text "(foo)\n(defn bar\n  [x]\n  baz)"})))))
+                                        :range-text "(foo)\n(defn bar\n  [x]\n  baz)"})))))
 
 
 (deftest format-text-at-range
   (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
-         (:text (sut/format-text-at-range {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))
+         (:range-text (sut/format-text-at-range {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))
 
 
 (def all-text "  (foo)
@@ -32,13 +32,13 @@ baz)")
     [x]
   
     baz)"
-         (:text (sut/format-text-at-idx {:all-text all-text :idx 11}))))
+         (:range-text (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= 1
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= [10 38]
          (:range (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= "\"bar \n \n \""
-         (:text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7})))))
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7})))))
 
 
 (deftest new-index
@@ -61,9 +61,9 @@ baz)")
 (deftest format-text-at-idx-on-type
   (comment ;; https://github.com/weavejester/cljfmt/issues/142
     (is (= "(bar \n \n )"
-           (:text (sut/format-text-at-idx-on-type {:all-text "(bar \n\n)" :idx 7})))))
+           (:range-text (sut/format-text-at-idx-on-type {:all-text "(bar \n\n)" :idx 7})))))
   (is (= "\"bar \n \n \""
-         (:text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7})))))
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7})))))
 
 
 (deftest new-index-on-type
@@ -82,11 +82,11 @@ baz)")
 (deftest index-for-tail-in-range
   (is (= 7
          (:new-index (sut/index-for-tail-in-range
-                      {:text "foo te    x t"
+                      {:range-text "foo te    x t"
                        :range-tail "   x t"}))))
   (is (= 169
          (:new-index (sut/index-for-tail-in-range
-                      {:text "(create-state \"\"
+                      {:range-text "(create-state \"\"
                                 \"###  \"
                                 \"  ###\"
                                 \" ### \"
@@ -95,19 +95,19 @@ baz)")
 
 
 (deftest remove-indent-token-if-empty-current-line
-  (is (= {:text "foo\n\nbar"
+  (is (= {:range-text "foo\n\nbar"
           :range [4 4]
           :current-line ""
           :new-index 4}
-         (sut/remove-indent-token-if-empty-current-line {:text "foo\n0\nbar"
+         (sut/remove-indent-token-if-empty-current-line {:range-text "foo\n0\nbar"
                                                          :range [4 5]
                                                          :new-index 4
                                                          :current-line ""})))
-  (is (= {:text "foo\n0\nbar"
+  (is (= {:range-text "foo\n0\nbar"
           :range [4 5]
           :current-line "0"
           :new-index 4}
-         (sut/remove-indent-token-if-empty-current-line {:text "foo\n0\nbar"
+         (sut/remove-indent-token-if-empty-current-line {:range-text "foo\n0\nbar"
                                                          :range [4 5]
                                                          :new-index 4
                                                          :current-line "0"}))))

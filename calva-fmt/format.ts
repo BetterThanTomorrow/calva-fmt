@@ -20,13 +20,13 @@ export function formatPosition(editor: vscode.TextEditor, onType: boolean = fals
     const doc: vscode.TextDocument = editor.document,
         pos: vscode.Position = editor.selection.active,
         index = doc.offsetAt(pos),
-        formatted: { "text": string, "range": number[], "new-index": number } = _formatIndex(doc.getText(), index, onType),
+        formatted: { "range-text": string, "range": number[], "new-index": number } = _formatIndex(doc.getText(), index, onType),
         range: vscode.Range = new vscode.Range(doc.positionAt(formatted.range[0]), doc.positionAt(formatted.range[1])),
         newIndex: number = doc.offsetAt(range.start) + formatted["new-index"],
         previousText: string = doc.getText(range);
-    if (previousText != formatted.text) {
+    if (previousText != formatted["range-text"]) {
         editor.edit(textEditorEdit => {
-            textEditorEdit.replace(range, formatted.text);
+            textEditorEdit.replace(range, formatted["range-text"]);
         }, { undoStopAfter: false, undoStopBefore: false }).then((_onFulfilled: boolean) => {
             editor.selection = new vscode.Selection(doc.positionAt(newIndex), doc.positionAt(newIndex));
         });
@@ -41,7 +41,7 @@ export function formatPositionCommand(editor: vscode.TextEditor) {
     formatPosition(editor);
 }
 
-function _formatIndex(allText: string, index: number, onType: boolean = false): { "text": string, "range": number[], "new-index": number } {
+function _formatIndex(allText: string, index: number, onType: boolean = false): { "range-text": string, "range": number[], "new-index": number } {
     const d = cljify({
         "all-text": allText,
         "idx": index,
@@ -58,19 +58,19 @@ function _formatIndex(allText: string, index: number, onType: boolean = false): 
 }
 
 
-function _formatRange(text: string, allText: string, range: number[]): string {
+function _formatRange(rangeText: string, allText: string, range: number[]): string {
     const d = cljify({
-        "text": text,
+        "range-text": rangeText,
         "all-text": allText,
         "range": range,
         "config": config.getConfig()
     }),
         result = jsify(formatTextAtRange(d));
     if (!result["error"]) {
-        return result["text"];
+        return result["range-text"];
     }
     else {
         console.log(result["error"]);
-        return text;
+        return rangeText;
     }
 }

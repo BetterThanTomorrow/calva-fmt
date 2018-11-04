@@ -100,8 +100,9 @@
             "[clojure]": {
                 "editor.wordSeparators": "\t ()\"':,;~@#$%^&{}[]`",
                 "editor.formatOnType": true,
-                "editor.autoIndent": false,
-                "editor.formatOnPaste": true
+                "editor.autoIndent": true,
+                "editor.formatOnPaste": true,
+                "files.trimTrailingWhitespace": false
             }
         }
     },

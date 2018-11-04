@@ -4,8 +4,8 @@
 
 
 #_(deftest log
-    (is (= (with-out-str (sut/log {:text ""} :text))
-           {:text ""})))
+    (is (= (with-out-str (sut/log {:range-text ""} :range-text))
+           {:range-text ""})))
 
 
 (def all-text "(def a 1)

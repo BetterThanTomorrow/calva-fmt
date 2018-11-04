@@ -5,27 +5,27 @@
 
 
 (defn format-text
-  [{:keys [text config] :as m}]
+  [{:keys [range-text config] :as m}]
   (try
-    #_(assoc m :text (zprint-str text {:parse-string-all? true
-                                       :style :community
-                                       :fn-force-nl #{:arg1-body}}))
-    (assoc m :text (cljfmt/reformat-string text config))
+    #_(assoc m :range-text (zprint-str range-text {:parse-string-all? true
+                                                   :style :community
+                                                   :fn-force-nl #{:arg1-body}}))
+    (assoc m :range-text (cljfmt/reformat-string range-text config))
     (catch js/Error e
       (assoc m :error (.-message e)))))
 
 
 (defn- normalize-indents
   "Normalizes indents based on where the text starts on the first line"
-  [{:keys [text] :as m}]
+  [{:keys [range-text] :as m}]
   (let [indent-before (apply str (repeat (util/indent-before-range m) " "))
-        lines (clojure.string/split text #"\r?\n" -1)]
-    (assoc m :text (clojure.string/join (str "\n" indent-before) lines))))
+        lines (clojure.string/split range-text #"\r?\n" -1)]
+    (assoc m :range-text (clojure.string/join (str "\n" indent-before) lines))))
 
 
 (defn index-for-tail-in-range
   "Find index for the `tail` in `text` disregarding whitespace"
-  [{:keys [text range-tail on-type] :as m}]
+  [{:keys [range-text range-tail on-type] :as m}]
   (let [leading-space-length (count (re-find #"^[ \t]*" range-tail))
         tail-pattern (-> range-tail
                          (util/escape-regexp)
@@ -34,7 +34,7 @@
         tail-pattern (if (and on-type (re-find #"^\n" range-tail))
                        (str "\n+" tail-pattern)
                        tail-pattern)
-        pos (util/re-pos-first (str " {0," leading-space-length "}" tail-pattern "$") text)]
+        pos (util/re-pos-first (str " {0," leading-space-length "}" tail-pattern "$") range-text)]
     (assoc m :new-index pos)))
 
 
@@ -44,7 +44,7 @@
   (let [range-text (subs all-text (first range) (last range))
         range-index (- idx (first range))
         tail (subs range-text range-index)
-        formatted-m (format-text (assoc m :text range-text))
+        formatted-m (format-text (assoc m :range-text range-text))
         normalized-m (normalize-indents formatted-m)]
     (-> normalized-m
         (assoc :range-tail tail)
@@ -62,9 +62,9 @@
 
 (defn remove-indent-token-if-empty-current-line
   "If an indent token was added, lets remove it. Not forgetting to shrink `:range`"
-  [{:keys [text range new-index] :as m}]
+  [{:keys [range-text range new-index] :as m}]
   (if (util/current-line-empty? m)
-    (assoc m :text (str (subs text 0 new-index) (subs text (inc new-index)))
+    (assoc m :range-text (str (subs range-text 0 new-index) (subs range-text (inc new-index)))
            :range [(first range) (dec (second range))])
     m))
 

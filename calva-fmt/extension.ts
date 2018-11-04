@@ -3,12 +3,31 @@ import { FormaOnTypeEditProvider } from './providers/ontype_formatter';
 import { RangeEditProvider } from './providers/range_formatter';
 import * as formatter from './format';
 
-const ClojureLanguageConfiguration = {
+const ClojureLanguageConfiguration: vscode.LanguageConfiguration = {
     wordPattern: /[^\s()[\]{};"\\]+/,
+    indentationRules: {
+        //increaseIndentPattern: /(\((?!.*\))|\[(?!.*\])|\{(?!.*\}))/,
+        increaseIndentPattern: undefined,
+        decreaseIndentPattern: undefined
+    },
+    onEnterRules: [
+        {
+            beforeText: /\((?!.*\))/,
+            action: { indentAction: vscode.IndentAction.Indent }
+        },
+        {
+            beforeText: /\[(?!.*\])/,
+            action: { indentAction: vscode.IndentAction.Indent }
+        },
+        {
+            beforeText: /\{(?!.*\})/,
+            action: { indentAction: vscode.IndentAction.Indent }
+        },
+    ]
+
 }
 
 function activate(context: vscode.ExtensionContext) {
-    vscode.workspace.getConfiguration().update('files.trimTrailingWhitespace', false);
     vscode.languages.setLanguageConfiguration("clojure", ClojureLanguageConfiguration);
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.formatCurrentForm', formatter.formatPositionCommand));
     context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new FormaOnTypeEditProvider,
