@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 
 function readConfiguration() {
-    let workspaceConfig = vscode.workspace.getConfiguration("calva.fmt")
+    let workspaceConfig = vscode.workspace.getConfiguration("calva.fmt");
     return {
-        "adjust-cursor-position?": workspaceConfig.get("autoAdjustIndentOnNewLines"),
+        "format-as-you-type": workspaceConfig.get("formatAsYouType"),
         "indentation?": workspaceConfig.get("indentation"),
         "remove-surrounding-whitespace?": workspaceConfig.get("removeSurroundingWhitespace"),
         "remove-trailing-whitespace?": workspaceConfig.get("removeTrailingWhitespace"),
