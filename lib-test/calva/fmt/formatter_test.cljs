@@ -11,8 +11,8 @@
 (deftest normalize-indents
   (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
          (:range-text (sut/normalize-indents {:all-text "  (foo)\n(defn bar\n[x]\nbaz)"
-                                        :range [2 26]
-                                        :range-text "(foo)\n(defn bar\n  [x]\n  baz)"})))))
+                                              :range [2 26]
+                                              :range-text "(foo)\n(defn bar\n  [x]\n  baz)"})))))
 
 
 (deftest format-text-at-range
@@ -56,6 +56,39 @@ baz)")
          (:new-index (sut/format-text-at-idx {:all-text "(defn \n  \nfoo)" :idx 6}))))
   (is (= 11
          (:new-index (sut/format-text-at-idx {:all-text "(foo\n (bar)\n )" :idx 11})))))
+
+
+(def first-top-level-text "
+;; foo
+(defn foo [x]
+  (* x x))
+ ")
+
+(def mid-top-level-text ";; foo
+(defn foo [x]
+  (* x x))
+ 
+(bar)")
+
+(def last-top-level-text ";; foo
+(defn foo [x]
+  (* x x))
+ ")
+
+
+(deftest new-index-top-level
+  (is (= 1
+         (:new-index (sut/format-text-at-idx {:all-text first-top-level-text :idx 1}))))
+  (is (= first-top-level-text
+         (:range-text (sut/format-text-at-idx {:all-text first-top-level-text :idx 1}))))
+  (is (= 32
+         (:new-index (sut/format-text-at-idx {:all-text mid-top-level-text :idx 33}))))
+  (is (= mid-top-level-text
+         (:range-text (sut/format-text-at-idx {:all-text mid-top-level-text :idx 33}))))
+  (is (= 32
+         (:new-index (sut/format-text-at-idx {:all-text last-top-level-text :idx 32}))))
+  (is (= last-top-level-text
+         (:range-text (sut/format-text-at-idx {:all-text last-top-level-text :idx 32})))))
 
 
 (deftest format-text-at-idx-on-type

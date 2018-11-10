@@ -11,18 +11,23 @@ const ClojureLanguageConfiguration: vscode.LanguageConfiguration = {
         decreaseIndentPattern: undefined
     },
     onEnterRules: [
+        // In a desperate attempt to stop VS Code from indenting top level lines, the gloves are off!
+        // {
+        //     beforeText: /\((?!.*\))/,
+        //     action: { indentAction: vscode.IndentAction.Indent }
+        // },
         {
-            beforeText: /\((?!.*\))/,
-            action: { indentAction: vscode.IndentAction.Indent }
+            beforeText: /.*/,
+            action: { indentAction: vscode.IndentAction.Outdent }
         },
-        {
-            beforeText: /\[(?!.*\])/,
-            action: { indentAction: vscode.IndentAction.Indent }
-        },
-        {
-            beforeText: /\{(?!.*\})/,
-            action: { indentAction: vscode.IndentAction.Indent }
-        },
+        // {
+        //     beforeText: /\[(?!.*\])/,
+        //     action: { indentAction: vscode.IndentAction.Indent }
+        // },
+        // {
+        //     beforeText: /\{(?!.*\})/,
+        //     action: { indentAction: vscode.IndentAction.Indent }
+        // },
     ]
 
 }

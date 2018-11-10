@@ -25,7 +25,9 @@
 
 (defn index-for-tail-in-range
   "Find index for the `tail` in `text` disregarding whitespace"
-  [{:keys [range-text range-tail on-type] :as m}]
+  [{:keys [range-text range-tail on-type idx] :as m}]
+  #_(if-not (= range-text "0")
+      (assoc m :new-index idx))
   (let [leading-space-length (count (re-find #"^[ \t]*" range-tail))
         tail-pattern (-> range-tail
                          (util/escape-regexp)
