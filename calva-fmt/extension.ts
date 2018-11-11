@@ -4,33 +4,17 @@ import { RangeEditProvider } from './providers/range_formatter';
 import * as formatter from './format';
 
 const ClojureLanguageConfiguration: vscode.LanguageConfiguration = {
-    wordPattern: /[^\s()[\]{};"\\]+/,
-    indentationRules: {
-        //increaseIndentPattern: /(\((?!.*\))|\[(?!.*\])|\{(?!.*\}))/,
-        increaseIndentPattern: undefined,
-        decreaseIndentPattern: undefined
-    },
+    wordPattern: /[^-\s/#()[\]{};"\\]+/,
     onEnterRules: [
         // In a desperate attempt to stop VS Code from indenting top level lines, the gloves are off!
-        // {
-        //     beforeText: /\((?!.*\))/,
-        //     action: { indentAction: vscode.IndentAction.Indent }
-        // },
         {
             beforeText: /.*/,
             action: { indentAction: vscode.IndentAction.Outdent }
         },
-        // {
-        //     beforeText: /\[(?!.*\])/,
-        //     action: { indentAction: vscode.IndentAction.Indent }
-        // },
-        // {
-        //     beforeText: /\{(?!.*\})/,
-        //     action: { indentAction: vscode.IndentAction.Indent }
-        // },
     ]
-
 }
+
+
 
 function activate(context: vscode.ExtensionContext) {
     vscode.languages.setLanguageConfiguration("clojure", ClojureLanguageConfiguration);

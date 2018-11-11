@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -98,7 +98,9 @@
         ],
         "configurationDefaults": {
             "[clojure]": {
-                "editor.wordSeparators": "\t ()\"':,;~@#$%^&{}[]`",
+                "editor.wordSeparators": "\t ()\"':,;~@#$%^&{}[]`-/",
+                "editor.autoClosingBrackets": "always",
+                "editor.autoClosingQuotes": "always",
                 "editor.formatOnType": true,
                 "editor.autoIndent": true,
                 "editor.formatOnPaste": true,
