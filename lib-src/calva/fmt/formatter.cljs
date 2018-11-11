@@ -17,15 +17,15 @@
 
 (defn- normalize-indents
   "Normalizes indents based on where the text starts on the first line"
-  [{:keys [range-text] :as m}]
+  [{:keys [range-text eol] :as m}]
   (let [indent-before (apply str (repeat (util/indent-before-range m) " "))
         lines (clojure.string/split range-text #"\r?\n" -1)]
-    (assoc m :range-text (clojure.string/join (str "\n" indent-before) lines))))
+    (assoc m :range-text (clojure.string/join (str eol indent-before) lines))))
 
 
 (defn index-for-tail-in-range
   "Find index for the `tail` in `text` disregarding whitespace"
-  [{:keys [range-text range-tail on-type idx] :as m}]
+  [{:keys [range-text range-tail on-type idx eol] :as m}]
   #_(if-not (= range-text "0")
       (assoc m :new-index idx))
   (let [leading-space-length (count (re-find #"^[ \t]*" range-tail))
@@ -33,8 +33,8 @@
                          (util/escape-regexp)
                          (clojure.string/replace #"^[ \t]+" "")
                          (clojure.string/replace #"\s+" "\\s*"))
-        tail-pattern (if (and on-type (re-find #"^\n" range-tail))
-                       (str "\n+" tail-pattern)
+        tail-pattern (if (and on-type (re-find #"^\r?\n" range-tail))
+                       (str eol "+" tail-pattern)
                        tail-pattern)
         pos (util/re-pos-first (str " {0," leading-space-length "}" tail-pattern "$") range-text)]
     (assoc m :new-index pos)))
@@ -73,8 +73,8 @@
 
 (defn format-text-at-idx
   "Formats the enclosing range of text surrounding idx"
-  [{:keys [all-text idx] :as m}]
-  (-> m
+  [m]
+  (-> (merge {:eol "\n"} m)
       (util/add-head-and-tail)
       (util/add-current-line)
       (add-indent-token-if-empty-current-line)

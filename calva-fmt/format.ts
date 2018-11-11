@@ -45,7 +45,8 @@ function _formatIndex(allText: string, index: number, onType: boolean = false): 
     const d = cljify({
         "all-text": allText,
         "idx": index,
-        "config": config.getConfig()
+        "config": config.getConfig(),
+        "eol": "\n"
     }),
         result = jsify(onType ? formatTextAtIdxOnType(d) : formatTextAtIdx(d));
     if (!result["error"]) {
