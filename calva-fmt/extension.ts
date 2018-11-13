@@ -4,7 +4,7 @@ import { RangeEditProvider } from './providers/range_formatter';
 import * as formatter from './format';
 
 const ClojureLanguageConfiguration: vscode.LanguageConfiguration = {
-    wordPattern: /[^-\s/#()[\]{};"\\]+/,
+    wordPattern: /[^\s#()[\]{};"\\]+/,
     onEnterRules: [
         // In a desperate attempt to stop VS Code from indenting top level lines, the gloves are off!
         {
