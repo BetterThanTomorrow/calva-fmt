@@ -19,7 +19,7 @@
   "Normalizes indents based on where the text starts on the first line"
   [{:keys [range-text] :as m}]
   (let [indent-before (apply str (repeat (util/indent-before-range m) " "))
-        lines (clojure.string/split range-text #"\r?\n" -1)]
+        lines (clojure.string/split range-text #"\r?\n(?!\s*;)" -1)]
     (assoc m :range-text (clojure.string/join (str "\n" indent-before) lines))))
 
 
