@@ -5,13 +5,28 @@
 
 
 (comment
+  (div
+   (foo
+    ; foo
+    [:div]
+    ;;bar
+    [:div])))
+
+(comment
+  (foo
+  ;; foo
+   [:div]
+  ;;bar
+   [:div]))
+
+(comment
   (def str "(defn \n\n)")
 
   (cljfmt/reformat-string str {:remove-surrounding-whitespace? false
                                :remove-trailing-whitespace? false
                                :remove-consecutive-blank-lines? false})
 
-  (cljfmt/reformat-string "(div\n ;; foo\n [:div]\n  ;; bar\n [:div])"
+  (cljfmt/reformat-string "(div\n (foo\n  ;; foo\n  [:div]\n  ;;bar\n  [:div]))"
                           {:remove-surrounding-whitespace? false
                            :remove-trailing-whitespace? false
                            :remove-consecutive-blank-lines? false})

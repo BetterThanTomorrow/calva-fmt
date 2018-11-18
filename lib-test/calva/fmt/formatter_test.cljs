@@ -12,7 +12,15 @@
   (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
          (:range-text (sut/normalize-indents {:all-text "  (foo)\n(defn bar\n[x]\nbaz)"
                                               :range [2 26]
-                                              :range-text "(foo)\n(defn bar\n  [x]\n  baz)"})))))
+                                              :range-text "(foo)\n(defn bar\n  [x]\n  baz)"}))))
+  (is (= " (foo\n  ;; foo\n  [:div]\n  ;;bar\n  [:div])"
+         (:range-text (sut/normalize-indents {:all-text " (foo\n  ;; foo\n  [:div]\n  ;;bar\n  [:div])"
+                                              :range [1 41]
+                                              :range-text "(foo\n  ;; foo\n  [:div]\n  ;;bar\n  [:div])"}))))
+  (is (= " (foo\n  ;; foo\n  [:div]\n  ;;bar\n  [:div])"
+         (:range-text (sut/normalize-indents {:all-text " (foo\n  foo\n  [:div]\n  bar\n  [:div])"
+                                              :range [1 37]
+                                              :range-text "(foo\n  foo\n  [:div]\n  bar\n  [:div])"})))))
 
 
 (deftest format-text-at-range
