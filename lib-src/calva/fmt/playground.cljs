@@ -11,6 +11,11 @@
                                :remove-trailing-whitespace? false
                                :remove-consecutive-blank-lines? false})
 
+  (cljfmt/reformat-string "(div\n ;; foo\n [:div]\n  ;; bar\n [:div])"
+                          {:remove-surrounding-whitespace? false
+                           :remove-trailing-whitespace? false
+                           :remove-consecutive-blank-lines? false})
+
   (cljfmt/reformat-string
    "(defn bar\n    [x]\n\n    baz)")
 
@@ -35,4 +40,3 @@
    [:div]
   ;; bar
    [:div]))
-   
