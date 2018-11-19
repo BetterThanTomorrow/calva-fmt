@@ -24,6 +24,7 @@
                           {:remove-surrounding-whitespace? false
                            :remove-trailing-whitespace? false
                            :remove-consecutive-blank-lines? false})
+
   (cljfmt/reformat-string
    "(foo
   
@@ -31,6 +32,10 @@
    {:remove-surrounding-whitespace? false
     :remove-trailing-whitespace? false
     :indentation? false})
+
+  (cljfmt/reformat-string "(ns ui-app.re-frame.db)
+
+(def default-db #::{:page :home})")
 
   (cljfmt/reformat-string
    "(defn bar\n    [x]\n\n    baz)")
