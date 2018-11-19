@@ -1,6 +1,7 @@
 (ns calva.fmt.util
   (:require [calva.js-utils :refer [cljify]]
-            ["paredit.js" :as paredit]))
+            ["paredit.js" :as paredit]
+            [clojure.string]))
 
 
 (defn log

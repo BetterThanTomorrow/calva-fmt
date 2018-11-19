@@ -15,14 +15,6 @@
       (assoc m :error (.-message e)))))
 
 
-(defn- normalize-indents
-  "Normalizes indents based on where the text starts on the first line"
-  [{:keys [range-text] :as m}]
-  (let [indent-before (apply str (repeat (util/indent-before-range m) " "))
-        lines (clojure.string/split range-text #"\r?\n(?!\s*;)" -1)]
-    (assoc m :range-text (clojure.string/join (str "\n" indent-before) lines))))
-
-
 (defn index-for-tail-in-range
   "Find index for the `tail` in `text` disregarding whitespace"
   [{:keys [range-text range-tail on-type idx] :as m}]

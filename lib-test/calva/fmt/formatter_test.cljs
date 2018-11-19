@@ -8,17 +8,6 @@
            (:range-text (sut/format-text {:range-text "  (foo   \nbar\n      baz)\ngazonk"})))))
 
 
-(deftest normalize-indents
-  (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
-         (:range-text (sut/normalize-indents {:all-text "  (foo)\n(defn bar\n[x]\nbaz)"
-                                              :range [2 26]
-                                              :range-text "(foo)\n(defn bar\n  [x]\n  baz)"}))))
-  (is (= "(foo\n;;\n  foo\n    ;;bar\n  bar)"
-         (:range-text (sut/normalize-indents {:all-text " (foo\n;;\n      foo\n    ;;\n      bar)"
-                                              :range [1 36]
-                                              :range-text "(foo\n;;\n      foo\n    ;;\n      bar)"})))))
-
-
 (deftest format-text-at-range
   (is (= "(foo)\n(defn bar\n  [x]\n  baz)"
          (:range-text (sut/format-text-at-range {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))
