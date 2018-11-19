@@ -20,7 +20,7 @@
 
 
 (deftest format-text-at-range
-  (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
+  (is (= "(foo)\n(defn bar\n  [x]\n  baz)"
          (:range-text (sut/format-text-at-range {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))
 
 
@@ -34,7 +34,7 @@ baz)")
 (deftest format-text-at-idx
   (is (= "(defn bar
     [x]
-  
+
     baz)"
          (:range-text (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= 1

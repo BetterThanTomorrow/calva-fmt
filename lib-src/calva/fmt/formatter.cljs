@@ -43,12 +43,14 @@
 (defn format-text-at-range
   "Formats text from all-text at the range"
   [{:keys [all-text range idx config on-type] :as m}]
-  (let [range-text (subs all-text (first range) (last range))
+  (let [indent-before (util/indent-before-range m)
+        padding (apply str (repeat indent-before " "))
+        range-text (subs all-text (first range) (last range))
+        padded-text (str padding range-text)
         range-index (- idx (first range))
         tail (subs range-text range-index)
-        formatted-m (format-text (assoc m :range-text range-text))
-        normalized-m (normalize-indents formatted-m)]
-    (-> normalized-m
+        formatted-m (format-text (assoc m :range-text padded-text))]
+    (-> (assoc m :range-text (subs (:range-text formatted-m) indent-before))
         (assoc :range-tail tail)
         (index-for-tail-in-range))))
 
