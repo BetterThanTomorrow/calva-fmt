@@ -51,6 +51,35 @@ baz)")
          (:new-index (sut/format-text-at-idx {:all-text "(foo\n (bar)\n )" :idx 11})))))
 
 
+(def head-and-tail-text "(def a 1)
+
+
+(defn foo [x] (let [bar 1]
+
+bar))")
+
+
+(deftest add-head-and-tail
+  (is (= {:head "" :tail head-and-tail-text
+          :all-text head-and-tail-text
+          :idx 0}
+         (sut/add-head-and-tail {:all-text head-and-tail-text :idx 0})))
+  (is (= {:head head-and-tail-text :tail ""
+          :all-text head-and-tail-text
+          :idx (count head-and-tail-text)}
+         (sut/add-head-and-tail {:all-text head-and-tail-text :idx (count head-and-tail-text)})))
+  (is (= {:head "(def a 1)\n\n\n(defn foo "
+          :tail "[x] (let [bar 1]\n\nbar))"
+          :all-text head-and-tail-text
+          :idx 22}
+         (sut/add-head-and-tail {:all-text head-and-tail-text :idx 22})))
+  (is (= {:head head-and-tail-text :tail ""
+          :all-text head-and-tail-text
+          :idx (inc (count head-and-tail-text))}
+         (sut/add-head-and-tail {:all-text head-and-tail-text :idx (inc (count head-and-tail-text))}))))
+
+
+
 (def first-top-level-text "
 ;; foo
 (defn foo [x]
@@ -137,3 +166,41 @@ baz)")
                                                          :range [4 5]
                                                          :new-index 4
                                                          :current-line "0"}))))
+
+
+(deftest current-line-empty?
+  (is (= true (sut/current-line-empty? {:current-line "       "})))
+  (is (= false (sut/current-line-empty? {:current-line "  foo  "}))))
+
+
+(deftest indent-before-range
+  (is (= 10
+         (sut/indent-before-range {:all-text "(def a 1)
+
+
+(defn foo [x] (let [bar 1]
+
+bar))" :range [22 25]}))))
+
+
+(def enclosing-range-text "(def a 1)
+
+
+(defn foo [x] (let [bar 1]
+
+bar))")
+
+
+(deftest enclosing-range
+  (is (= [22 25] ;"[x]"
+         (:range (sut/enclosing-range {:all-text enclosing-range-text :idx 23}))))
+  (is (= [12 45] ;"enclosing form"
+         (:range (sut/enclosing-range {:all-text enclosing-range-text :idx 21}))))
+  (is (= [0 9] ; after top level form
+         (:range (sut/enclosing-range {:all-text enclosing-range-text :idx 9}))))
+  (is (= [0 9] ; before top level form
+         (:range (sut/enclosing-range {:all-text enclosing-range-text :idx 0}))))
+  (is (= [26 44] ; before top level form
+         (:range (sut/enclosing-range {:all-text enclosing-range-text :idx 39}))))
+  (is (= [10 10] ; void (between top level forms)
+         (:range (sut/enclosing-range {:all-text enclosing-range-text :idx 10})))))
