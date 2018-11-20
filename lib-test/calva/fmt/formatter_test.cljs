@@ -31,7 +31,10 @@ baz)")
   (is (= [10 38]
          (:range (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= "\"bar \n \n \""
-         (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7})))))
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7}))))
+  (is (= "  '([]\n    [])"
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "  '([]\n[])" :idx 7}))))
+  )
 
 
 (deftest new-index
@@ -180,7 +183,10 @@ bar))")
 
 (defn foo [x] (let [bar 1]
 
-bar))" :range [22 25]}))))
+bar))" :range [22 25]})))
+  (is (= 4
+         (sut/indent-before-range {:all-text "  '([]
+[])" :range [4 9]}))))
 
 
 (def enclosing-range-text "(def a 1)
