@@ -11,6 +11,13 @@
    baz))
 
 (comment
+
+  (cljfmt/reformat-string "  '([]
+[])" {:remove-surrounding-whitespace? false
+      :remove-trailing-whitespace? false
+      :remove-consecutive-blank-lines? false})
+
+
   (def str "(defn \n\n)")
 
   (cljfmt/reformat-string str {:remove-surrounding-whitespace? false

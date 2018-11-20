@@ -8,8 +8,13 @@
            (:range-text (sut/format-text {:range-text "  (foo   \nbar\n      baz)\ngazonk"})))))
 
 
-(deftest format-text-at-range
+(deftest format-text-at-range-new
   (is (= "(foo)\n(defn bar\n  [x]\n  baz)"
+         (:range-text (sut/format-text-at-range-new {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))
+
+
+(deftest format-text-at-range
+  (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
          (:range-text (sut/format-text-at-range {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))
 
 
@@ -23,7 +28,7 @@ baz)")
 (deftest format-text-at-idx
   (is (= "(defn bar
     [x]
-
+  
     baz)"
          (:range-text (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= 1
@@ -32,9 +37,10 @@ baz)")
          (:range (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= "\"bar \n \n \""
          (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7}))))
-  (is (= "  '([]\n    [])"
-         (:range-text (sut/format-text-at-idx-on-type {:all-text "  '([]\n[])" :idx 7}))))
-  )
+  #_(is (= "'([]\n    [])"
+           (:range-text (sut/format-text-at-idx-on-type {:all-text "  '([]\n[])" :idx 7}))))
+  (is (= "[]\n    []"
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "  '([]\n[])" :idx 7})))))
 
 
 (deftest new-index
@@ -81,6 +87,16 @@ bar))")
           :idx (inc (count head-and-tail-text))}
          (sut/add-head-and-tail {:all-text head-and-tail-text :idx (inc (count head-and-tail-text))}))))
 
+
+(deftest normalize-indents
+  (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
+         (:range-text (sut/normalize-indents {:all-text "  (foo)\n(defn bar\n[x]\nbaz)"
+                                              :range [2 26]
+                                              :range-text "(foo)\n(defn bar\n  [x]\n  baz)"}))))
+  (is (= "(foo\n;;\n  foo\n    ;;bar\n  bar)"
+         (:range-text (sut/normalize-indents {:all-text " (foo\n;;\n      foo\n    ;;\n      bar)"
+                                              :range [1 36]
+                                              :range-text "(foo\n;;\n      foo\n    ;;\n      bar)"})))))
 
 
 (def first-top-level-text "
