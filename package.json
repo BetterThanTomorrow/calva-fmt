@@ -49,12 +49,27 @@
                 "command": "calva-fmt.formatCurrentForm",
                 "title": "Format current form",
                 "category": "Calva Format"
+            },
+            {
+                "command": "calva-fmt.inferParens",
+                "title": "Infer parens (all kinds) from the indentation of the document",
+                "category": "Calva Format"
             }
         ],
         "keybindings": [
             {
                 "command": "calva-fmt.formatCurrentForm",
-                "key": "tab",
+                "key": "tab i",
+                "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
+            },
+            {
+                "command": "calva-fmt.inferParens",
+                "key": "tab p",
+                "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
+            },
+            {
+                "command": "vscode.insertTab",
+                "key": "tab tab",
                 "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             }
         ],
@@ -133,7 +148,8 @@
     },
     "dependencies": {
         "npm": "^6.4.1",
-        "paredit.js": "^0.3.4"
+        "paredit.js": "^0.3.4",
+        "parinfer": "^3.12.0"
     },
     "license": "MIT"
 }
