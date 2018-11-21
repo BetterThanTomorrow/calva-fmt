@@ -1,6 +1,6 @@
 (ns calva.fmt.playground
   (:require [cljfmt.core :as cljfmt]
-            [zprint.core :refer [zprint-str]]
+            #_[zprint.core :refer [zprint-str]]
             [calva.fmt.util :as util]))
 
 

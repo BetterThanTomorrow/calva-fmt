@@ -1,6 +1,6 @@
 (ns calva.fmt.formatter
   (:require [cljfmt.core :as cljfmt]
-            [zprint.core :refer [zprint-str]]
+            #_[zprint.core :refer [zprint-str]]
             ["paredit.js" :as paredit]
             [calva.js-utils :refer [cljify]]
             [calva.fmt.util :as util]))
