@@ -74,6 +74,14 @@
                   (second (re-find #"^(.*)\n?" tail))))))
 
 
+(defn- normalize-indents
+  "Normalizes indents based on where the text starts on the first line"
+  [{:keys [range-text] :as m}]
+  (let [indent-before (apply str (repeat (indent-before-range m) " "))
+        lines (clojure.string/split range-text #"\r?\n(?!\s*;)" -1)]
+    (assoc m :range-text (clojure.string/join (str "\n" indent-before) lines))))
+
+
 (defn index-for-tail-in-range
   "Find index for the `tail` in `text` disregarding whitespace"
   [{:keys [range-text range-tail on-type idx] :as m}]
@@ -91,7 +99,7 @@
     (assoc m :new-index pos)))
 
 
-(defn format-text-at-range
+(defn format-text-at-range-new
   "Formats text from all-text at the range"
   [{:keys [all-text range idx config on-type] :as m}]
   (let [indent-before (indent-before-range m)
@@ -102,6 +110,19 @@
         tail (subs range-text range-index)
         formatted-m (format-text (assoc m :range-text padded-text))]
     (-> (assoc m :range-text (subs (:range-text formatted-m) indent-before))
+        (assoc :range-tail tail)
+        (index-for-tail-in-range))))
+
+
+(defn format-text-at-range
+  "Formats text from all-text at the range"
+  [{:keys [all-text range idx config on-type] :as m}]
+  (let [range-text (subs all-text (first range) (last range))
+        range-index (- idx (first range))
+        tail (subs range-text range-index)
+        formatted-m (format-text (assoc m :range-text range-text))
+        normalized-m (normalize-indents formatted-m)]
+    (-> normalized-m
         (assoc :range-tail tail)
         (index-for-tail-in-range))))
 
