@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import * as config from './config';
-import * as parinfer from 'parinfer';
 
-const { formatTextAtRange, formatTextAtIdx, formatTextAtIdxOnType, cljify, jsify } = require('../lib/calva_fmt');
+const { formatTextAtRange, formatTextAtIdx, formatTextAtIdxOnType, inferParens, cljify, jsify } = require('../lib/calva_fmt');
 
 
 export function formatRangeEdits(document: vscode.TextDocument, range: vscode.Range): vscode.TextEdit[] {
@@ -77,21 +76,37 @@ function _formatRange(rangeText: string, allText: string, range: number[]): stri
     }
 }
 
+
 export function inferParensCommand(editor: vscode.TextEditor) {
     const position: vscode.Position = editor.selection.active,
         document = editor.document,
         currentText = document.getText(),
-        currentRange = new vscode.Range(document.positionAt(0), document.positionAt(currentText.length)),
-        d = {
-            "cursorLine": position.line,
-            "cursorX": position.character
-        },
-        r = parinfer.indentMode(currentText, d);
-    if (r.success && r.text != currentText) {
-        editor.edit(textEditorEdit => {
-            textEditorEdit.replace(currentRange, r.text);
+        d = cljify({
+            "text": currentText,
+            "line": position.line,
+            "character": position.character
+        }),
+        r: {
+            success: boolean,
+            edits?: [{
+                edit: string,
+                start: { line: number, character: number },
+                end: { line: number, character: number },
+                text: string
+            }],
+            line?: number,
+            character?: number,
+            error?: { message: string }
+        } = inferParens(d);
+    if (r.success) {
+        editor.edit(editBuilder => {
+            r.edits.forEach((edit) => {
+                const start = new vscode.Position(edit.start.line, edit.start.character),
+                    end = new vscode.Position(edit.end.line, edit.end.character);
+                editBuilder.replace(new vscode.Range(start, end), edit.text);
+            });
         }, { undoStopAfter: true, undoStopBefore: false }).then((_onFulfilled: boolean) => {
-            const newPosition = new vscode.Position(r.cursorLine, r.cursorX);
+            const newPosition = new vscode.Position(r.line, r.character);
             editor.selections = [new vscode.Selection(newPosition, newPosition)];
         });
     }

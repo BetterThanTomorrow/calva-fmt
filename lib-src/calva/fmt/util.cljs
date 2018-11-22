@@ -31,3 +31,6 @@
     (.-index m)
     -1))
 
+(defn split-into-lines
+  [s]
+  (clojure.string/split s #"\r?\n" -1))

@@ -1,6 +1,7 @@
 (ns calva.fmt.playground
   (:require [cljfmt.core :as cljfmt]
             #_[zprint.core :refer [zprint-str]]
+            ["parinfer" :as parinfer]
             [calva.fmt.util :as util]))
 
 
@@ -68,3 +69,11 @@
    [:div]
   ;; bar
    [:div]))
+
+
+(comment
+  (parinfer/indentMode "    (foo []
+       (bar)
+       (baz)))"
+                       (jsify {:cursorLine 2
+                               :cursorX 13})))

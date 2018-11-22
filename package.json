@@ -68,7 +68,7 @@
                 "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             },
             {
-                "command": "vscode.insertTab",
+                "command": "tab",
                 "key": "tab tab",
                 "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             }

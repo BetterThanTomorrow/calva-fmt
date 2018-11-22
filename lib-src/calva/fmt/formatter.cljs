@@ -31,7 +31,7 @@
     (if (= start end)
       0
       (-> (subs all-text 0 (first range))
-          (clojure.string/split #"\r?\n" -1)
+          (util/split-into-lines)
           (last)
           (count)))))
 
