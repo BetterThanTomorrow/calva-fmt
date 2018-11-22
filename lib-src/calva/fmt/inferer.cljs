@@ -6,8 +6,9 @@
 (defn infer-parens
   "Calculate the edits needed for infering parens in `text`,
    and where the cursor should be placed to 'stay' in the right place."
-  [{:keys [text line character] :as m}]
-  (let [options (jsify {:cursorLine line :cursorX character})
+  [^js m]
+  (let [{:keys [text line character]} (cljify m)
+        options (jsify {:cursorLine line :cursorX character})
         result (cljify (parinfer/indentMode text options))]
     (jsify
      (if (:success result)

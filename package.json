@@ -47,12 +47,12 @@
         "commands": [
             {
                 "command": "calva-fmt.formatCurrentForm",
-                "title": "Format current form",
+                "title": "Format Current Form",
                 "category": "Calva Format"
             },
             {
                 "command": "calva-fmt.inferParens",
-                "title": "Infer parens (all kinds) from the indentation of the document",
+                "title": "Infer Parens (from the indentation)",
                 "category": "Calva Format"
             }
         ],

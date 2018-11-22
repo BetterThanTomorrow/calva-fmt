@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { FormaOnTypeEditProvider } from './providers/ontype_formatter';
 import { RangeEditProvider } from './providers/range_formatter';
 import * as formatter from './format';
+import * as inferer from './infer';
 
 const ClojureLanguageConfiguration: vscode.LanguageConfiguration = {
     wordPattern: /[^\s#()[\]{};"\\]+/,
@@ -19,7 +20,7 @@ const ClojureLanguageConfiguration: vscode.LanguageConfiguration = {
 function activate(context: vscode.ExtensionContext) {
     vscode.languages.setLanguageConfiguration("clojure", ClojureLanguageConfiguration);
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.formatCurrentForm', formatter.formatPositionCommand));
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.inferParens', formatter.inferParensCommand));
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.inferParens', inferer.inferParensCommand));
     context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new FormaOnTypeEditProvider,
         "\n"));
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new RangeEditProvider));
