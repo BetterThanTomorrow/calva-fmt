@@ -39,7 +39,11 @@
 )"
    {:remove-surrounding-whitespace? false
     :remove-trailing-whitespace? false
-    :indentation? false})
+    :indentation? true})
+
+  (cljfmt/reformat-string "(bar\n \n)"
+                          {:remove-surrounding-whitespace? false
+                           :remove-trailing-whitespace? false})
 
   (cljfmt/reformat-string "(ns ui-app.re-frame.db)
 

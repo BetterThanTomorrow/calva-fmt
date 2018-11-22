@@ -54,6 +54,11 @@
                 "command": "calva-fmt.inferParens",
                 "title": "Infer Parens (from the indentation)",
                 "category": "Calva Format"
+            },
+            {
+                "command": "calva-fmt.tabIndent",
+                "title": "Indent Line",
+                "category": "Calva Format"
             }
         ],
         "keybindings": [
@@ -68,7 +73,7 @@
                 "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             },
             {
-                "command": "tab",
+                "command": "calva-fmt.tabIndent",
                 "key": "tab tab",
                 "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             }

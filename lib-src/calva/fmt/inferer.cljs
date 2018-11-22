@@ -24,6 +24,7 @@
   (let [o (jsify {:cursorLine 1 :cursorX 13})
         result (parinfer/indentMode "    (foo []\n      (bar)\n      (baz)))" o)]
     (cljify result))
+
   (infer-parens {:text "    (foo []\n      (bar)\n      (baz)))"
                  :line 2
                  :character 13})
