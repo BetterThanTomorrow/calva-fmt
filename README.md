@@ -10,14 +10,26 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 ## Features
 
 * Formats according to the community [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) plus giving you some options to tweak this style.
-* Has a command for formatting the enclosing form, default key binding is `cmd+k tab`.
+* Sports a command for formatting the enclosing form, default key binding is `tab tab`.
+* Give you a command for infering parens/brackets, default key binding `tab p`.
 * Is the formater used for the VSCode *Format Selection* and *Format Document* commands.
 * Is intended to be used alongside and by other Clojure extensions.
 * Formats the code when new lines are entered, mostly keeping things formated as you type.
 
+
+### Demo time
+
+#### Infer parens
+Calva formatter uses [Parinfer](http://shaunlebron.github.io/parinfer) to give you a command to infer parens from the indentation. In the below gif I am copying the last assertion in the test map, using VS Code’s built in cloning of a line (`shift+alt+down`), which break the structure, and then I issue the **Infer Parens** command to get the structure back.
+
+![Infer parens](/assets/infer-parens.gif)
+
+(Notice the cameo by [Calva Paredit](https://github.com/BetterThanTomorrow/calva-paredit): **Expand Selection**, `ctrl+w`.)
+
+
 ## How to use
 
-Install it and edit away. It will keep the code fomatted mostly as you type, in a somewhat ”relaxed” way, and will format it more strictly (collecting trailing brackets, for instance) when you hit `tab`. Search the settings for `calva-fmt` to see how you can tweak it.
+Install it and edit away. It will keep the code fomatted mostly as you type, in a somewhat ”relaxed” way, and will format it more strictly (collecting trailing brackets, for instance) when you hit `tab tab`. Search the settings for `calva-fmt` to see how you can tweak it.
 
 ### Trimming trailing whitespace
 
@@ -44,9 +56,9 @@ That's currently just me, Peter Strömberg. I'd be happy to get some more people
 File issues or send pull requests. You can also find me in the #editors and #calva-dev channels of Clojurains Slack.
 
 
-## Parinfer and format-as-you-type
+## Disable the Parinfer Extension
 
-Calva Formatter and Parinfer compete on formatting the code, extra much so if you keep `calva.fmt.formatAsYouType` on. I recommend you to not use Parinfer together with Calva, but if you do, rember this conflict.
+Calva Formatter and the current Parinfer extension are not compatible. Some Parinfer magic is built in, though. Try the **Infer Parens** command for instance.
 
 ## Calva Paredit recommended
 
@@ -59,7 +71,9 @@ Calva Formater is written in TypeScript and ClojureScript. It is setup so that t
 See [How to Contribute](https://github.com/BetterThanTomorrow/calva-fmt/wiki/How-to-Contribute) on the project wiki for instructions.
 
 ## The Future of calva-fmt
-We'll see what kind of feedback people give us before deciding where we will take this extension.
+* Make it honor project settings.
+* Include some Parinfer magic.
+
 
 ## Happy Formatting
 
