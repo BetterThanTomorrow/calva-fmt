@@ -174,15 +174,18 @@
   "Calculate the edits needed for infering indents in `text`,
    and where the cursor should be placed to 'stay' in the right place."
   [^js m]
-  (let [{:keys [text line character previous-line previous-character change]} (cljify m)
-        options (jsify {:cursorLine line :cursorX character
-                        :prevCursorLine previous-line
-                        :prevCursorX previous-character
-                        :changes {:lineNo (:line change)
-                                  :x      (:character change)
-                                  :oldText (:oldText change)
-                                  :newText (:newText change)}})
-        result (cljify (parinfer/parenMode text options))]
+  (let [{:keys [text line character previous-line previous-character changes]} (cljify m)
+        options {:cursorLine line :cursorX character
+                 :prevCursorLine previous-line
+                 :prevCursorX previous-character
+                 :changes (mapv (fn [change]
+                                  {:lineNo (:line change)
+                                   :x      (:character change)
+                                   :oldText (:old-text change)
+                                   :newText (:new-text change)})
+                                changes)}
+        ;;_ (println (pr-str options))
+        result (cljify (parinfer/smartMode text (jsify options)))]
     (jsify
      (if (:success result)
        {:success true
@@ -203,16 +206,31 @@
                   :cursorX 3
                   :prevCursorLine 1
                   :prevCursorX 2
-                  :changes {:lineNo 1
-                            :x 3 
-                            :oldText "" 
-                            :newText " "}})
-        result (parinfer/smartMode "(comment\n   (foo bar\n       baz))" o)]
+                  :changes [{:lineNo 1
+                             :x 2
+                             :oldText ""
+                             :newText " "}]})
+        result (parinfer/parenMode "(comment\n   (foo bar\n     baz))" o)]
     (cljify result))
+  (let [o (jsify {:cursorLine 1
+                  :cursorX 3
+                  :prevCursorLine 1
+                  :prevCursorX 2})
+        result (parinfer/parenMode "(comment\n    (foo bar\n    baz))" o)]
+    (cljify result))
+  (infer-indents {:text "(comment \n   (foo bar \n     baz))"
+                  :line 1
+                  :character 3
+                  :previous-line 1
+                  :previous-character 2
+                  :changes [{:line 1
+                             :character 2
+                             :old-text ""
+                             :new-text " "}]})
   (infer-indents {:text "  (defn a []\n     (foo []\n     (bar)\n     (baz)))"
                   :line 1
                   :character 4
-                  :change {:line 4
-                           :character 0
-                           :oldText ""
-                           :newText " "}}))
+                  :changes [{:line 4
+                             :character 0
+                             :old-text ""
+                             :new-text " "}]}))

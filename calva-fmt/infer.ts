@@ -60,12 +60,12 @@ export function tabIndentCommand(editor: vscode.TextEditor) {
                 "character": position.character,
                 "previous-line": prevPosition.line,
                 "previous-character": prevPosition.character,
-                "change": {
-                    "line": position.line,
-                    "character": position.character,
-                    "oldText": "",
-                    "newText": tab
-                }
+                "changes": [{
+                    "line": prevPosition.line,
+                    "character": prevPosition.character,
+                    "old-text": "",
+                    "new-text": tab
+                }]
             });
         if (r.success) {
             editor.edit(editBuilder => {

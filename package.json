@@ -64,7 +64,7 @@
         "keybindings": [
             {
                 "command": "calva-fmt.formatCurrentForm",
-                "key": "tab tab",
+                "key": "tab space",
                 "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             },
             {
@@ -73,8 +73,8 @@
                 "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             },
             {
-                "command": "tab",
-                "key": "tab i",
+                "command": "calva-fmt.tabIndent",
+                "key": "tab tab",
                 "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             }
         ],
