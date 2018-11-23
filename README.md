@@ -10,22 +10,12 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 ## Features
 
 * Formats according to the community [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) plus giving you some options to tweak this style.
-* Sports a command for formatting the enclosing form, default key binding is `tab tab`.
-* Give you a command for infering parens/brackets, default key binding `tab p`.
-* Is the formater used for the VSCode *Format Selection* and *Format Document* commands.
-* Is intended to be used alongside and by other Clojure extensions.
+* Adds command for formatting the enclosing form, default key binding is `tab`.
+* Adds command for infering parens/brackets from indents (using ParinferLib), default key binding `ctrl+alt+p`.
+* Adds command for indenting and dedenting the current line (using ParinferLib), default key binding `ctrl+i` and `shift+ctrl+i`, respectively.
+* Provides the formater for the VSCode *Format Selection* and *Format Document* commands.
+* Is intended to be used alongside and by other Clojure extensions. **(Though it conflicts with Parinfer, see below.)**
 * Formats the code when new lines are entered, mostly keeping things formated as you type.
-
-
-### Demo time
-
-#### Infer parens
-Calva formatter uses [Parinfer](http://shaunlebron.github.io/parinfer) to give you a command to infer parens from the indentation. In the below gif I am copying the last assertion in the test map, using VS Code’s built in cloning of a line (`shift+alt+down`), which break the structure, and then I issue the **Infer Parens** command to get the structure back.
-
-![Infer parens](/assets/infer-parens.gif)
-
-(Notice the cameo by [Calva Paredit](https://github.com/BetterThanTomorrow/calva-paredit): **Expand Selection**, `ctrl+w`.)
-
 
 ## How to use
 
@@ -58,7 +48,7 @@ File issues or send pull requests. You can also find me in the #editors and #cal
 
 ## Disable the Parinfer Extension
 
-Calva Formatter and the current Parinfer extension are not compatible. Some Parinfer magic is built in, though. Try the **Infer Parens** command for instance.
+Calva Formatter and the current Parinfer extension are not compatible. Some Parinfer functionality is is built in, though, in the form of explicit commands, see above feature list.
 
 ## Calva Paredit recommended
 
@@ -72,7 +62,7 @@ See [How to Contribute](https://github.com/BetterThanTomorrow/calva-fmt/wiki/How
 
 ## The Future of calva-fmt
 * Make it honor project settings.
-* Include some Parinfer magic.
+* Up the Parinfer magic support.
 
 
 ## Happy Formatting

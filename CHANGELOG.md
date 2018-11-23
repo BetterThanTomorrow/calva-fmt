@@ -7,11 +7,16 @@ All notable changes to the "calva-fmt" extension will be documented in this file
 - Offer zprint as an option for formatting the whole file.
 
 ### Work in pogress
-- Support for all `:cljfmt` settings.
-- Tab indent the current line while keeping the relative indentation of the following lines.
+- Support for `:cljfmt` settings maps.
+
+## 0.0.23 - 2018-11-24
+- Add **Indent/Dedent Line** commands, `ctrl+i` and `shift+ctrl+i`, respectively.
 
 ## 0.0.22 - 2018-11-22
-- Add **Infer Parens** command, `tap p`.
+- Add **Infer Parens** command, `ctrl+alt+p`.
+
+## 0.0.22 - 2018-11-22
+- Add **Infer Parens** command, `ctrl+alt+p`.
 
 ## 0.0.15 - 2018-11-04
 - Format code as new lines are entered, keeping things mostly formatted as you type.

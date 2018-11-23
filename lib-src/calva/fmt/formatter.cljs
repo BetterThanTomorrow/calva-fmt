@@ -184,8 +184,8 @@
                                    :oldText (:old-text change)
                                    :newText (:new-text change)})
                                 changes)}
-        ;;_ (println (pr-str options))
         result (cljify (parinfer/smartMode text (jsify options)))]
+    ;;(println (pr-str options))
     (jsify
      (if (:success result)
        {:success true
