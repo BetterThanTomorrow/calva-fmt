@@ -25,6 +25,7 @@ function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.tabDedent', (e) => { inferer.indentCommand(e, " ", false) }));
     context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new FormaOnTypeEditProvider, "\n"));
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new RangeEditProvider));
+    vscode.window.onDidChangeActiveTextEditor(inferer.updateState);
     // vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
     //     console.log(e);
     // });

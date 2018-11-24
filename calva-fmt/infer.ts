@@ -29,7 +29,9 @@ export function inferParensCommand(editor: vscode.TextEditor) {
         r: ResultOptions = calvaFmtLib.inferParens({
             "text": currentText,
             "line": position.line,
-            "character": position.character
+            "character": position.character,
+            "previous-line": position.line,
+            "previous-character": position.character
         });
     applyResults(r, editor);
 }
@@ -96,4 +98,9 @@ function applyResults(r: ResultOptions, editor: vscode.TextEditor) {
     else {
         vscode.window.showErrorMessage("Calva Formatter Error: " + (r.error ? r.error.message : r["error-msg"]));
     }
+}
+
+
+export function updateState(editor: vscode.TextEditor) {
+
 }
