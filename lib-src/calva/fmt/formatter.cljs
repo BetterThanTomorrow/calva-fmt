@@ -37,9 +37,38 @@
           (last)
           (count)))))
 
+;; Thanks to @lilactown at Clojurians Slack for this way to check
+;; if we have an enclosing range. He refers to this:
+;; https://codereview.stackexchange.com/a/180569 
+
+(def opening (set "{[("))
+
+(def closing (set "}])"))
+
+(def mapping (apply assoc {} (interleave opening closing)))
+
+(defn -enclosing? [{:keys [queue first?]} c]
+  (if (and (not first?) (empty? queue))
+    (reduced {:queue (conj queue c)})
+    {:first? false
+     :queue (cond
+              (opening c) (conj queue (mapping c))
+              (closing c) (if (= c (peek queue))
+                            (pop queue)
+                            (reduced (conj queue c)))
+              :else queue)}))
+
+(defn enclosing? [text]
+  (-> (reduce -enclosing? {:queue [] :first? true} text)
+      (:queue)
+      (empty?)))
+
+(comment
+ (enclosing? "[][]")
+ (enclosing? "([][])"))
 
 (defn enclosing-range
-  "Expands the range from pos up to any enclosing list/vector/map/string"
+  "Expands the range from `idx` up to any enclosing list/vector/map/string"
   [{:keys [all-text idx] :as m}]
   (assoc m :range
          (let [ast (paredit/parse all-text)
@@ -50,7 +79,7 @@
                  (if (and (some? range)
                           (or (= idx (first range))
                               (= idx (last range))
-                              (not (contains? (set "{[(") (first text)))))
+                              (not (enclosing? text))))
                    (let [expanded-range ((.. paredit -navigator -sexpRangeExpansion) ast (first range) (last range))]
                      (if (and (some? expanded-range) (not= expanded-range range))
                        (recur expanded-range)
@@ -58,6 +87,10 @@
                    (cljify range))))
              [idx idx]))))
 
+
+(comment
+ (enclosing-range {:all-text "  ([]\n[])"
+                   :idx 6}))
 
 (defn add-head-and-tail
   "Splits `:all-text` at `:idx` in `:head` and `:tail`"
@@ -101,7 +134,7 @@
     (assoc m :new-index pos)))
 
 
-(defn format-text-at-range-new
+(defn format-text-at-range
   "Formats text from all-text at the range"
   [{:keys [all-text range idx config on-type] :as m}]
   (let [indent-before (indent-before-range m)
@@ -115,8 +148,16 @@
         (assoc :range-tail tail)
         (index-for-tail-in-range))))
 
+(comment 
+ (format-text-at-range {:all-text "  '([]\n[])",
+                        :idx 7,
+                        :on-type true,
+                        :head "  '([]\n",
+                        :tail "[])",
+                        :current-line "[])",
+                        :range [4 9]}))
 
-(defn format-text-at-range
+(defn format-text-at-range-old
   "Formats text from all-text at the range"
   [{:keys [all-text range idx config on-type] :as m}]
   (let [range-text (subs all-text (first range) (last range))
@@ -169,6 +210,8 @@
       (assoc-in [:config :remove-consecutive-blank-lines?] false)
       (format-text-at-idx)))
 
+(comment
+ (:range-text (format-text-at-idx-on-type {:all-text "  '([]\n[])" :idx 7})))
 
 (defn infer-indents
   "Calculate the edits needed for infering indents in `text`,

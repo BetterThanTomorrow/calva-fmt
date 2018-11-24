@@ -8,14 +8,14 @@
            (:range-text (sut/format-text {:range-text "  (foo   \nbar\n      baz)\ngazonk"})))))
 
 
-(deftest format-text-at-range-new
-  (is (= "(foo)\n(defn bar\n  [x]\n  baz)"
-         (:range-text (sut/format-text-at-range-new {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))
-
-
 (deftest format-text-at-range
-  (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
+  (is (= "(foo)\n(defn bar\n  [x]\n  baz)"
          (:range-text (sut/format-text-at-range {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))
+
+
+(deftest format-text-at-range-old
+  (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
+         (:range-text (sut/format-text-at-range-old {:all-text "  (foo)\n(defn bar\n[x]\nbaz)" :range [2 26]})))))
 
 
 (def all-text "  (foo)
@@ -28,19 +28,13 @@ baz)")
 (deftest format-text-at-idx
   (is (= "(defn bar
     [x]
-  
+
     baz)"
          (:range-text (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= 1
          (:new-index (sut/format-text-at-idx {:all-text all-text :idx 11}))))
   (is (= [10 38]
-         (:range (sut/format-text-at-idx {:all-text all-text :idx 11}))))
-  (is (= "\"bar \n \n \""
-         (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7}))))
-  #_(is (= "'([]\n    [])"
-           (:range-text (sut/format-text-at-idx-on-type {:all-text "  '([]\n[])" :idx 7}))))
-  (is (= "[]\n    []"
-         (:range-text (sut/format-text-at-idx-on-type {:all-text "  '([]\n[])" :idx 7})))))
+         (:range (sut/format-text-at-idx {:all-text all-text :idx 11})))))
 
 
 (deftest new-index
@@ -92,11 +86,7 @@ bar))")
   (is (= "(foo)\n  (defn bar\n    [x]\n    baz)"
          (:range-text (sut/normalize-indents {:all-text "  (foo)\n(defn bar\n[x]\nbaz)"
                                               :range [2 26]
-                                              :range-text "(foo)\n(defn bar\n  [x]\n  baz)"}))))
-  (is (= "(foo\n;;\n  foo\n    ;;bar\n  bar)"
-         (:range-text (sut/normalize-indents {:all-text " (foo\n;;\n      foo\n    ;;\n      bar)"
-                                              :range [1 36]
-                                              :range-text "(foo\n;;\n      foo\n    ;;\n      bar)"})))))
+                                              :range-text "(foo)\n(defn bar\n  [x]\n  baz)"})))))
 
 
 (def first-top-level-text "
@@ -117,6 +107,7 @@ bar))")
  ")
 
 
+;; These fail, leading to a horrible behaviour when creating new lines top level
 (deftest new-index-top-level
   (is (= 1
          (:new-index (sut/format-text-at-idx {:all-text first-top-level-text :idx 1}))))
@@ -133,11 +124,18 @@ bar))")
 
 
 (deftest format-text-at-idx-on-type
-  (comment ;; https://github.com/weavejester/cljfmt/issues/142
-    (is (= "(bar \n \n )"
-           (:range-text (sut/format-text-at-idx-on-type {:all-text "(bar \n\n)" :idx 7})))))
+  (is (= "(bar \n\n )"
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "(bar \n\n)" :idx 7}))))
+  (is (= "(bar \n \n )"
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "(bar \n \n)" :idx 8}))))
+  (is (= "(bar \n \n )"
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "(bar \n\n)" :idx 6}))))
   (is (= "\"bar \n \n \""
-         (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7})))))
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7}))))
+  (is (= "\"bar \n \n \""
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7}))))
+  (is (= "([]\n    [])"
+         (:range-text (sut/format-text-at-idx-on-type {:all-text "  '([]\n[])" :idx 7})))))
 
 
 (deftest new-index-on-type
