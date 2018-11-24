@@ -202,6 +202,7 @@
                   :changes {:lineNo 1 :x 0 :oldText "" :newText " "}})
         result (parinfer/parenMode "  (defn a []\n     (foo []\n     (bar)\n     (baz)))" o)]
     (cljify result))
+  
   (let [o (jsify {:cursorLine 1
                   :cursorX 3
                   :prevCursorLine 1
@@ -212,12 +213,25 @@
                              :newText " "}]})
         result (parinfer/parenMode "(comment\n   (foo bar\n     baz))" o)]
     (cljify result))
+  
+  (let [o (jsify {:cursorLine 1
+                  :cursorX 0
+                  :prevCursorLine 0
+                  :prevCursorX 8
+                  :changes [{:lineNo 0
+                             :x 8
+                             :oldText ")"
+                             :newText "\n)"}]})
+        result (parinfer/smartMode "(--> foo\n)" o)]
+    (cljify result))
+  
   (let [o (jsify {:cursorLine 1
                   :cursorX 3
                   :prevCursorLine 1
                   :prevCursorX 2})
         result (parinfer/parenMode "(comment\n    (foo bar\n    baz))" o)]
     (cljify result))
+  
   (infer-indents {:text "(comment \n   (foo bar \n     baz))"
                   :line 1
                   :character 3
@@ -227,6 +241,17 @@
                              :character 2
                              :old-text ""
                              :new-text " "}]})
+  
+  (infer-indents {:text "(comment\n\n   (foo bar \n     baz))"
+                  :line 1
+                  :character 0
+                  :previous-line 1
+                  :previous-character 0
+                  :changes [{:line 0
+                             :character 8
+                             :old-text "\n   (foo bar \n     baz))"
+                             :new-text "\n\n   (foo bar \n     baz))"}]})
+  
   (infer-indents {:text "  (defn a []\n     (foo []\n     (bar)\n     (baz)))"
                   :line 1
                   :character 4
