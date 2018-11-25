@@ -17,17 +17,18 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 * Is intended to be used alongside and by other Clojure extensions. **(Though it conflicts with Parinfer, see below.)**
 * Formats the code when new lines are entered, mostly keeping things formated as you type.
 
+_Format Current Form_
+
+![Format Current Form](/assets/format-current-form.gif)
+
+_Parinfer_
+
+![Format Current Form](/assets/parinfer.gif)
+
 ## How to use
 
 Install it and edit away. It will keep the code fomatted mostly as you type, in a somewhat ”relaxed” way, and will format it more strictly (collecting trailing brackets, for instance) when you hit `tab tab`. Search the settings for `calva-fmt` to see how you can tweak it.
 
-### Trimming trailing whitespace
-
-Beware that VS Code's built-in trimming of trailing whitespace is not Clojure-aware, but simply trims lines, regardless. This means that it will trim trailing whitespace also in multiline strings, which might be quite disastrous in some cases. To safely trim keep Calva Formatters setting for this enable and disable the built-in one:
-
-```json
-    "editor.trimAutoWhitespace": false
-```
 
 ## You might not need to install it
 
