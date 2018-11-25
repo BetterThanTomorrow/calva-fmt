@@ -51,4 +51,6 @@
   (enclosing? "([)")
   (enclosing? "[\"[\"]")
   (enclosing? "(\"[\")")
-  (enclosing? "\"foo\""))
+  (enclosing? "\"foo\"")
+  (enclosing? "\"([.*+?^${}()\n|\\[\\]\\])\"")
+  (enclosing? "\"([.*+?^${}()\\n|\\\\[\\\\]\\\\])\""))

@@ -81,7 +81,18 @@
                     :idx 4
                     :range [3 8]})
   (enclosing-range {:all-text "  (#{foo})"
-                    :idx 5}))
+                    :idx 5})
+  (def s "(foo \"([\\[\\]\\])\")")
+  (count s)
+  (enclosing-range {:all-text s
+                    :idx 4})
+  (pr-str s)
+  (def s " (\"([\\[\\]\\])\")")
+  (cljfmt/reformat-string (pr-str s)
+                          {:remove-surrounding-whitespace? false
+                           :remove-trailing-whitespace? false
+                           :remove-consecutive-blank-lines? false
+                           :align-associative? true}))
 
 (defn add-head-and-tail
   "Splits `:all-text` at `:idx` in `:head` and `:tail`"
