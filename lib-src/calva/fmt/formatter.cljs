@@ -64,7 +64,7 @@
              (let [expanded-range ((.. paredit -navigator -sexpRangeExpansion) ast (first enclosing) (last enclosing))]
                (if (some? expanded-range)
                  (let [text (apply subs all-text expanded-range)]
-                   (if (and (not= expanded-range enclosing) (re-find #"^['`#?_]" text))
+                   (if (and (not= expanded-range enclosing) (re-find #"^[\”'`#?_]" text))
                      (recur expanded-range)
                      (cljify enclosing)))
                  (cljify enclosing)))))))
@@ -77,9 +77,10 @@
                     :idx 6})
   (enclosing-range {:all-text "   (foo)"
                     :idx 4})
+  (enclosing-range {:all-text "  \"(foo)\""
+                    :idx 4})
   (enclosing-range {:all-text "  ((foo))"
-                    :idx 4
-                    :range [3 8]})
+                    :idx 4})
   (enclosing-range {:all-text "  (#{foo})"
                     :idx 5})
   (def s "(foo \"([\\[\\]\\])\")")
