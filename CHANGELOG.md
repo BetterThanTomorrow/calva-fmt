@@ -15,9 +15,6 @@ All notable changes to the "calva-fmt" extension will be documented in this file
 ## 0.0.22 - 2018-11-22
 - Add **Infer Parens** command, `ctrl+alt+p`.
 
-## 0.0.22 - 2018-11-22
-- Add **Infer Parens** command, `ctrl+alt+p`.
-
 ## 0.0.15 - 2018-11-04
 - Format code as new lines are entered, keeping things mostly formatted as you type.
 
