@@ -43,28 +43,45 @@
   [{:keys [all-text idx] :as m}]
   (assoc m :range
          (let [ast (paredit/parse all-text)
-               range ((.. paredit -navigator -sexpRange) ast idx)]
-           (try
-             (if (some? range)
-               (loop [range range]
-                 (let [text (apply subs all-text range)]
-                   (if (and (some? range)
-                            (or (= idx (first range))
-                                (= idx (last range))
-                                (not (util/enclosing? text))))
-                     (let [expanded-range ((.. paredit -navigator -sexpRangeExpansion) ast (first range) (last range))]
-                       (if (and (some? expanded-range) (not= expanded-range range))
-                         (recur expanded-range)
-                         (cljify range)))
-                     (cljify range))))
-               [idx idx])
-             (catch js/Error e
-               (let [range ((.. paredit -navigator -rangeForDefun) ast idx)]))))))
+               range ((.. paredit -navigator -sexpRange) ast idx)
+               enclosing (try
+                           (if (some? range)
+                             (loop [range range]
+                               (let [text (apply subs all-text range)]
+                                 (if (and (some? range)
+                                          (or (= idx (first range))
+                                              (= idx (last range))
+                                              (not (util/enclosing? text))))
+                                   (let [expanded-range ((.. paredit -navigator -sexpRangeExpansion) ast (first range) (last range))]
+                                     (if (and (some? expanded-range) (not= expanded-range range))
+                                       (recur expanded-range)
+                                       (cljify range)))
+                                   (cljify range))))
+                             [idx idx])
+                           (catch js/Error e
+                             ((.. paredit -navigator -rangeForDefun) ast idx)))]
+           (loop [enclosing enclosing]
+             (let [expanded-range ((.. paredit -navigator -sexpRangeExpansion) ast (first enclosing) (last enclosing))]
+               (if (some? expanded-range)
+                 (let [text (apply subs all-text expanded-range)]
+                   (if (and (not= expanded-range enclosing) (re-find #"^['`#?_]" text))
+                     (recur expanded-range)
+                     (cljify enclosing)))
+                 (cljify enclosing)))))))
 
 
 (comment
- (enclosing-range {:all-text "  ([]\n[])"
-                   :idx 6}))
+  (re-find #"^[']+" "'{foo}")
+  #_('#{foo} bar)
+  (enclosing-range {:all-text "  ([]\n[])"
+                    :idx 6})
+  (enclosing-range {:all-text "   (foo)"
+                    :idx 4})
+  (enclosing-range {:all-text "  ((foo))"
+                    :idx 4
+                    :range [3 8]})
+  (enclosing-range {:all-text "  (#{foo})"
+                    :idx 5}))
 
 (defn add-head-and-tail
   "Splits `:all-text` at `:idx` in `:head` and `:tail`"

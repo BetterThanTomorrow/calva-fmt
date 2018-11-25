@@ -134,7 +134,7 @@ bar))")
          (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7}))))
   (is (= "\"bar \n \n \""
          (:range-text (sut/format-text-at-idx-on-type {:all-text "\"bar \n \n \"" :idx 7}))))
-  (is (= "([]\n    [])"
+  (is (= "'([]\n    [])"
          (:range-text (sut/format-text-at-idx-on-type {:all-text "  '([]\n[])" :idx 7})))))
 
 
@@ -223,4 +223,16 @@ bar))")
   (is (= [26 44] ; before top level form
          (:range (sut/enclosing-range {:all-text enclosing-range-text :idx 39}))))
   (is (= [10 10] ; void (between top level forms)
-         (:range (sut/enclosing-range {:all-text enclosing-range-text :idx 10})))))
+         (:range (sut/enclosing-range {:all-text enclosing-range-text :idx 10}))))
+  (is (= [5 5]
+         (:range (sut/enclosing-range {:all-text "  []\n  \n[]" :idx 5}))))
+  (is (= [1 7]
+         (:range (sut/enclosing-range {:all-text " ([][])" :idx 4}))))
+  (is (= [1 6]
+         (:range (sut/enclosing-range {:all-text " (\"[\")" :idx 4}))))
+  (is (= [1 12]
+         (:range (sut/enclosing-range {:all-text " {:foo :bar}" :idx 2}))))
+  (is (= [1 13]
+         (:range (sut/enclosing-range {:all-text " #{:foo :bar}" :idx 8}))))
+  (is (= [1 12]
+         (:range (sut/enclosing-range {:all-text " '(:foo bar)" :idx 8})))))
