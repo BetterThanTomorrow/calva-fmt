@@ -1,5 +1,7 @@
 (ns calva.fmt.util
-  (:require [clojure.string]))
+  (:require [clojure.string]
+            ["paredit.js" :as paredit]
+            [calva.js-utils :refer [cljify jsify]]))
 
 
 (defn log
@@ -56,11 +58,30 @@
                             (reduced (conj queue c)))
               :else queue)}))
 
-(defn enclosing? [text]
+(defn enclosing?-old [text]
   (-> (reduce -enclosing? {:queue [] :first? true} text)
       (:queue)
       (empty?)))
 
 (comment
+  (enclosing?-old "[][]")
+  (enclosing?-old "([][])")
+  (enclosing?-old "([)")
+  (enclosing?-old "[\"[\"]")
+  (enclosing?-old "(\"[\")")
+  (enclosing?-old "\"foo\""))
+
+
+(defn enclosing? [text]
+  (let [ast (cljify (paredit/parse text))
+        children (:children ast)]
+    (and (= 1 (count children))
+         (= "list" (:type (first children))))))
+
+(comment
   (enclosing? "[][]")
-  (enclosing? "([][])"))
+  (enclosing? "([][])")
+  (enclosing? "([)")
+  (enclosing? "[\"[\"]")
+  (enclosing? "(\"[\")")
+  (enclosing? "\"foo\""))

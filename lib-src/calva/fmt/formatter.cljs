@@ -44,19 +44,22 @@
   (assoc m :range
          (let [ast (paredit/parse all-text)
                range ((.. paredit -navigator -sexpRange) ast idx)]
-           (if (some? range)
-             (loop [range range]
-               (let [text (apply subs all-text range)]
-                 (if (and (some? range)
-                          (or (= idx (first range))
-                              (= idx (last range))
-                              (not (util/enclosing? text))))
-                   (let [expanded-range ((.. paredit -navigator -sexpRangeExpansion) ast (first range) (last range))]
-                     (if (and (some? expanded-range) (not= expanded-range range))
-                       (recur expanded-range)
-                       (cljify range)))
-                   (cljify range))))
-             [idx idx]))))
+           (try
+             (if (some? range)
+               (loop [range range]
+                 (let [text (apply subs all-text range)]
+                   (if (and (some? range)
+                            (or (= idx (first range))
+                                (= idx (last range))
+                                (not (util/enclosing? text))))
+                     (let [expanded-range ((.. paredit -navigator -sexpRangeExpansion) ast (first range) (last range))]
+                       (if (and (some? expanded-range) (not= expanded-range range))
+                         (recur expanded-range)
+                         (cljify range)))
+                     (cljify range))))
+               [idx idx])
+             (catch js/Error e
+               (let [range ((.. paredit -navigator -rangeForDefun) ast idx)]))))))
 
 
 (comment

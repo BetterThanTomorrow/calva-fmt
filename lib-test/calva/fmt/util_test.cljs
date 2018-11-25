@@ -55,6 +55,6 @@ bar))")
   (is (= true
          (sut/enclosing? "([][])")))
   (is (= true
-         (sut/enclosing? "([)")))
+         (sut/enclosing? "(\"[\")")))
   (is (= true
          (sut/enclosing? "(\"(\")"))))
