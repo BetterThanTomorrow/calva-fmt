@@ -33,43 +33,10 @@
     (.-index m)
     -1))
 
+
 (defn split-into-lines
   [s]
   (clojure.string/split s #"\r?\n" -1))
-
-;; Thanks to @lilactown at Clojurians Slack for this way to check
-;; if we have an enclosing range. He refers to this:
-;; https://codereview.stackexchange.com/a/180569 
-
-(def opening (set "{[("))
-
-(def closing (set "}])"))
-
-(def mapping (apply assoc {} (interleave opening closing)))
-
-(defn -enclosing? [{:keys [queue first?]} c]
-  (if (and (not first?) (empty? queue))
-    (reduced {:queue (conj queue c)})
-    {:first? false
-     :queue (cond
-              (opening c) (conj queue (mapping c))
-              (closing c) (if (= c (peek queue))
-                            (pop queue)
-                            (reduced (conj queue c)))
-              :else queue)}))
-
-(defn enclosing?-old [text]
-  (-> (reduce -enclosing? {:queue [] :first? true} text)
-      (:queue)
-      (empty?)))
-
-(comment
-  (enclosing?-old "[][]")
-  (enclosing?-old "([][])")
-  (enclosing?-old "([)")
-  (enclosing?-old "[\"[\"]")
-  (enclosing?-old "(\"[\")")
-  (enclosing?-old "\"foo\""))
 
 
 (defn enclosing? [text]
