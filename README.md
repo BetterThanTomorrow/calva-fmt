@@ -10,6 +10,7 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 ## Features
 
 * Formats according to the community [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) plus giving you some options to tweak this style.
+* Opt-in feature to align map items in columns.
 * Adds command for formatting the enclosing form, default key binding is `tab`.
 * Adds command for infering parens/brackets from indents (using ParinferLib), default key binding `ctrl+alt+p`.
 * Adds command for indenting and dedenting the current line (using ParinferLib), default key binding `ctrl+i` and `shift+ctrl+i`, respectively.

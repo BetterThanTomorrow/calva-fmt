@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.25",
+    "version": "0.0.26",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -96,32 +96,37 @@
                     "calva.fmt.indentation": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if calva-fmt should correct the indentation of your code."
+                        "description": "Correct the indentation of your code?"
                     },
                     "calva.fmt.removeSurroundingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if calva-fmt should remove whitespace surrounding inner forms. This will convert ( foo ) to (foo)."
+                        "description": "Remove whitespace surrounding inner forms? This will convert ( foo ) to (foo)."
                     },
                     "calva.fmt.removeTrailingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if calva-fmt should remove trailing whitespace in lines. This will convert (foo) \\n to (foo)\\n."
+                        "description": "Remove trailing whitespace in lines? This will convert (foo) \\n to (foo)\\n."
                     },
                     "calva.fmt.insertMissingWhitespace": {
                         "type": "boolean",
                         "default": true,
-                        "description": "true if calva-fmt should insert whitespace missing from between elements. This will convert (foo(bar)) to (foo (bar))."
+                        "description": "Insert whitespace missing from between elements? This will convert (foo(bar)) to (foo (bar))."
                     },
                     "calva.fmt.removeConsecutiveBlankLines": {
                         "type": "boolean",
                         "default": false,
-                        "description": "true if calva-fmt should squeeze consecutive blank lines to one."
+                        "description": "Squeeze consecutive blank lines to one?"
                     },
                     "calva.fmt.formatAsYouType": {
                         "type": "boolean",
                         "default": true,
-                        "description": "Should calva-fmt auto-adjust indentation and format as you type (only on enter, currently)?"
+                        "description": "Auto-adjust indentation and format as you type (only on enter, currently)?"
+                    },
+                    "calva.fmt.allgnMapItems": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Align map items in columns? (Experimental)"
                     }
                 }
             }
