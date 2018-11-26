@@ -9,8 +9,11 @@ All notable changes to the "calva-fmt" extension will be documented in this file
 ### Work in pogress
 - Support for `:cljfmt` settings maps.
 
+## 0.0.28 - 2018-11-26
+- Add command for aligning map items, and bindings, in columns, `ctrl+alt+l`. (Exprimental)
+
 ## 0.0.26 - 2018-11-24
-- Add experimental option to align map items in columns, `calva.fmt.allgnMapItems`, defaults to `false`.
+- Add experimental option to align map items, and bindings, in columns, `calva.fmt.allgnMapItems`, defaults to `false`.
 
 ## 0.0.23 - 2018-11-24
 - Add **Indent/Dedent Line** commands, `ctrl+i` and `shift+ctrl+i`, respectively.

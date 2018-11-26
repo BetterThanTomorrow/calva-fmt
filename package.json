@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.27",
+    "version": "0.0.28",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -51,6 +51,11 @@
                 "category": "Calva Format"
             },
             {
+                "command": "calva-fmt.alignCurrentForm",
+                "title": "Format and Align Current Form (recursively, experimental)",
+                "category": "Calva Format"
+            },
+            {
                 "command": "calva-fmt.inferParens",
                 "title": "Infer Parens (from the indentation)",
                 "category": "Calva Format"
@@ -70,6 +75,11 @@
             {
                 "command": "calva-fmt.formatCurrentForm",
                 "key": "tab",
+                "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
+            },
+            {
+                "command": "calva-fmt.alignCurrentForm",
+                "key": "ctrl+alt+l",
                 "when": "editorLangId == clojure && editorTextFocus && !editorReadOnly && !suggestWidgetVisible && !hasOtherSuggestions"
             },
             {

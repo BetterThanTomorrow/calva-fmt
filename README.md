@@ -10,8 +10,8 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 ## Features
 
 * Formats according to the community [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) plus giving you some options to tweak this style.
-* Opt-in feature to align map items in columns.
 * Adds command for formatting the enclosing form, default key binding is `tab`.
+* Adds command for aligning map items, and bindings in the current form, default key binding `ctrl+alt+l`. (This is a bit experimental and will not always produce the prettiest results. Also it is recursive.) You can also opt-in to have this behaviour be on for all formatting, via settings.
 * Adds command for infering parens/brackets from indents (using ParinferLib), default key binding `ctrl+alt+p`.
 * Adds command for indenting and dedenting the current line (using ParinferLib), default key binding `ctrl+i` and `shift+ctrl+i`, respectively.
 * Provides the formater for the VSCode *Format Selection* and *Format Document* commands.
@@ -25,6 +25,10 @@ _Format Current Form_
 _Parinfer_
 
 ![Format Current Form](/assets/parinfer.gif)
+
+_Align Current Form_
+
+![Align Current Form](/assets/align-items.gif)
 
 ## How to use
 

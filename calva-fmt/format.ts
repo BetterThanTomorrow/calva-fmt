@@ -17,11 +17,11 @@ export function formatRange(document: vscode.TextDocument, range: vscode.Range) 
     return vscode.workspace.applyEdit(wsEdit);
 }
 
-export function formatPosition(editor: vscode.TextEditor, onType: boolean = false): void {
+export function formatPosition(editor: vscode.TextEditor, onType: boolean = false, extraConfig = {}): void {
     const doc: vscode.TextDocument = editor.document,
         pos: vscode.Position = editor.selection.active,
         index = doc.offsetAt(pos),
-        formatted: { "range-text": string, "range": number[], "new-index": number } = _formatIndex(doc.getText(), index, onType),
+        formatted: { "range-text": string, "range": number[], "new-index": number } = _formatIndex(doc.getText(), index, onType, extraConfig),
         range: vscode.Range = new vscode.Range(doc.positionAt(formatted.range[0]), doc.positionAt(formatted.range[1])),
         newIndex: number = doc.offsetAt(range.start) + formatted["new-index"],
         previousText: string = doc.getText(range);
@@ -42,11 +42,15 @@ export function formatPositionCommand(editor: vscode.TextEditor) {
     formatPosition(editor);
 }
 
-function _formatIndex(allText: string, index: number, onType: boolean = false): { "range-text": string, "range": number[], "new-index": number } {
+export function alignPositionCommand(editor: vscode.TextEditor) {
+    formatPosition(editor, true, { "align-associative?": true });
+}
+
+function _formatIndex(allText: string, index: number, onType: boolean = false, extraConfig = {}): { "range-text": string, "range": number[], "new-index": number } {
     const d = cljify({
         "all-text": allText,
         "idx": index,
-        "config": config.getConfig()
+        "config": { ...config.getConfig(), ...extraConfig }
     }),
         result = jsify(onType ? formatTextAtIdxOnType(d) : formatTextAtIdx(d));
     if (!result["error"]) {
