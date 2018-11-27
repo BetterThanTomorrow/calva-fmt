@@ -1,4 +1,4 @@
-{:dependencies [[cljfmt "0.6.1-ALIGN"]
+{:dependencies [[pez/cljfmt "0.0.1-SNAPSHOT"]
                 #_[zprint "0.4.11"]]
 
  :source-paths ["lib-src" "lib-test"]
