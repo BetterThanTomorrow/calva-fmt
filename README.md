@@ -4,35 +4,40 @@ This is the [Calva Formatter](https://marketplace.visualstudio.com/items?itemNam
 
 ## Raison d´être
 
+1. To the extent possible, formatting should happen as you type. Code should very seldom be in a an unformatted state.
 1. **Fewer dependencies, less headaches**. You should be able to edit a Clojure file, with full formatting help, without depending on a REPL running or anything else needed to be installed.
-1. **Fewer conflicts, more predictability**. As VSCode gets to be a more serious editor for Clojurians there is a an editing war going on between the various plugins that help with editing Clojure code. Calva Formatter is aiming at being the major Clojure formatter, lifting this responsibility from the shoulders of extensions like Calva, Paredit and other Clojure related extensions.
+1. **Fewer conflicts, more predictability**. As VSCode gets to be a more serious editor for Clojurians there is a an editing war going on between the various plugins that help with editing Clojure code. Calva Formatter is aiming at being the major Clojure formatter, lifting this responsibility from the shoulders of extensions like Calva, Paredit and other Clojure related extensions..
 
 ## Features
 
-* Formats according to the community [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) plus giving you some options to tweak this style.
-* Adds command for formatting the enclosing form, default key binding is `tab`.
-* Adds command for aligning map items, and bindings in the current form, default key binding `ctrl+alt+l`. (This is a bit experimental and will not always produce the prettiest results. Also it is recursive.) You can also opt-in to have this behaviour be on for all formatting, via settings.
-* Adds command for infering parens/brackets from indents (using ParinferLib), default key binding `ctrl+alt+p`.
-* Adds command for indenting and dedenting the current line (using ParinferLib), default key binding `ctrl+i` and `shift+ctrl+i`, respectively.
+* Formats according to the community [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) (while giving you some options to tweak this style).
+* Adds a command for formatting the enclosing form, default key binding is `tab`.
+* Adds a command for aligning map items, and bindings in the current form, default key binding `ctrl+alt+l`. (This is a bit experimental and will not always produce the prettiest results. Also it is recursive.) You can also opt-in to have this behaviour be on for all formatting, via settings.
+* Adds a command for infering parens/brackets from indents (using ParinferLib), default key binding `ctrl+alt+p`.
+* Adds a command for indenting and dedenting the current line (using ParinferLib), default key binding `ctrl+i` and `shift+ctrl+i`, respectively.
 * Provides the formater for the VSCode *Format Selection* and *Format Document* commands.
 * Is intended to be used alongside and by other Clojure extensions. **(Though it conflicts with Parinfer, see below.)**
 * Formats the code when new lines are entered, mostly keeping things formated as you type.
 
-_Format Current Form_
+### Demo GIF time
+
+Some examples of what it can be like to use Calva Formatter:
+
+### Format Current Form
 
 ![Format Current Form](/assets/format-current-form.gif)
 
-_Parinfer_
-
-![Format Current Form](/assets/parinfer.gif)
-
-_Align Current Form_
+### Align Current Form
 
 ![Align Current Form](/assets/align-items.gif)
 
+### Parinfer
+
+![Infer parens](/assets/parinfer.gif)
+
 ## How to use
 
-Install it and edit away. It will keep the code fomatted mostly as you type, in a somewhat ”relaxed” way, and will format it more strictly (collecting trailing brackets, for instance) when you hit `tab tab`. Search the settings for `calva-fmt` to see how you can tweak it.
+Install it and edit away. It will keep the code fomatted mostly as you type, in a somewhat ”relaxed” way, and will format it more strictly (collecting trailing brackets, for instance) when you hit `tab`. Search the settings for `calva-fmt` to see how you can tweak it.
 
 
 ## You might not need to install it
@@ -67,9 +72,8 @@ Calva Formater is written in TypeScript and ClojureScript. It is setup so that t
 See [How to Contribute](https://github.com/BetterThanTomorrow/calva-fmt/wiki/How-to-Contribute) on the project wiki for instructions.
 
 ## The Future of calva-fmt
-* Make it honor project settings.
-* Up the Parinfer magic support.
 
+* Make it honor project settings.
 
 ## Happy Formatting
 
