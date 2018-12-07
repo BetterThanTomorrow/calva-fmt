@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as config from './config';
+const formatter = require('@cospaia/calva-lib/calva.fmt.formatter');
 
 const { formatTextAtRange, formatTextAtIdx, formatTextAtIdxOnType, cljify, jsify } = require('../lib/calva_fmt');
 
