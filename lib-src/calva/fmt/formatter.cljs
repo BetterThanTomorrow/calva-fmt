@@ -144,19 +144,29 @@
         padded-text (str padding range-text)
         range-index (- idx (first range))
         tail (subs range-text range-index)
-        formatted-m (format-text (assoc m :range-text padded-text))]
+        formatted-m (-> m
+                        (assoc-in [:config :indents] ^:replace {#"^[a-z]" [[:block 1 0]]})
+                        (assoc :range-text padded-text)
+                        (format-text))]
     (-> (assoc m :range-text (subs (:range-text formatted-m) indent-before))
         (assoc :range-tail tail)
         (index-for-tail-in-range))))
 
+
 (comment 
- (format-text-at-range {:all-text "  '([]\n[])",
-                        :idx 7,
-                        :on-type true,
-                        :head "  '([]\n",
-                        :tail "[])",
-                        :current-line "[])",
-                        :range [4 9]}))
+  (cljfmt/reformat-string "(let [x y\na b]\nbar\n)\n\n(-> foo\nbar\n)\n\n(foo bar\nbaz\n)"
+                          {:remove-surrounding-whitespace? false
+                           :remove-trailing-whitespace? false
+                           :remove-consecutive-blank-lines? false
+                           :indents ^:replace {#".*" [[:inner 0]]}})
+  (format-text-at-range {:all-text "  '([]\n[])",
+                         :idx 7,
+                         :on-type true,
+                         :head "  '([]\n",
+                         :tail "[])",
+                         :current-line "[])",
+                         :range [4 9]}))
+                        
 
 (defn format-text-at-range-old
   "Formats text from all-text at the range"

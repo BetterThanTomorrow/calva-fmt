@@ -1,4 +1,5 @@
 {:dependencies [[pez/cljfmt "0.6.2-ALIGN"]
+                [cider/cider-nrepl "0.19.0-SNAPSHOT"]
                 #_[zprint "0.4.11"]]
 
  :source-paths ["lib-src" "lib-test"]

@@ -4,7 +4,78 @@
             ["parinfer" :as parinfer]
             ["paredit.js" :as paredit]
             [calva.js-utils :refer [cljify jsify]]
-            [calva.fmt.util :as util]))
+            [calva.fmt.util :as util]
+            [clojure.data]))
+
+
+(comment
+  (def tonsky-multi
+    "(defn multi-arity
+  ([x]
+   body)
+  ([x y]
+   body))")
+  (def formatted-multi
+    (cljfmt/reformat-string tonsky-multi
+                            {:remove-surrounding-whitespace? false
+                             :remove-trailing-whitespace? false
+                             :remove-consecutive-blank-lines? false
+                             :indents {#"^[a-z]" [[:block 1 0]]}}))
+  (= tonsky-multi formatted-multi))
+
+(comment
+  (def t "(when something
+  body)
+
+(defn f [x]
+  body)
+
+(defn f
+  [x]
+  body)
+
+(defn many-args [a b c
+                 d e f]
+  body)
+
+(defn multi-arity
+  ([x]
+   body)
+  ([x y]
+   body))
+
+(let [x 1
+      y 2]
+  body)
+
+[1 2 3
+ 4 5 6]
+
+{:key-1 v1
+ :key-2 v2}
+
+#{a b c
+  d e f}
+
+(or (condition-a)
+  (condition-b))
+
+(filter even?
+  (range 1 10))
+
+(clojure.core/filter even?
+  (range 1 10))
+
+(filter
+ even?
+  (range 1 10))")
+
+  (def f
+    (cljfmt/reformat-string t {:indents {#"^\w" [[:inner 0]]}}))
+                                                   ;;#"^\W" [[:block 0 0]]
+
+  (= t f)
+  (println f))
 
 
 (comment
@@ -17,10 +88,8 @@
       first
       :children
       count)
-  (-> (cljify ((.. paredit -walk -containingSexpsAt) (paredit/parse "[][]") "a" identity))
-      )
-  (-> (cljify ((.. paredit -walk -containingSexpsAt) (paredit/parse "[][]") [0 4] identity))
-      )
+  (-> (cljify ((.. paredit -walk -containingSexpsAt) (paredit/parse "[][]") "a" identity)))
+  (-> (cljify ((.. paredit -walk -containingSexpsAt) (paredit/parse "[][]") [0 4] identity)))
   (-> (cljify ((.. paredit -walk -containingSexpsAt) (paredit/parse "#()") 0 identity))
       count)
   (-> (cljify ((.. paredit -walk -containingSexpsAt) (paredit/parse "()") 0 identity))
@@ -72,6 +141,11 @@
       :remove-trailing-whitespace? false
       :remove-consecutive-blank-lines? false})
 
+  (cljfmt/reformat-string "(let [x y\na b]\nbar\n)\n\n(-> foo\nbar\n)\n\n(foo bar\nbaz\n)"
+                          {:remove-surrounding-whitespace? false
+                           :remove-trailing-whitespace? false
+                           :remove-consecutive-blank-lines? false
+                           :indents ^:replace {#".*" [[:inner 0]]}})
 
   (def str "(defn \n\n)")
 
