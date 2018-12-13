@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import * as config from './config';
-
-const { formatTextAtRange, formatTextAtIdx, formatTextAtIdxOnType, cljify, jsify } = require('../lib/calva_fmt');
-
+const formatter = require('@cospaia/calva-lib/lib/calva.fmt.formatter');
+const jsUtils = require('@cospaia/calva-lib/lib/calva.js_utils');
 
 export function formatRangeEdits(document: vscode.TextDocument, range: vscode.Range): vscode.TextEdit[] {
     const text: string = document.getText(range),
@@ -47,12 +46,12 @@ export function alignPositionCommand(editor: vscode.TextEditor) {
 }
 
 function _formatIndex(allText: string, index: number, onType: boolean = false, extraConfig = {}): { "range-text": string, "range": number[], "new-index": number } {
-    const d = cljify({
+    const d = jsUtils.cljify({
         "all-text": allText,
         "idx": index,
         "config": { ...config.getConfig(), ...extraConfig }
     }),
-        result = jsify(onType ? formatTextAtIdxOnType(d) : formatTextAtIdx(d));
+        result = jsUtils.jsify(onType ? formatter.format_text_at_idx_on_type(d) : formatter.format_text_at_idx(d));
     if (!result["error"]) {
         return result;
     }
@@ -64,13 +63,14 @@ function _formatIndex(allText: string, index: number, onType: boolean = false, e
 
 
 function _formatRange(rangeText: string, allText: string, range: number[]): string {
-    const d = cljify({
+    const d = {
         "range-text": rangeText,
         "all-text": allText,
         "range": range,
         "config": config.getConfig()
-    }),
-        result = jsify(formatTextAtRange(d));
+    },
+        cljData = jsUtils.cljify(d),
+        result = jsUtils.jsify(formatter.format_text_at_range(cljData));
     if (!result["error"]) {
         return result["range-text"];
     }
