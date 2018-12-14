@@ -6,7 +6,7 @@ const jsUtils = require('@cospaia/calva-lib/lib/calva.js_utils');
 export function formatRangeEdits(document: vscode.TextDocument, range: vscode.Range): vscode.TextEdit[] {
     const text: string = document.getText(range),
         rangeTuple: number[] = [document.offsetAt(range.start), document.offsetAt(range.end)],
-        newText: string = _formatRange(text, document.getText(), rangeTuple);
+        newText: string = _formatRange(text, document.getText(), rangeTuple, document.eol == 2 ? "\r\n" : "\n");
     return [vscode.TextEdit.replace(range, newText)];
 }
 
@@ -20,7 +20,7 @@ export function formatPosition(editor: vscode.TextEditor, onType: boolean = fals
     const doc: vscode.TextDocument = editor.document,
         pos: vscode.Position = editor.selection.active,
         index = doc.offsetAt(pos),
-        formatted: { "range-text": string, "range": number[], "new-index": number } = _formatIndex(doc.getText(), index, onType, extraConfig),
+        formatted: { "range-text": string, "range": number[], "new-index": number } = _formatIndex(doc.getText(), index, doc.eol == 2 ? "\r\n" : "\n", onType, extraConfig),
         range: vscode.Range = new vscode.Range(doc.positionAt(formatted.range[0]), doc.positionAt(formatted.range[1])),
         newIndex: number = doc.offsetAt(range.start) + formatted["new-index"],
         previousText: string = doc.getText(range);
@@ -45,13 +45,14 @@ export function alignPositionCommand(editor: vscode.TextEditor) {
     formatPosition(editor, true, { "align-associative?": true });
 }
 
-function _formatIndex(allText: string, index: number, onType: boolean = false, extraConfig = {}): { "range-text": string, "range": number[], "new-index": number } {
+function _formatIndex(allText: string, index: number, eol: string, onType: boolean = false, extraConfig = {}): { "range-text": string, "range": number[], "new-index": number } {
     const d = jsUtils.cljify({
         "all-text": allText,
         "idx": index,
+        "eol": eol,
         "config": { ...config.getConfig(), ...extraConfig }
     }),
-        result = jsUtils.jsify(onType ? formatter.format_text_at_idx_on_type(d) : formatter.format_text_at_idx(d));
+    result = jsUtils.jsify(onType ? formatter.format_text_at_idx_on_type(d) : formatter.format_text_at_idx(d));
     if (!result["error"]) {
         return result;
     }
@@ -62,15 +63,16 @@ function _formatIndex(allText: string, index: number, onType: boolean = false, e
 }
 
 
-function _formatRange(rangeText: string, allText: string, range: number[]): string {
+function _formatRange(rangeText: string, allText: string, range: number[], eol: string): string {
     const d = {
         "range-text": rangeText,
         "all-text": allText,
         "range": range,
+        "eol": eol,
         "config": config.getConfig()
     },
-        cljData = jsUtils.cljify(d),
-        result = jsUtils.jsify(formatter.format_text_at_range(cljData));
+    cljData = jsUtils.cljify(d),
+    result = jsUtils.jsify(formatter.format_text_at_range(cljData));
     if (!result["error"]) {
         return result["range-text"];
     }
