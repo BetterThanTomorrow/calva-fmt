@@ -7,10 +7,13 @@ import * as inferer from './infer';
 const ClojureLanguageConfiguration: vscode.LanguageConfiguration = {
     wordPattern: /[^\s#()[\]{};"\\]+/,
     onEnterRules: [
-        // In a desperate attempt to stop VS Code from indenting top level lines, the gloves are off!
+        // This is madness, but the only way to stop vscode from indenting new lines
         {
             beforeText: /.*/,
-            action: { indentAction: vscode.IndentAction.Outdent }
+            action: {
+                indentAction: vscode.IndentAction.Outdent,
+                removeText: Number.MAX_VALUE
+            }
         },
     ]
 }
@@ -24,7 +27,7 @@ function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.inferParens', inferer.inferParensCommand));
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.tabIndent', (e) => { inferer.indentCommand(e, " ", true) }));
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.tabDedent', (e) => { inferer.indentCommand(e, " ", false) }));
-    context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new FormaOnTypeEditProvider, "\n"));
+    context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new FormaOnTypeEditProvider, "\r", "\n"));
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new RangeEditProvider));
     vscode.window.onDidChangeActiveTextEditor(inferer.updateState);
     // vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
