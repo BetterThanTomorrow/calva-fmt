@@ -171,7 +171,7 @@
         "vscode": "^1.1.21"
     },
     "dependencies": {
-        "@cospaia/calva-lib": "^0.0.17",
+        "@cospaia/calva-lib": "^0.0.18",
         "immutable": "^3.8.1",
         "immutable-cursor": "^2.0.1",
         "npm": "^6.4.1"
