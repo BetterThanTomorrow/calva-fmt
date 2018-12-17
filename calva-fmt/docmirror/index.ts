@@ -44,12 +44,25 @@ class DocumentMirror {
     lines: ClojureSourceLine[] = [];
     scanner = new Scanner();
 
+    dirtyLines: number[] = [];
+
     constructor(public doc: vscode.TextDocument) {
         scanner.state = { inString: false }
         for(let i=0; i<doc.lineCount; i++) {
             let line = doc.lineAt(i);
             this.lines.push(new ClojureSourceLine(line.text, scanner.state));
         }
+    }
+
+    markDirty(idx: number) {
+        if(this.dirtyLines.indexOf(idx) == -1)
+            this.dirtyLines.push(idx);
+    }
+
+    removeDirty(start: number, end: number, inserted: number) {
+        let delta = end-start + inserted;
+        this.dirtyLines = this.dirtyLines.filter(x => x < start || x > end)
+                                          .map(x => x > start ? x - delta : x);
     }
 
     changeRange(e: vscode.TextDocumentContentChangeEvent) {
@@ -61,6 +74,9 @@ class DocumentMirror {
 
         // the right side of the line unaffected by the edit.
         let right = this.lines[e.range.end.line].text.substr(e.range.end.character);
+
+        // we've nuked this lines, so. yay.
+        this.removeDirty(e.range.start.line, e.range.end.line, replaceLines.length-1);
 
         let items: ClojureSourceLine[] = [];
         
@@ -84,29 +100,35 @@ class DocumentMirror {
         this.lines.splice(e.range.start.line, e.range.end.line-e.range.start.line+1, ...items);
         let nextIdx = e.range.start.line+replaceLines.length
         let nextLine = this.lines[nextIdx];
-        let prevState = lastLine.endState;
         
-        while(nextLine && !equal(nextLine.startState, prevState)) {
-            // everything is desynced now, so scan forward until it is resolved.
+        if(nextLine && !equal(nextLine.startState, lastLine.endState))
+            this.markDirty(nextIdx); // everything is desynced now, so mark this line.
+        console.log(this.dirtyLines);
+    }
 
-            // TODO: this should only really happen after all coalesced events have occured, and even possibly only
-            //       when we need to force computation because we need the parenthesis info. For example, we do not
-            //       need up to date information for the purposes of formatting for the lines below the cursor *ever*.
-            //       because " can toggle the entire file to be in/out of a string, it is important that we don't immediately touch
-            //       the whole file again. Waiting to perform this scan only when the cursor is moved, or on return would be enough.
-            //
-            //       This is a TODO because I need to track 'dirty' line #s, and update the indices as edits move them about.
-            
-            let newLine = new ClojureSourceLine(this.lines[nextIdx].text, prevState);
-            prevState = newLine.endState;
-            this.lines[nextIdx++] = newLine;
-            nextLine = this.lines[nextIdx];
+    flushChanges() {
+        let seen = new Set<number>();
+        this.dirtyLines.sort();
+        while(this.dirtyLines.length) {
+            let nextIdx = this.dirtyLines.shift();
+            if(seen.has(nextIdx))
+                continue; // already processed.
+
+            seen.add(nextIdx);
+            let prevState = nextIdx == 0 ? { inString: false } : this.lines[nextIdx-1].endState;
+            let newLine: ClojureSourceLine;
+            do {
+                newLine = new ClojureSourceLine(this.lines[nextIdx].text, prevState);
+                prevState = newLine.endState;
+                this.lines[nextIdx++] = newLine;    
+            } while(this.lines[nextIdx] && !(equal(this.lines[nextIdx].startState, newLine.endState)))
         }
     }
 
     processChanges(e: vscode.TextDocumentContentChangeEvent[]) {
         for(let change of e)
             this.changeRange(change);
+        //this.flushChanges();
         
         if(debugValidation && this.doc.getText() != this.text)
             vscode.window.showErrorMessage("DocumentMirror failed");
