@@ -22,26 +22,22 @@ export class Scanner {
         this.state = state;
         let lex = (this.state.inString ? multstring : toplevel).lex(line);
         let tk: Token;
-        try {
-            do {
-                tk = lex.scan();
-                if(tk) {
-                    let oldpos = lex.position;
-                    if(tk.type == "str-end") {
-                        this.state = { ...this.state, inString: false};
-                        lex = toplevel.lex(line);
-                        lex.position = oldpos;
-                    } else if (tk.type == "str-start") {
-                        this.state = { ...this.state, inString: true};
-                        lex = multstring.lex(line);
-                        lex.position = oldpos;
-                    }
-                    tks.push(tk);
+        do {
+            tk = lex.scan();
+            if(tk) {
+                let oldpos = lex.position;
+                if(tk.type == "str-end") {
+                    this.state = { ...this.state, inString: false};
+                    lex = toplevel.lex(line);
+                    lex.position = oldpos;
+                } else if (tk.type == "str-start") {
+                    this.state = { ...this.state, inString: true};
+                    lex = multstring.lex(line);
+                    lex.position = oldpos;
                 }
-            } while(tk);
-        } catch(e) {
-            debugger
-        }
+                tks.push(tk);
+            }
+        } while(tk);
         return tks;
     }
 }
