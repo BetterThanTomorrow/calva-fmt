@@ -6,8 +6,8 @@ const scanner = new Scanner();
 class ClojureSourceLine {
     tokens: Token[];
     endState: ScannerState;
-    constructor(public text: string, public startState: ScannerState) {
-        this.tokens = scanner.processLine(text, startState)
+    constructor(public text: string, public startState: ScannerState, lineNo: number) {
+        this.tokens = scanner.processLine(text, lineNo, startState)
         this.endState = scanner.state;
     }
 
@@ -47,25 +47,29 @@ class DocumentMirror {
     dirtyLines: number[] = [];
 
     constructor(public doc: vscode.TextDocument) {
-        scanner.state = { inString: false }
+        scanner.state = { inString: false, paren: null }
         for(let i=0; i<doc.lineCount; i++) {
             let line = doc.lineAt(i);
-            this.lines.push(new ClojureSourceLine(line.text, scanner.state));
+            this.lines.push(new ClojureSourceLine(line.text, scanner.state, i));
         }
     }
 
-    markDirty(idx: number) {
+    private markDirty(idx: number) {
         if(this.dirtyLines.indexOf(idx) == -1)
             this.dirtyLines.push(idx);
     }
 
-    removeDirty(start: number, end: number, inserted: number) {
+    private removeDirty(start: number, end: number, inserted: number) {
         let delta = end-start + inserted;
         this.dirtyLines = this.dirtyLines.filter(x => x < start || x > end)
                                           .map(x => x > start ? x - delta : x);
     }
+    
+    private getStateForLine(line: number) {
+        return line == 0 ? { inString: false, paren: null } : this.lines[line-1].endState;
+    }
 
-    changeRange(e: vscode.TextDocumentContentChangeEvent) {
+    private changeRange(e: vscode.TextDocumentContentChangeEvent) {
         // extract the lines we will replace
         let replaceLines = e.text.split(this.doc.eol == vscode.EndOfLine.LF ? /\n/ : /\r\n/);
 
@@ -82,18 +86,18 @@ class DocumentMirror {
         
         // initialize the lexer state - the first line is definitely not in a string, otherwise copy the
         // end state of the previous line before the edit
-        let state = e.range.start.line == 0 ? { inString: false } : this.lines[e.range.start.line-1].endState;
+        let state = this.getStateForLine(e.range.start.line)
 
         let lastLine: ClojureSourceLine;
         if(replaceLines.length == 1) {
             // trivial single line edit
-            items.push(lastLine = new ClojureSourceLine(left + replaceLines[0] + right, state));
+            items.push(lastLine = new ClojureSourceLine(left + replaceLines[0] + right, state, e.range.start.line));
         } else {
             // multi line edit.
-            items.push(new ClojureSourceLine(left + replaceLines[0], state));
+            items.push(new ClojureSourceLine(left + replaceLines[0], state, e.range.start.line));
             for(let i=1; i<replaceLines.length-1; i++)
-                items.push(new ClojureSourceLine(replaceLines[i], scanner.state));
-            items.push(lastLine = new ClojureSourceLine(replaceLines[replaceLines.length-1] + right, scanner.state))
+                items.push(new ClojureSourceLine(replaceLines[i], scanner.state, e.range.start.line+i));
+            items.push(lastLine = new ClojureSourceLine(replaceLines[replaceLines.length-1] + right, scanner.state, e.range.start.line+replaceLines.length))
         }
 
         // now splice in our edited lines
@@ -115,10 +119,10 @@ class DocumentMirror {
                 continue; // already processed.
 
             seen.add(nextIdx);
-            let prevState = nextIdx == 0 ? { inString: false } : this.lines[nextIdx-1].endState;
+            let prevState = this.getStateForLine(nextIdx);
             let newLine: ClojureSourceLine;
             do {
-                newLine = new ClojureSourceLine(this.lines[nextIdx].text, prevState);
+                newLine = new ClojureSourceLine(this.lines[nextIdx].text, prevState, nextIdx+1);
                 prevState = newLine.endState;
                 this.lines[nextIdx++] = newLine;    
             } while(this.lines[nextIdx] && !(equal(this.lines[nextIdx].startState, newLine.endState)))
@@ -128,7 +132,7 @@ class DocumentMirror {
     processChanges(e: vscode.TextDocumentContentChangeEvent[]) {
         for(let change of e)
             this.changeRange(change);
-        //this.flushChanges();
+        this.flushChanges();
         
         if(debugValidation && this.doc.getText() != this.text)
             vscode.window.showErrorMessage("DocumentMirror failed");

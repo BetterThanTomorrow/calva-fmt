@@ -19,10 +19,8 @@ export interface Rule {
  * create one of these.
  *
  * @class
- * @param context a context object for this lexer.
- * @param {FileInfo} source
+ * @param {string} source the source code to parse
  * @param rules the rules of this lexer.
- * @param {boolean?} skipWhiteSpace if true- terminals who's type is "ws" are discarded.
  */
 export class Lexer {
     position: number = 0;
@@ -68,7 +66,6 @@ export class Lexer {
                 return null;
             throw new Error("Unexpected character at " + this.position + ": "+JSON.stringify(this.source));
         }
-            
         return token;
     }
 }
@@ -84,7 +81,7 @@ export class LexicalGrammar {
      * Defines a terminal with the given pattern and constructor.
      * @param {string} pattern the pattern this nonterminal must match.
      * @param {function(Array<string>): Object} fn returns a lexical token representing
-     *        this terminal.  An additional "si" property containing the token source position
+     *        this terminal.  An additional "offset" property containing the token source position
      *        will also be added, as well as a "raw" property, containing the raw string match.
      */
     terminal(pattern: string, fn: (T, RegExpExecArray) => any): void {

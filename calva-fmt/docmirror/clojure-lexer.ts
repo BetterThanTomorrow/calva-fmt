@@ -1,23 +1,75 @@
+/**
+ * A Scanner for Clojure.
+ * 
+ * Based on a pared down version of my lexer without a lot of other needless cruft relating to source information etc.
+ * Unlike flex, this lexer doesn't support states, so we toggle between toplevel and string states by swapping lexers.
+ * 
+ * This is *not* a fully accurate lexer, since it needs to be robust in the face of junk.
+ */
 import { LexicalGrammar, Token } from "./lexer";
 export type Token = Token;
 
+// The toplevel lexical grammar for Clojure.
 let toplevel = new LexicalGrammar();
+
+// whitespace
 toplevel.terminal("\\s+", (l, m) => ({ type: "ws" }))
+// comments
 toplevel.terminal(";.*", (l, m) => ({ type: "comment" }))
+// punctuators
 toplevel.terminal("\\(|\\)|\\[|\\]|\\{|\\}|#\\{|,|~@|~|'|#'|#:|#_|^|#\\(|`|#?\\(", (l, m) => ({ type: "punc" }))
+// this is a REALLY lose symbol definition, but similar to how clojure really collects it. numbers/true/nil are all 
 toplevel.terminal("[^()[\\]\\{\\}#,~@'`^\"\\s]+", (l, m) => ({ type: "id" }))
+// complete string on a single line
 toplevel.terminal('"(\\\\.|[^"]+)*"', (l, m) => ({ type: "str"}))
+
+// begin a multiline string
 toplevel.terminal('"([^"]+|\\\\.)*', (l, m) => ({ type: "str-start"}))
 
-let multstring = new LexicalGrammar()
-multstring.terminal('([^"]|\\\\.)*"', (l, m) => ({ type: "str-end" }))
-multstring.terminal('([^"]|\\\\.)*', (l, m) => ({ type: "str" }))
 
-export type ScannerState = { inString: boolean }
+// Inside a multi-line string lexical grammar
+let multstring = new LexicalGrammar()
+// end a multiline string
+multstring.terminal('([^"]|\\\\.)*"', (l, m) => ({ type: "str-end" }))
+// still within a multiline string
+multstring.terminal('([^"]|\\\\.)*', (l, m) => ({ type: "str-inside" }))
+
+export interface OpenParen {
+    type: "(" | "[" | "{";
+    line: number;
+    character: number;
+    firstToken: Token;
+
+    previous: OpenParen;
+}
+
+/** The state of the scanner */
+export interface ScannerState {
+    /** Are we scanning inside a string? If so use multstring grammar, otherwise use toplevel. */
+    inString: boolean
+
+    /** Parenthesis information */
+    paren: OpenParen;
+}
+
+const OPEN_PARS = {
+    "(": "(",
+    "#(": "(",
+    "#?(": "(",
+    "#{": "{",
+    "{": "{",
+    "[": "["
+}
+
+const CLOSE_PARS = {
+    ")": "(",
+    "]": "[",
+    "}": "{"
+}
 
 export class Scanner {
-    state: ScannerState = { inString: false };
-    processLine(line: string, state: ScannerState = this.state) {
+    state: ScannerState = { inString: false, paren: null };
+    processLine(line: string, lineNumber: number, state: ScannerState = this.state) {
         let tks: Token[] = [];
         this.state = state;
         let lex = (this.state.inString ? multstring : toplevel).lex(line);
@@ -26,14 +78,37 @@ export class Scanner {
             tk = lex.scan();
             if(tk) {
                 let oldpos = lex.position;
-                if(tk.type == "str-end") {
-                    this.state = { ...this.state, inString: false};
-                    lex = toplevel.lex(line);
-                    lex.position = oldpos;
-                } else if (tk.type == "str-start") {
-                    this.state = { ...this.state, inString: true};
-                    lex = multstring.lex(line);
-                    lex.position = oldpos;
+                switch(tk.type) {
+                    case "punc": {
+                        let opar = OPEN_PARS[tk.raw];
+                        if(opar) {
+                            this.state = {
+                                ...this.state,
+                                paren: {
+                                    type: opar,
+                                    line: lineNumber,
+                                    character: tk.offset,
+                                    firstToken: null,
+                                    previous: this.state.paren
+                                }}
+                        } else {
+                            let cpar = CLOSE_PARS[tk.raw];
+                            if(cpar) {
+                                this.state = { ... this.state, paren: this.state.paren ? this.state.paren.previous : null }
+                            }
+                        }
+                        break;
+                    }
+                    case "str-end": // multiline string ended, switch back to toplevel
+                        this.state = { ...this.state, inString: false};
+                        lex = toplevel.lex(line);
+                        lex.position = oldpos;
+                        break;
+                    case "str-start": // multiline string started, switch to multstring.
+                        this.state = { ...this.state, inString: true};
+                        lex = multstring.lex(line);
+                        lex.position = oldpos;
+                        break;
                 }
                 tks.push(tk);
             }
