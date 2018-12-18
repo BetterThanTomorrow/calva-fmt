@@ -46,6 +46,11 @@
     "contributes": {
         "commands": [
             {
+                "command": "calva-fmt.growSelection",
+                "title": "Grow Selection",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
                 "command": "calva-fmt.formatCurrentForm",
                 "title": "Format Current Form",
                 "category": "Calva Format"

@@ -6,8 +6,12 @@
  * 
  * This is *not* a fully accurate lexer, since it needs to be robust in the face of junk.
  */
-import { LexicalGrammar, Token } from "./lexer";
-export type Token = Token;
+import { LexicalGrammar, Token as LexerToken } from "./lexer";
+
+
+export interface Token extends LexerToken {
+    state: ScannerState;
+}
 
 // The toplevel lexical grammar for Clojure.
 let toplevel = new LexicalGrammar();
@@ -50,6 +54,9 @@ export interface ScannerState {
 
     /** Parenthesis information */
     paren: OpenParen;
+
+    line: number;
+    character: number;
 }
 
 const OPEN_PARS = {
@@ -68,12 +75,12 @@ const CLOSE_PARS = {
 }
 
 export class Scanner {
-    state: ScannerState = { inString: false, paren: null };
+    state: ScannerState = { inString: false, paren: null, character: 0, line: 0 };
     processLine(line: string, lineNumber: number, state: ScannerState = this.state) {
         let tks: Token[] = [];
         this.state = state;
         let lex = (this.state.inString ? multstring : toplevel).lex(line);
-        let tk: Token;
+        let tk: LexerToken;
         do {
             tk = lex.scan();
             if(tk) {
@@ -110,7 +117,8 @@ export class Scanner {
                         lex.position = oldpos;
                         break;
                 }
-                tks.push(tk);
+                this.state = { ...this.state, line: lineNumber, character: lex.position}
+                tks.push({ ...tk, state: this.state });
             }
         } while(tk);
         return tks;
