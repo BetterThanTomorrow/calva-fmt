@@ -41,6 +41,10 @@ export function formatPositionCommand(editor: vscode.TextEditor) {
     formatPosition(editor);
 }
 
+export function indentPositionCommand(editor: vscode.TextEditor) {
+    formatPosition(editor, true);
+}
+
 export function alignPositionCommand(editor: vscode.TextEditor) {
     formatPosition(editor, true, { "align-associative?": true });
 }

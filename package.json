@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.31",
+    "version": "0.0.32-SNAPSHOT",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -47,7 +47,12 @@
         "commands": [
             {
                 "command": "calva-fmt.formatCurrentForm",
-                "title": "Format Current Form",
+                "title": "Format Current Form (strict formatting)",
+                "category": "Calva Format"
+            },
+            {
+                "command": "calva-fmt.indentCurrentForm",
+                "title": "Indent Current Form (relaxed formatting)",
                 "category": "Calva Format"
             },
             {
@@ -171,7 +176,7 @@
         "vscode": "^1.1.21"
     },
     "dependencies": {
-        "@cospaia/calva-lib": "0.0.18",
+        "@cospaia/calva-lib": "0.0.19",
         "immutable": "^3.8.1",
         "immutable-cursor": "^2.0.1",
         "npm": "^6.4.1"
