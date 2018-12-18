@@ -197,11 +197,11 @@ class DocumentMirror {
         if(line) {
             for(let i=0; i<line.tokens.length; i++) {
                 let tk = line.tokens[i];
-                if(tk.offset > pos.character)
+                if(previous ? tk.offset > pos.character : tk.offset >= pos.character)
                     return new TokenCursor(this, pos.line, previous ? Math.max(0, lastIndex-1) : lastIndex);
                 lastIndex = i;
             }
-            return new TokenCursor(this, pos.line, previous ? Math.max(0, lastIndex-1) : lastIndex);
+            return new TokenCursor(this, pos.line, line.tokens.length-1);
         }
     }
 
@@ -321,7 +321,7 @@ export function growSelection() {
         try {
             vscode.window.activeTextEditor.selection = new vscode.Selection(
                 mirror.getTokenCursor(vscode.window.activeTextEditor.selection.start).previousOpen(-1).start,
-                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.end, true).nextClose(-1).end)
+                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.end).nextClose(-1).end)
         } catch (e) {
             console.error(e);
         }
