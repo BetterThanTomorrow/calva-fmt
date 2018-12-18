@@ -38,25 +38,10 @@ multstring.terminal('([^"]|\\\\.)*"', (l, m) => ({ type: "str-end" }))
 // still within a multiline string
 multstring.terminal('([^"]|\\\\.)*', (l, m) => ({ type: "str-inside" }))
 
-export interface OpenParen {
-    type: "(" | "[" | "{";
-    line: number;
-    character: number;
-    firstToken: Token;
-
-    previous: OpenParen;
-}
-
 /** The state of the scanner */
 export interface ScannerState {
     /** Are we scanning inside a string? If so use multstring grammar, otherwise use toplevel. */
     inString: boolean
-
-    /** Parenthesis information */
-    paren: OpenParen;
-
-    line: number;
-    character: number;
 }
 
 const OPEN_PARS = {
@@ -75,7 +60,7 @@ const CLOSE_PARS = {
 }
 
 export class Scanner {
-    state: ScannerState = { inString: false, paren: null, character: 0, line: 0 };
+    state: ScannerState = { inString: false };
     processLine(line: string, lineNumber: number, state: ScannerState = this.state) {
         let tks: Token[] = [];
         this.state = state;
@@ -86,26 +71,6 @@ export class Scanner {
             if(tk) {
                 let oldpos = lex.position;
                 switch(tk.type) {
-                    case "punc": {
-                        let opar = OPEN_PARS[tk.raw];
-                        if(opar) {
-                            this.state = {
-                                ...this.state,
-                                paren: {
-                                    type: opar,
-                                    line: lineNumber,
-                                    character: tk.offset,
-                                    firstToken: null,
-                                    previous: this.state.paren
-                                }}
-                        } else {
-                            let cpar = CLOSE_PARS[tk.raw];
-                            if(cpar) {
-                                this.state = { ... this.state, paren: this.state.paren ? this.state.paren.previous : null }
-                            }
-                        }
-                        break;
-                    }
                     case "str-end": // multiline string ended, switch back to toplevel
                         this.state = { ...this.state, inString: false};
                         lex = toplevel.lex(line);
@@ -117,7 +82,7 @@ export class Scanner {
                         lex.position = oldpos;
                         break;
                 }
-                this.state = { ...this.state, line: lineNumber, character: lex.position}
+                this.state = { ...this.state }
                 tks.push({ ...tk, state: this.state });
             }
         } while(tk);

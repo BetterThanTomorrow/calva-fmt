@@ -18,6 +18,115 @@ class ClojureSourceLine {
 
 let debugValidation = false
 
+const OPEN = new Set(["(", "#{", "[", "{", "#(", "#?("])
+const CLOSE = new Set([")", "]", "}"])
+
+class TokenCursor {
+    constructor(public doc: DocumentMirror, public line: number, public token: number, public deltaDepth = 0) {
+    }
+
+    get start() {
+        return new vscode.Position(this.line, this.getToken().offset);
+    }
+
+    get end() {
+        return new vscode.Position(this.line, this.getToken().offset + this.getToken().raw.length);
+    }
+
+    atStart() {
+        return this.token == 0 && this.line == 0;
+    }
+
+    atEnd() {
+        return this.line == this.doc.lines.length-1 && this.token == this.doc.lines[this.line].tokens.length-1;
+    }
+
+    previous() {
+        if(this.token > 0) {
+            this.token--;
+        } else {
+            if(this.line == 0) return;
+            this.line--;
+            this.token = this.doc.lines[this.line].tokens.length-1;
+        }
+        const tk = this.getToken()
+        if(tk.type == "punc") {
+            if(OPEN.has(tk.raw))
+                this.deltaDepth--;
+            else if(CLOSE.has(tk.raw))
+                this.deltaDepth++;
+        }
+        return this;
+    }
+
+    next() {
+        if(this.token < this.doc.lines[this.line].tokens.length-1) {
+            this.token++;
+        } else {
+            if(this.line == this.doc.lines.length-1) return;
+            this.line++;
+            this.token = 0;
+        }
+        const tk = this.getToken();
+        if(tk.type == "punc") {
+            if(OPEN.has(tk.raw))
+                this.deltaDepth++;
+            else if(CLOSE.has(tk.raw))
+                this.deltaDepth--;
+        }
+        return this;
+    }
+
+    previousOpen(depth: number = 0) {
+        depth += this.deltaDepth;
+        while(!this.atStart()) {
+            this.previous();
+            const tk = this.getToken();
+            if(tk.type == "punc" && OPEN.has(tk.raw) && this.deltaDepth == depth)
+                return this;
+        }
+        return this;
+    }
+
+    previousClose(depth: number = 0) {
+        depth += this.deltaDepth;
+        while(!this.atStart()) {
+            this.previous();
+            const tk = this.getToken();
+            if(tk.type == "punc" && CLOSE.has(tk.raw) && this.deltaDepth == depth)
+                return this;
+        }
+        return this;
+    }
+
+    nextOpen(depth: number = 0) {
+        depth += this.deltaDepth;
+        while(!this.atEnd()) {
+            this.next();
+            const tk = this.getToken();
+            if(tk.type == "punc" && OPEN.has(tk.raw) && this.deltaDepth == depth)
+                return this;
+        }
+        return this;
+    }
+
+    nextClose(depth: number = 0) {
+        depth += this.deltaDepth;
+        debugValidation
+        while(!this.atEnd()) {
+            this.next();
+            const tk = this.getToken();
+            if(tk.type == "punc" && CLOSE.has(tk.raw) && this.deltaDepth == depth)
+                return this;
+        }
+        return this;
+    }
+
+    getToken() {
+        return this.doc.lines[this.line].tokens[this.token];
+    }
+}
+
 function equal(x: any, y: any): boolean {
     if(x==y) return true;
     if(x instanceof Array && y instanceof Array) {
@@ -78,21 +187,21 @@ class DocumentMirror {
     }
     
     private getStateForLine(line: number): ScannerState {
-        return line == 0 ? { inString: false, paren: null, line, character: 0 } : { ... this.lines[line-1].endState, line, character: 0 };
+        return line == 0 ? { inString: false, } : { ... this.lines[line-1].endState };
     }
 
-    public getTokenAt(range: vscode.Position): Token {
+    public getTokenCursor(pos: vscode.Position, previous: boolean = false) {
         this.flushChanges();
-        let line = this.lines[range.line]
+        let line = this.lines[pos.line]
+        let lastIndex = 0;
         if(line) {
-            let lastToken = null;
             for(let i=0; i<line.tokens.length; i++) {
                 let tk = line.tokens[i];
-                if(tk.offset > range.character)
-                    return lastToken;
-                lastToken = tk;
+                if(tk.offset > pos.character)
+                    return new TokenCursor(this, pos.line, previous ? Math.max(0, lastIndex-1) : lastIndex);
+                lastIndex = i;
             }
-            return lastToken;
+            return new TokenCursor(this, pos.line, previous ? Math.max(0, lastIndex-1) : lastIndex);
         }
     }
 
@@ -133,6 +242,8 @@ class DocumentMirror {
     }
 
     flushChanges() {
+        if(!this.dirtyLines.length)
+            return;
         let seen = new Set<number>();
         this.dirtyLines.sort();
         while(this.dirtyLines.length) {
@@ -207,14 +318,12 @@ export function growSelection() {
     let doc = vscode.window.activeTextEditor.document
     let mirror = getDocument(doc);
     if(mirror) {
-        let pos = doc.positionAt(Math.max(0, doc.offsetAt(vscode.window.activeTextEditor.selection.start)-1));
-        let tk = mirror.getTokenAt(pos);
-        if(tk) {
-            if(tk.state.paren) {
-                let p = tk.state.paren;
-                let pos = new vscode.Position(p.line, p.character);
-                vscode.window.activeTextEditor.selection = new vscode.Selection(pos, pos);
-            }
+        try {
+            vscode.window.activeTextEditor.selection = new vscode.Selection(
+                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.start).previousOpen(-1).start,
+                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.end, true).nextClose(-1).end)
+        } catch (e) {
+            console.error(e);
         }
     }
 }
