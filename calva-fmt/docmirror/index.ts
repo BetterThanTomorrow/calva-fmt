@@ -67,6 +67,11 @@ class TokenCursor {
 
     /** Move this cursor forwards one token */
     next() {
+        const tk = this.getToken();
+        if(tk.type == "open")
+            this.deltaDepth++;
+        else if(tk.type == "close")
+            this.deltaDepth--;
         if(this.token < this.doc.lines[this.line].tokens.length-1) {
             this.token++;
         } else {
@@ -74,16 +79,11 @@ class TokenCursor {
             this.line++;
             this.token = 0;
         }
-        const tk = this.getToken();
-        if(tk.type == "open")
-            this.deltaDepth++;
-        else if(tk.type == "close")
-            this.deltaDepth--;
         return this;
     }
 
-    findPrev(type: string, depth: number = 0) {
-        depth += this.deltaDepth;
+    findPrev(type: string) {
+        let depth = this.deltaDepth-1;
         while(!this.atStart()) {
             this.previous();
             const tk = this.getToken();
@@ -93,15 +93,23 @@ class TokenCursor {
         return this;
     }
 
-    findNext(type: string, depth: number = 0) {
-        depth += this.deltaDepth;
+    findNext(type: string) {
+        let depth = this.deltaDepth;
+        if(this.getToken().type == type && this.deltaDepth == depth)
+            return this;
         while(!this.atEnd()) {
             this.next();
-            const tk = this.getToken();
-            if(tk.type == type && this.deltaDepth == depth)
+            if(this.getToken().type == type && this.deltaDepth == depth)
                 return this;
         }
         return this;
+    }
+
+    getPrevToken() {
+        this.previous();
+        let tk = this.getToken();
+        this.next();
+        return tk;
     }
 
     getToken() {
@@ -179,7 +187,7 @@ class DocumentMirror {
         if(line) {
             for(let i=0; i<line.tokens.length; i++) {
                 let tk = line.tokens[i];
-                if(previous ? tk.offset > pos.character : tk.offset >= pos.character)
+                if(previous ? tk.offset > pos.character : tk.offset > pos.character)
                     return new TokenCursor(this, pos.line, previous ? Math.max(0, lastIndex-1) : lastIndex);
                 lastIndex = i;
             }
@@ -304,14 +312,10 @@ export function growSelection() {
             let selection = vscode.window.activeTextEditor.selection;
             let prevCursor = mirror.getTokenCursor(selection.start);
             let nextCursor = mirror.getTokenCursor(selection.end);
-            if(prevCursor.getToken().type == "close") {
-                prevCursor.previous();
-                if(doc.offsetAt(selection.start) == doc.offsetAt(selection.end))
-                    nextCursor.previous();
-            }
+
             vscode.window.activeTextEditor.selection = new vscode.Selection(
-                prevCursor.findPrev("open", -1).start,
-                nextCursor.findNext("close", -1).end)
+                prevCursor.findPrev("open").start,
+                nextCursor.findNext("close").end)
         } catch (e) {
             console.error(e);
         }
