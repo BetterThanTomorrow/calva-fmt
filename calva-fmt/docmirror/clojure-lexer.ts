@@ -49,21 +49,6 @@ export interface ScannerState {
     inString: boolean
 }
 
-const OPEN_PARS = {
-    "(": "(",
-    "#(": "(",
-    "#?(": "(",
-    "#{": "{",
-    "{": "{",
-    "[": "["
-}
-
-const CLOSE_PARS = {
-    ")": "(",
-    "]": "[",
-    "}": "{"
-}
-
 export class Scanner {
     state: ScannerState = { inString: false };
     processLine(line: string, lineNumber: number, state: ScannerState = this.state) {

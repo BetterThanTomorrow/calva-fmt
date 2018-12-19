@@ -301,9 +301,17 @@ export function growSelection() {
     let mirror = getDocument(doc);
     if(mirror) {
         try {
+            let selection = vscode.window.activeTextEditor.selection;
+            let prevCursor = mirror.getTokenCursor(selection.start);
+            let nextCursor = mirror.getTokenCursor(selection.end);
+            if(prevCursor.getToken().type == "close") {
+                prevCursor.previous();
+                if(doc.offsetAt(selection.start) == doc.offsetAt(selection.end))
+                    nextCursor.previous();
+            }
             vscode.window.activeTextEditor.selection = new vscode.Selection(
-                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.start).findPrev("open", -1).start,
-                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.end).findNext("close", -1).end)
+                prevCursor.findPrev("open", -1).start,
+                nextCursor.findNext("close", -1).end)
         } catch (e) {
             console.error(e);
         }
