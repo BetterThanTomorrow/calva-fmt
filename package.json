@@ -56,6 +56,16 @@
                 "category": "Calva Format (restartable-formatter)"
             },
             {
+                "command": "calva-fmt.forwardList",
+                "title": "Forward List",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
+                "command": "calva-fmt.backwardList",
+                "title": "Backward List",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
                 "command": "calva-fmt.formatCurrentForm",
                 "title": "Format Current Form",
                 "category": "Calva Format"

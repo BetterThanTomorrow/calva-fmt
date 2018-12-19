@@ -28,14 +28,15 @@ class TokenCursor {
         return new TokenCursor(this.doc, this.line, this.token);
     }
 
-    /** Return the start position */
-    get start() {
-        return new vscode.Position(this.line, this.getToken().offset);
+    set(cursor: TokenCursor) {
+        this.doc = cursor.doc;
+        this.line = cursor.line;
+        this.token = cursor.token;
     }
 
-    /** Return the end position */
-    get end() {
-        return new vscode.Position(this.line, this.getToken().offset + this.getToken().raw.length);
+    /** Return the position */
+    get position() {
+        return new vscode.Position(this.line, this.getToken().offset);
     }
 
     /** True if we are at the start of the document */
@@ -117,7 +118,6 @@ class TokenCursor {
         let delta = 0;
         this.forwardWhitespace();
         if(this.getToken().type == "close") {
-            this.previous();
             return false;
         }
         while(!this.atEnd()) {
@@ -127,9 +127,9 @@ class TokenCursor {
                 case 'id':
                 case 'str':
                 case 'str-end':
-                    if(delta > 0)
-                        this.next();
-                    else return true;
+                    this.next();
+                    if(delta <= 0)
+                        return true;
                     break;
                 case 'str-inside':
                 case 'str-start':
@@ -140,9 +140,8 @@ class TokenCursor {
                     continue;
                 case 'close':
                     delta--;
-                    if(delta > 0)
-                        this.next();
-                    else
+                    this.next();
+                    if(delta <= 0)
                         return true;
                     break;
                 case 'open':
@@ -186,10 +185,33 @@ class TokenCursor {
                     delta--;
                     this.previous();
                     if(delta <= 0)
-                        return;
+                        return true;
                     break;
             }
         }
+    }
+
+    forwardList(): boolean {
+        let cursor = this.clone();
+        while(cursor.forwardSexp()) {
+            if(cursor.getPrevToken().type == "close") {
+                this.set(cursor);
+                return true;
+            }
+            this.next()
+        }
+        return false;
+    }
+
+    backwardList(): boolean {
+        let cursor = this.clone();
+        while(cursor.backwardSexp()) {
+            if(cursor.getToken().type == "open") {
+                this.set(cursor);
+                return true;
+            }
+        }
+        return false;
     }
 
     getPrevToken() {
@@ -395,12 +417,26 @@ export function forwardSexp() {
     let textEditor = vscode.window.activeTextEditor;
     let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
     cursor.forwardSexp();
-    textEditor.selection = new vscode.Selection(cursor.end, cursor.end);
+    textEditor.selection = new vscode.Selection(cursor.position, cursor.position);
 }
 
 export function backwardSexp() {
     let textEditor = vscode.window.activeTextEditor;
     let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
     cursor.backwardSexp();
-    textEditor.selection = new vscode.Selection(cursor.start, cursor.start);    
+    textEditor.selection = new vscode.Selection(cursor.position, cursor.position);    
+}
+
+export function forwardList() {
+    let textEditor = vscode.window.activeTextEditor;
+    let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
+    cursor.forwardList();
+    textEditor.selection = new vscode.Selection(cursor.position, cursor.position);
+}
+
+export function backwardList() {
+    let textEditor = vscode.window.activeTextEditor;
+    let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
+    cursor.backwardList();
+    textEditor.selection = new vscode.Selection(cursor.position, cursor.position);    
 }

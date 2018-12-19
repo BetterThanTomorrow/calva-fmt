@@ -27,6 +27,9 @@ function activate(context: vscode.ExtensionContext) {
     // this doesn't actually grow anything yet, but just jumps to the start of the enclosing expression.
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.forwardSexp', docmirror.forwardSexp))
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardSexp', docmirror.backwardSexp))
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.forwardList', docmirror.forwardList))
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardList', docmirror.backwardList))
+    
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.formatCurrentForm', formatter.formatPositionCommand));
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.alignCurrentForm', formatter.alignPositionCommand));
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.inferParens', inferer.inferParensCommand));
