@@ -76,7 +76,7 @@ export class Scanner {
             }
         } while(tk);
         // insert a sentinel EOL value, this allows us to simplify TokenCaret's implementation.
-        tks.push({ type: "eol", raw: "", offset: line.length, state: this.state })
+        tks.push({ type: "eol", raw: "\n", offset: line.length, state: this.state })
         return tks;
     }
 }

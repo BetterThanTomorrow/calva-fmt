@@ -25,7 +25,8 @@ function activate(context: vscode.ExtensionContext) {
     docmirror.activate();
     vscode.languages.setLanguageConfiguration("clojure", ClojureLanguageConfiguration);
     // this doesn't actually grow anything yet, but just jumps to the start of the enclosing expression.
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.growSelection', docmirror.growSelection))
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.forwardSexp', docmirror.forwardSexp))
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardSexp', docmirror.backwardSexp))
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.formatCurrentForm', formatter.formatPositionCommand));
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.alignCurrentForm', formatter.alignPositionCommand));
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.inferParens', inferer.inferParensCommand));

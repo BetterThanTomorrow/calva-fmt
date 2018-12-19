@@ -46,8 +46,13 @@
     "contributes": {
         "commands": [
             {
-                "command": "calva-fmt.growSelection",
-                "title": "Grow Selection",
+                "command": "calva-fmt.forwardSexp",
+                "title": "Forward Sexp",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
+                "command": "calva-fmt.backwardSexp",
+                "title": "Backward Sexp",
                 "category": "Calva Format (restartable-formatter)"
             },
             {

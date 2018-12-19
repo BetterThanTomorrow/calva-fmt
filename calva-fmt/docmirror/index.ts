@@ -20,12 +20,12 @@ let debugValidation = false
 
 /** A mutable cursor into the token stream. */
 class TokenCursor {
-    constructor(public doc: DocumentMirror, public line: number, public token: number, public deltaDepth = 0) {
+    constructor(public doc: DocumentMirror, public line: number, public token: number) {
     }
 
     /** Create a copy of this cursor. */
     clone() {
-        return new TokenCursor(this.doc, this.line, this.token, this.deltaDepth);
+        return new TokenCursor(this.doc, this.line, this.token);
     }
 
     /** Return the start position */
@@ -57,21 +57,11 @@ class TokenCursor {
             this.line--;
             this.token = this.doc.lines[this.line].tokens.length-1;
         }
-        const tk = this.getToken()
-        if(tk.type == "open")
-            this.deltaDepth--;
-        else if(tk.type == "close")
-            this.deltaDepth++;
         return this;
     }
 
     /** Move this cursor forwards one token */
     next() {
-        const tk = this.getToken();
-        if(tk.type == "open")
-            this.deltaDepth++;
-        else if(tk.type == "close")
-            this.deltaDepth--;
         if(this.token < this.doc.lines[this.line].tokens.length-1) {
             this.token++;
         } else {
@@ -79,30 +69,127 @@ class TokenCursor {
             this.line++;
             this.token = 0;
         }
-        return this;
     }
 
-    findPrev(type: string) {
-        let depth = this.deltaDepth-1;
-        while(!this.atStart()) {
-            this.previous();
-            const tk = this.getToken();
-            if(tk.type == type && this.deltaDepth == depth)
-                return this;
-        }
-        return this;
-    }
-
-    findNext(type: string) {
-        let depth = this.deltaDepth;
-        if(this.getToken().type == type && this.deltaDepth == depth)
-            return this;
+    fowardString() {
         while(!this.atEnd()) {
-            this.next();
-            if(this.getToken().type == type && this.deltaDepth == depth)
-                return this;
+            switch(this.getToken().type) {
+                case "eol":
+                case "str-inside":
+                case "str-start":
+                    this.next();
+                    continue;
+                default:
+                    return;
+            }
         }
-        return this;
+    }
+
+    forwardWhitespace() {
+        while(!this.atEnd()) {
+            switch(this.getToken().type) {
+                case "eol":
+                case "ws":
+                case "comment":
+                    this.next();
+                    continue;
+                default:
+                    return;
+            }
+        }
+    }
+
+    backwardWhitespace() {
+        while(!this.atStart()) {
+            switch(this.getPrevToken().type) {
+                case "eol":
+                case "ws":
+                case "comment":
+                    this.previous();
+                    continue;
+                default:
+                    return;
+            }
+        }
+    }
+
+    forwardSexp(): boolean {
+        let delta = 0;
+        this.forwardWhitespace();
+        if(this.getToken().type == "close") {
+            this.previous();
+            return false;
+        }
+        while(!this.atEnd()) {
+            this.forwardWhitespace();
+            let tk = this.getToken();
+            switch(tk.type) {
+                case 'id':
+                case 'str':
+                case 'str-end':
+                    if(delta > 0)
+                        this.next();
+                    else return true;
+                    break;
+                case 'str-inside':
+                case 'str-start':
+                    do {
+                        this.next();
+                        tk = this.getToken();
+                    } while(tk.type == "str-inside" || tk.type == "eol")
+                    continue;
+                case 'close':
+                    delta--;
+                    if(delta > 0)
+                        this.next();
+                    else
+                        return true;
+                    break;
+                case 'open':
+                    delta++;
+                    this.next();
+                    break;
+            }
+        }
+    }
+
+    backwardSexp() {
+        let delta = 0;
+        this.backwardWhitespace();
+        switch(this.getPrevToken().type) {
+            case "open":
+                return false;
+        }
+        while(!this.atStart()) {
+            this.backwardWhitespace();
+            let tk = this.getPrevToken();
+            switch(tk.type) {
+                case 'id':
+                case 'str':
+                case 'str-start':
+                    this.previous();
+                    if(delta <= 0)
+                        return true;
+                    break;
+                case 'str-inside':
+                case 'str-end':
+                    do {
+                        this.previous();
+                        tk = this.getPrevToken();
+                    } while(tk.type == "str-inside")
+                    continue;                    
+                case 'close':
+                    delta++;
+                    this.previous();
+                    break;
+                case 'open':
+                    delta--;
+                    this.previous();
+                    if(delta <= 0)
+                        return;
+                    break;
+            }
+        }
     }
 
     getPrevToken() {
@@ -304,20 +391,16 @@ export function getDocument(doc: vscode.TextDocument) {
  * 
  * These won't live here.
  */
-export function growSelection() {
-    let doc = vscode.window.activeTextEditor.document
-    let mirror = getDocument(doc);
-    if(mirror) {
-        try {
-            let selection = vscode.window.activeTextEditor.selection;
-            let prevCursor = mirror.getTokenCursor(selection.start);
-            let nextCursor = mirror.getTokenCursor(selection.end);
+export function forwardSexp() {
+    let textEditor = vscode.window.activeTextEditor;
+    let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
+    cursor.forwardSexp();
+    textEditor.selection = new vscode.Selection(cursor.end, cursor.end);
+}
 
-            vscode.window.activeTextEditor.selection = new vscode.Selection(
-                prevCursor.findPrev("open").start,
-                nextCursor.findNext("close").end)
-        } catch (e) {
-            console.error(e);
-        }
-    }
+export function backwardSexp() {
+    let textEditor = vscode.window.activeTextEditor;
+    let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
+    cursor.backwardSexp();
+    textEditor.selection = new vscode.Selection(cursor.start, cursor.start);    
 }
