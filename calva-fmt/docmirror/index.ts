@@ -214,6 +214,45 @@ class TokenCursor {
         return false;
     }
 
+    downList(): boolean {
+        let cursor = this.clone();
+        do {
+            cursor.forwardWhitespace();
+            if(cursor.getToken().type == "open") {
+                cursor.next();
+                this.set(cursor);
+                return true;
+            }
+        } while(cursor.forwardSexp())
+        return false;
+    }
+
+    upList(): boolean {
+        let cursor = this.clone();
+        do {
+            cursor.forwardWhitespace();
+            if(cursor.getToken().type == "close") {
+                cursor.next();
+                this.set(cursor);
+                return true;
+            }
+        } while(cursor.forwardSexp())
+        return false;
+    }
+
+    backwardUpList(): boolean {
+        let cursor = this.clone();
+        do {
+            cursor.backwardWhitespace();
+            if(cursor.getPrevToken().type == "open") {
+                cursor.previous();
+                this.set(cursor);
+                return true;
+            }
+        } while(cursor.backwardSexp())
+        return false;
+    }
+
     getPrevToken() {
         this.previous();
         let tk = this.getToken();
@@ -438,5 +477,26 @@ export function backwardList() {
     let textEditor = vscode.window.activeTextEditor;
     let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
     cursor.backwardList();
+    textEditor.selection = new vscode.Selection(cursor.position, cursor.position);    
+}
+
+export function downList() {
+    let textEditor = vscode.window.activeTextEditor;
+    let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
+    cursor.downList();
+    textEditor.selection = new vscode.Selection(cursor.position, cursor.position);    
+}
+
+export function upList() {
+    let textEditor = vscode.window.activeTextEditor;
+    let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
+    cursor.upList();
+    textEditor.selection = new vscode.Selection(cursor.position, cursor.position);    
+}
+
+export function backwardUpList() {
+    let textEditor = vscode.window.activeTextEditor;
+    let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
+    cursor.backwardUpList();
     textEditor.selection = new vscode.Selection(cursor.position, cursor.position);    
 }

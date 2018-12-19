@@ -29,6 +29,9 @@ function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardSexp', docmirror.backwardSexp))
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.forwardList', docmirror.forwardList))
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardList', docmirror.backwardList))
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.downList', docmirror.downList))
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.upList', docmirror.upList))
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardUpList', docmirror.backwardUpList))
     
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.formatCurrentForm', formatter.formatPositionCommand));
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.alignCurrentForm', formatter.alignPositionCommand));
