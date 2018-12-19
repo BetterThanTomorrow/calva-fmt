@@ -20,8 +20,13 @@ let toplevel = new LexicalGrammar();
 toplevel.terminal("\\s+", (l, m) => ({ type: "ws" }))
 // comments
 toplevel.terminal(";.*", (l, m) => ({ type: "comment" }))
+// open parens
+toplevel.terminal("\\(|\\[|\\{|#\\(|#?\\(|#\\{", (l, m) => ({ type: "open" }))
+// close parens
+toplevel.terminal("\\)|\\]|\\}", (l, m) => ({ type: "close" }))
+
 // punctuators
-toplevel.terminal("\\(|\\)|\\[|\\]|\\{|\\}|#\\{|,|~@|~|'|#'|#:|#_|^|#\\(|`|#?\\(", (l, m) => ({ type: "punc" }))
+toplevel.terminal(",|~@|~|'|#'|#:|#_|\\^|`|#|\\^:", (l, m) => ({ type: "punc" }))
 // this is a REALLY lose symbol definition, but similar to how clojure really collects it. numbers/true/nil are all 
 toplevel.terminal("[^()[\\]\\{\\}#,~@'`^\"\\s]+", (l, m) => ({ type: "id" }))
 // complete string on a single line
@@ -82,10 +87,11 @@ export class Scanner {
                         lex.position = oldpos;
                         break;
                 }
-                this.state = { ...this.state }
                 tks.push({ ...tk, state: this.state });
             }
         } while(tk);
+        // insert a sentinel EOL value, this allows us to simplify TokenCaret's implementation.
+        tks.push({ type: "eol", raw: "", offset: line.length, state: this.state })
         return tks;
     }
 }

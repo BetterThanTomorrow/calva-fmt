@@ -18,9 +18,6 @@ class ClojureSourceLine {
 
 let debugValidation = false
 
-const OPEN = new Set(["(", "#{", "[", "{", "#(", "#?("])
-const CLOSE = new Set([")", "]", "}"])
-
 class TokenCursor {
     constructor(public doc: DocumentMirror, public line: number, public token: number, public deltaDepth = 0) {
     }
@@ -50,12 +47,10 @@ class TokenCursor {
             this.token = this.doc.lines[this.line].tokens.length-1;
         }
         const tk = this.getToken()
-        if(tk.type == "punc") {
-            if(OPEN.has(tk.raw))
-                this.deltaDepth--;
-            else if(CLOSE.has(tk.raw))
-                this.deltaDepth++;
-        }
+        if(tk.type == "open")
+            this.deltaDepth--;
+        else if(tk.type == "close")
+            this.deltaDepth++;
         return this;
     }
 
@@ -68,12 +63,10 @@ class TokenCursor {
             this.token = 0;
         }
         const tk = this.getToken();
-        if(tk.type == "punc") {
-            if(OPEN.has(tk.raw))
-                this.deltaDepth++;
-            else if(CLOSE.has(tk.raw))
-                this.deltaDepth--;
-        }
+        if(tk.type == "open")
+            this.deltaDepth++;
+        else if(tk.type == "close")
+            this.deltaDepth--;
         return this;
     }
 
@@ -82,7 +75,7 @@ class TokenCursor {
         while(!this.atStart()) {
             this.previous();
             const tk = this.getToken();
-            if(tk.type == "punc" && OPEN.has(tk.raw) && this.deltaDepth == depth)
+            if(tk.type == "open" && this.deltaDepth == depth)
                 return this;
         }
         return this;
@@ -93,7 +86,7 @@ class TokenCursor {
         while(!this.atStart()) {
             this.previous();
             const tk = this.getToken();
-            if(tk.type == "punc" && CLOSE.has(tk.raw) && this.deltaDepth == depth)
+            if(tk.type == "close" && this.deltaDepth == depth)
                 return this;
         }
         return this;
@@ -104,7 +97,7 @@ class TokenCursor {
         while(!this.atEnd()) {
             this.next();
             const tk = this.getToken();
-            if(tk.type == "punc" && OPEN.has(tk.raw) && this.deltaDepth == depth)
+            if(tk.type == "open" && this.deltaDepth == depth)
                 return this;
         }
         return this;
@@ -112,11 +105,10 @@ class TokenCursor {
 
     nextClose(depth: number = 0) {
         depth += this.deltaDepth;
-        debugValidation
         while(!this.atEnd()) {
             this.next();
             const tk = this.getToken();
-            if(tk.type == "punc" && CLOSE.has(tk.raw) && this.deltaDepth == depth)
+            if(tk.type == "close" && this.deltaDepth == depth)
                 return this;
         }
         return this;
