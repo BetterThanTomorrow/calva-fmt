@@ -18,26 +18,37 @@ class ClojureSourceLine {
 
 let debugValidation = false
 
+/** A mutable cursor into the token stream. */
 class TokenCursor {
     constructor(public doc: DocumentMirror, public line: number, public token: number, public deltaDepth = 0) {
     }
 
+    /** Create a copy of this cursor. */
+    clone() {
+        return new TokenCursor(this.doc, this.line, this.token, this.deltaDepth);
+    }
+
+    /** Return the start position */
     get start() {
         return new vscode.Position(this.line, this.getToken().offset);
     }
 
+    /** Return the end position */
     get end() {
         return new vscode.Position(this.line, this.getToken().offset + this.getToken().raw.length);
     }
 
+    /** True if we are at the start of the document */
     atStart() {
         return this.token == 0 && this.line == 0;
     }
 
+    /** True if we are at the end of the document */
     atEnd() {
         return this.line == this.doc.lines.length-1 && this.token == this.doc.lines[this.line].tokens.length-1;
     }
 
+    /** Move this cursor backwards one token */
     previous() {
         if(this.token > 0) {
             this.token--;
@@ -54,6 +65,7 @@ class TokenCursor {
         return this;
     }
 
+    /** Move this cursor forwards one token */
     next() {
         if(this.token < this.doc.lines[this.line].tokens.length-1) {
             this.token++;
@@ -70,45 +82,23 @@ class TokenCursor {
         return this;
     }
 
-    previousOpen(depth: number = 0) {
+    findPrev(type: string, depth: number = 0) {
         depth += this.deltaDepth;
         while(!this.atStart()) {
             this.previous();
             const tk = this.getToken();
-            if(tk.type == "open" && this.deltaDepth == depth)
+            if(tk.type == type && this.deltaDepth == depth)
                 return this;
         }
         return this;
     }
 
-    previousClose(depth: number = 0) {
-        depth += this.deltaDepth;
-        while(!this.atStart()) {
-            this.previous();
-            const tk = this.getToken();
-            if(tk.type == "close" && this.deltaDepth == depth)
-                return this;
-        }
-        return this;
-    }
-
-    nextOpen(depth: number = 0) {
+    findNext(type: string, depth: number = 0) {
         depth += this.deltaDepth;
         while(!this.atEnd()) {
             this.next();
             const tk = this.getToken();
-            if(tk.type == "open" && this.deltaDepth == depth)
-                return this;
-        }
-        return this;
-    }
-
-    nextClose(depth: number = 0) {
-        depth += this.deltaDepth;
-        while(!this.atEnd()) {
-            this.next();
-            const tk = this.getToken();
-            if(tk.type == "close" && this.deltaDepth == depth)
+            if(tk.type == type && this.deltaDepth == depth)
                 return this;
         }
         return this;
@@ -312,8 +302,8 @@ export function growSelection() {
     if(mirror) {
         try {
             vscode.window.activeTextEditor.selection = new vscode.Selection(
-                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.start).previousOpen(-1).start,
-                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.end).nextClose(-1).end)
+                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.start).findPrev("open", -1).start,
+                mirror.getTokenCursor(vscode.window.activeTextEditor.selection.end).findNext("close", -1).end)
         } catch (e) {
             console.error(e);
         }
