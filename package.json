@@ -80,6 +80,11 @@
                 "title": "Backward Up List",
                 "category": "Calva Format (restartable-formatter)"
             },
+            {
+                "command": "calva-fmt.argumentPosition",
+                "title": "Dump Argument Position",
+                "category": "Calva Format (restartable-formatter)"
+            },
             
             {
                 "command": "calva-fmt.formatCurrentForm",

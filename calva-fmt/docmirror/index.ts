@@ -253,7 +253,9 @@ class TokenCursor {
         return false;
     }
 
-    getPrevToken() {
+    getPrevToken(): Token {
+        if(this.line == 0 && this.token == 0)
+            return { type: "eol", raw: "\n", offset: 0, state: null };
         this.previous();
         let tk = this.getToken();
         this.next();
@@ -499,4 +501,115 @@ export function backwardUpList() {
     let cursor = getDocument(textEditor.document).getTokenCursor(textEditor.selection.start);
     cursor.backwardUpList();
     textEditor.selection = new vscode.Selection(cursor.position, cursor.position);    
+}
+
+const whitespace = new Set(["ws", "comment", "eol"])
+
+let indents = {
+    "alt!": [["block", 0]],
+    "alt!!": [["block", 0]],
+    "are": [["block", 2]] ,
+    "as->": [["block", 2]],
+    "binding": [["block", 1]],
+    "bound-fn": [["inner", 1]],
+    "case": [["block", 1]],
+    "catch": [["block", 2]],
+    "comment": [["block", 2]],
+    "cond": [["block", 2]],
+    "condp": [["block", 2]],
+    "cond->": [["block", 1]],
+    "cond->>": [["block", 1]],
+    "def": [["inner", 2]],
+    "defmacro": [["inner", 2]],
+    "defmethod": [["inner", 2]],
+    "defmulti": [["inner", 2]],
+    "defn": [["inner", 2]],
+    "defn-": [["inner", 2]],
+    "defonce": [["inner", 2]],
+    "defprotocol": [["block", 1], ["inner", 1]],
+    "defrecord": [["block", 2], ["inner", 1]],
+    "defstruct": [["block", 1]],
+    "deftest": [["inner", 2]],
+    "deftype": [["block", 2], ["inner", 1]],
+    "do": [["block", 2]],
+    "doseq": [["block", 1]],
+    "dotimes": [["block", 1]],
+    "doto": [["block", 1]],
+    "extend": [["block", 1]],
+    "extend-protocol": [["block", 1], ["inner", 1]],
+    "extend-type": [["block", 1], ["inner", 1]],
+    "fdef": [["inner", 2]],
+    "finally": [["block", 2]],
+    "fn": [["inner", 2]],
+    "for": [["block", 1]],
+    "future": [["block", 2]],
+    "go": [["block", 2]],
+    "go-loop": [["block", 1]],
+    "if": [["block", 1]],
+    "if-let": [["block", 1]],
+    "if-not": [["block", 1]],
+    "if-some": [["block", 1]],
+    "let": [["block", 1]],
+    "let-fn": [["block", 1], ["inner", 2, 0]],
+    "locking": [["block", 1]],
+    "loop": [["block", 1]],
+    "match": [["block", 1]],
+    "ns": [["block", 1]],
+    "proxy": [["block", 2], ["inner", 1]],
+    "reify": [["inner", 0], ["inner", 1]],
+    "struct-map": [["block", 1]],
+    "testing": [["block", 1]],
+    "thread": [["block", 0]],
+    "try": [["block", 0]],
+    "use-fixtures": [["inner", 0]],
+    "when": [["block", 1]],
+    "when-first": [["block", 1]],
+    "when-let": [["block", 1]],
+    "when-not": [["block", 1]],
+    "when-some": [["block", 1]],
+    "while": [["block", 1]],
+    "with-local-vars": [["block", 1]],
+    "with-open": [["block", 1]],
+    "with-out-str": [["block", 0]],
+    "with-precision": [["block", 1]],
+    "with-redefs": [["block", 1]],
+}
+
+/** Returns [argumentPosition, startOfList] */
+export function getIndent(document: vscode.TextDocument, position: vscode.Position): number {
+    const maxLines = 10;
+    let cursor = getDocument(document).getTokenCursor(position);
+    let startLine = cursor.line;
+    let prevIndent = -1;
+    let argPos = 0;
+    do {
+        if(!cursor.backwardSexp()) {
+            let headLine = cursor.line;
+            prevIndent = cursor.position.character;
+            // TODO, get qualified stuff
+            let indentRule = indents[cursor.getToken().raw];
+            let indent = prevIndent;
+            let targetIndent = cursor.position.character-1 + 2;;
+            if(indentRule) {
+                let mode = indentRule[0][0];
+                let argidx = indentRule[0][1];
+                if(mode == "inner") {
+                } else if(mode == "block") {
+                    cursor.forwardSexp()
+                    cursor.forwardWhitespace();
+                    if(cursor.line == headLine && argPos >= argidx)
+                        indent = cursor.position.character;
+                    else
+                        indent = targetIndent;
+                }
+            }
+//            vscode.window.showInformationMessage("arg position "+argPos+", head: "+cursor.getToken().raw+ " prevIndent: "+prevIndent);
+            return indent;
+        }
+        if(prevIndent == -1 && cursor.line != startLine)
+            prevIndent = cursor.position.character;
+        if(!whitespace.has(cursor.getPrevToken().raw))
+            argPos++;
+    } while(startLine-cursor.line < maxLines);
+    return 0;
 }

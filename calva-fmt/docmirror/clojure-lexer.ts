@@ -17,7 +17,7 @@ export interface Token extends LexerToken {
 let toplevel = new LexicalGrammar();
 
 // whitespace
-toplevel.terminal("\\s+", (l, m) => ({ type: "ws" }))
+toplevel.terminal("[\\s,]+", (l, m) => ({ type: "ws" }))
 // comments
 toplevel.terminal(";.*", (l, m) => ({ type: "comment" }))
 // open parens
@@ -26,7 +26,7 @@ toplevel.terminal("\\(|\\[|\\{|#\\(|#?\\(|#\\{", (l, m) => ({ type: "open" }))
 toplevel.terminal("\\)|\\]|\\}", (l, m) => ({ type: "close" }))
 
 // punctuators
-toplevel.terminal(",|~@|~|'|#'|#:|#_|\\^|`|#|\\^:", (l, m) => ({ type: "punc" }))
+toplevel.terminal("~@|~|'|#'|#:|#_|\\^|`|#|\\^:", (l, m) => ({ type: "punc" }))
 // this is a REALLY lose symbol definition, but similar to how clojure really collects it. numbers/true/nil are all 
 toplevel.terminal("[^()[\\]\\{\\}#,~@'`^\"\\s]+", (l, m) => ({ type: "id" }))
 // complete string on a single line
