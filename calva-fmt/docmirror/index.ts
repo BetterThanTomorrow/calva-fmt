@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { Scanner, ScannerState, Token } from "./clojure-lexer";
+import { stat } from "fs";
 
 const scanner = new Scanner();
 
@@ -516,43 +517,43 @@ let indentRules: { [id: string]: IndentRule[]} = {
     "bound-fn": [["inner", 1]],
     "case": [["block", 1]],
     "catch": [["block", 2]],
-    "comment": [["block", 2]],
-    "cond": [["block", 2]],
+    "comment": [["block", 0]],
+    "cond": [["block", 0]],
     "condp": [["block", 2]],
     "cond->": [["block", 1]],
     "cond->>": [["block", 1]],
-    "def": [["inner", 2]],
-    "defmacro": [["inner", 2]],
-    "defmethod": [["inner", 2]],
-    "defmulti": [["inner", 2]],
-    "defn": [["inner", 2]],
-    "defn-": [["inner", 2]],
-    "defonce": [["inner", 2]],
+    "def": [["inner", 0]],
+    "defmacro": [["inner", 0]],
+    "defmethod": [["inner", 0]],
+    "defmulti": [["inner", 0]],
+    "defn": [["inner", 0]],
+    "defn-": [["inner", 0]],
+    "defonce": [["inner", 0]],
     "defprotocol": [["block", 1], ["inner", 1]],
     "defrecord": [["block", 2], ["inner", 1]],
     "defstruct": [["block", 1]],
-    "deftest": [["inner", 2]],
+    "deftest": [["inner", 0]],
     "deftype": [["block", 2], ["inner", 1]],
-    "do": [["block", 2]],
+    "do": [["block", 0]],
     "doseq": [["block", 1]],
     "dotimes": [["block", 1]],
     "doto": [["block", 1]],
     "extend": [["block", 1]],
     "extend-protocol": [["block", 1], ["inner", 1]],
     "extend-type": [["block", 1], ["inner", 1]],
-    "fdef": [["inner", 2]],
-    "finally": [["block", 2]],
-    "fn": [["inner", 2]],
+    "fdef": [["inner", 0]],
+    "finally": [["block", 0]],
+    "fn": [["inner", 0]],
     "for": [["block", 1]],
-    "future": [["block", 2]],
-    "go": [["block", 2]],
+    "future": [["block", 0]],
+    "go": [["block", 0]],
     "go-loop": [["block", 1]],
     "if": [["block", 1]],
     "if-let": [["block", 1]],
     "if-not": [["block", 1]],
     "if-some": [["block", 1]],
     "let": [["block", 1]],
-    "let-fn": [["block", 1], ["inner", 2, 0]],
+    "letfn": [["block", 1], ["inner", 2, 0]],
     "locking": [["block", 1]],
     "loop": [["block", 1]],
     "match": [["block", 1]],
@@ -626,42 +627,36 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
 
 /** Returns [argumentPosition, startOfList] */
 export function getIndent(document: vscode.TextDocument, position: vscode.Position): number {
-    const maxLines = 10;
-    let cursor = getDocument(document).getTokenCursor(position);
-    let startLine = cursor.line;
-    let prevIndent = -1;
-    let argPos = 0;
     let state = collectIndentState(document, position);
-    do {
-        // this is all wrong from here on down ;)
-        if(!cursor.backwardSexp()) {
-            let headLine = cursor.line;
-            prevIndent = cursor.position.character;
-            // TODO, get qualified stuff
-            let indentRule = indentRules[cursor.getToken().raw];
-            let indent = prevIndent;
-            let targetIndent = cursor.position.character-1 + 2;;
-            if(indentRule) {
-                let mode = indentRule[0][0];
-                let argidx = indentRule[0][1];
-                if(mode == "inner") {
-                    if(argPos > argidx)
-                        indent = targetIndent;
-                } else if(mode == "block") {
-                    cursor.forwardSexp()
-                    cursor.forwardWhitespace();
-                    if(cursor.line == headLine && argPos > argidx)
-                        indent = cursor.position.character;
-                    else
-                        indent = targetIndent;
+    // now find applicable indent rules
+    let indent = 0;
+    let thisBlock = state[state.length-1];
+    if(!state.length)
+        return 0;
+    if(thisBlock.exprsOnLine > 0)
+        indent = thisBlock.firstItemIdent;
+    else
+        indent = thisBlock.startIndent
+    
+    for(let pos = state.length-1; pos >= 0; pos--) {
+        for(let rule of state[pos].rules) {
+            if(rule[0] == "inner") {
+                if(pos + rule[1] == state.length-1) {
+                    if(rule.length == 3) {
+                        if(rule[2] > thisBlock.argPos)
+                            indent = thisBlock.startIndent + 1;
+                    } else
+                        indent = thisBlock.startIndent + 1;
+                }
+            } else if(rule[0] == "block" && pos == state.length-1) {
+                if(thisBlock.exprsOnLine <= rule[1]) {
+                    if(thisBlock.argPos > rule[1])
+                        indent = thisBlock.startIndent + 1
+                } else {
+
                 }
             }
-            return indent;
         }
-        if(prevIndent == -1 && cursor.line != startLine)
-            prevIndent = cursor.position.character;
-        if(!whitespace.has(cursor.getPrevToken().raw))
-            argPos++;
-    } while(startLine-cursor.line < maxLines);
-    return 0;
+    }
+    return indent;
 }
