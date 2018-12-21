@@ -505,7 +505,9 @@ export function backwardUpList() {
 
 const whitespace = new Set(["ws", "comment", "eol"])
 
-let indents = {
+type IndentRule = ["block", number] | ["inner", number] | ["inner", number, number];
+
+let indentRules: { [id: string]: IndentRule[]} = {
     "alt!": [["block", 0]],
     "alt!!": [["block", 0]],
     "are": [["block", 2]] ,
@@ -575,6 +577,53 @@ let indents = {
     "with-redefs": [["block", 1]],
 }
 
+interface IndentState {
+    first: string;
+    startIndent: number;
+    firstItemIdent: number;
+    rules: IndentRule[];
+    argPos: number;
+    exprsOnLine: number;
+}
+
+export function collectIndentState(document: vscode.TextDocument, position: vscode.Position, maxDepth: number = 3, maxLines: number = 20): IndentState[] {
+    let cursor = getDocument(document).getTokenCursor(position);
+    let argPos = 0;
+    let startLine = cursor.line;
+    let exprsOnLine = 0;
+    let lastLine = cursor.line;
+    let indents: IndentState[] = [];
+    do {
+        if(!cursor.backwardSexp()) {
+            // skip past the first item and record the indent of the first item on the same line if there is one.
+            let nextCursor = cursor.clone();
+            nextCursor.forwardSexp()
+            nextCursor.forwardWhitespace();
+
+            let firstItemIdent = nextCursor.line == cursor.line ? nextCursor.position.character : -1;
+
+
+            let token = cursor.getToken().raw;
+            let startIndent = cursor.position.character;
+            if(!cursor.backwardUpList())
+                break;
+            let indentRule = indentRules[token] || [];
+            indents.unshift({ first: token, rules: indentRule, argPos, exprsOnLine, startIndent, firstItemIdent });
+            argPos = 0;
+            exprsOnLine = 1;
+        }
+        if(!whitespace.has(cursor.getPrevToken().raw)) {
+            argPos++;
+            exprsOnLine++;
+        }
+        if(cursor.line != lastLine) {
+            exprsOnLine = 0;
+            lastLine = cursor.line;
+        }
+    } while(!cursor.atEnd() && (startLine-cursor.line < maxLines || indents.length <= maxDepth));
+    return indents;
+}
+
 /** Returns [argumentPosition, startOfList] */
 export function getIndent(document: vscode.TextDocument, position: vscode.Position): number {
     const maxLines = 10;
@@ -582,28 +631,31 @@ export function getIndent(document: vscode.TextDocument, position: vscode.Positi
     let startLine = cursor.line;
     let prevIndent = -1;
     let argPos = 0;
+    let state = collectIndentState(document, position);
     do {
+        // this is all wrong from here on down ;)
         if(!cursor.backwardSexp()) {
             let headLine = cursor.line;
             prevIndent = cursor.position.character;
             // TODO, get qualified stuff
-            let indentRule = indents[cursor.getToken().raw];
+            let indentRule = indentRules[cursor.getToken().raw];
             let indent = prevIndent;
             let targetIndent = cursor.position.character-1 + 2;;
             if(indentRule) {
                 let mode = indentRule[0][0];
                 let argidx = indentRule[0][1];
                 if(mode == "inner") {
+                    if(argPos > argidx)
+                        indent = targetIndent;
                 } else if(mode == "block") {
                     cursor.forwardSexp()
                     cursor.forwardWhitespace();
-                    if(cursor.line == headLine && argPos >= argidx)
+                    if(cursor.line == headLine && argPos > argidx)
                         indent = cursor.position.character;
                     else
                         indent = targetIndent;
                 }
             }
-//            vscode.window.showInformationMessage("arg position "+argPos+", head: "+cursor.getToken().raw+ " prevIndent: "+prevIndent);
             return indent;
         }
         if(prevIndent == -1 && cursor.line != startLine)
