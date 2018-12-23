@@ -590,6 +590,8 @@ interface IndentState {
     exprsOnLine: number;
 }
 
+let OPEN_LIST = new Set(["#(", "#?(", "("])
+
 export function collectIndentState(document: vscode.TextDocument, position: vscode.Position, maxDepth: number = 3, maxLines: number = 20): IndentState[] {
     let cursor = getDocument(document).getTokenCursor(position);
     let argPos = 0;
@@ -609,7 +611,7 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
             nextCursor.forwardSexp()
             nextCursor.forwardWhitespace();
 
-            let firstItemIdent = nextCursor.line == cursor.line ? nextCursor.position.character : -1;
+            let firstItemIdent = nextCursor.line == cursor.line && OPEN_LIST.has(prevToken.raw) ? nextCursor.position.character : cursor.position.character;
 
 
             let token = cursor.getToken().raw;
