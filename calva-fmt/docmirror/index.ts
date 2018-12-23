@@ -149,6 +149,9 @@ class TokenCursor {
                     delta++;
                     this.next();
                     break;
+                default:
+                    this.next();
+                    break;
             }
         }
     }
@@ -188,6 +191,8 @@ class TokenCursor {
                     if(delta <= 0)
                         return true;
                     break;
+                default:
+                    this.previous();
             }
         }
     }
@@ -257,10 +262,9 @@ class TokenCursor {
     getPrevToken(): Token {
         if(this.line == 0 && this.token == 0)
             return { type: "eol", raw: "\n", offset: 0, state: null };
-        this.previous();
-        let tk = this.getToken();
-        this.next();
-        return tk;
+        let cursor = this.clone();
+        cursor.previous();
+        return cursor.getToken();
     }
 
     getToken() {
@@ -596,6 +600,11 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
     let indents: IndentState[] = [];
     do {
         if(!cursor.backwardSexp()) {
+            // this needs some work..
+            let prevToken = cursor.getPrevToken();
+            if(prevToken.type == 'open' && prevToken.offset <= 1) {
+                maxDepth = 0; // treat an sexpr starting on line 0 sensibly.
+            }
             // skip past the first item and record the indent of the first item on the same line if there is one.
             let nextCursor = cursor.clone();
             nextCursor.forwardSexp()
@@ -621,7 +630,7 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
             exprsOnLine = 0;
             lastLine = cursor.line;
         }
-    } while(!cursor.atEnd() && (startLine-cursor.line < maxLines || indents.length <= maxDepth));
+    } while(!cursor.atEnd() || startLine-cursor.line < maxLines || indents.length >= maxDepth);
     return indents;
 }
 
@@ -629,14 +638,10 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
 export function getIndent(document: vscode.TextDocument, position: vscode.Position): number {
     let state = collectIndentState(document, position);
     // now find applicable indent rules
-    let indent = 0;
+    let indent = -1;
     let thisBlock = state[state.length-1];
     if(!state.length)
         return 0;
-    if(thisBlock.exprsOnLine > 0)
-        indent = thisBlock.firstItemIdent;
-    else
-        indent = thisBlock.startIndent
     
     for(let pos = state.length-1; pos >= 0; pos--) {
         for(let rule of state[pos].rules) {
@@ -653,10 +658,18 @@ export function getIndent(document: vscode.TextDocument, position: vscode.Positi
                     if(thisBlock.argPos > rule[1])
                         indent = thisBlock.startIndent + 1
                 } else {
-
+                    indent = thisBlock.firstItemIdent;
                 }
             }
         }
+    }
+
+    if(indent == -1) {
+        // no indentation styles applied, so use default style.
+        if(thisBlock.exprsOnLine > 0)
+            indent = thisBlock.firstItemIdent;
+        else
+            indent = thisBlock.startIndent
     }
     return indent;
 }
