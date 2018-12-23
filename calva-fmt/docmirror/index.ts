@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { Scanner, ScannerState, Token } from "./clojure-lexer";
-import { stat } from "fs";
 
 const scanner = new Scanner();
 
