@@ -46,6 +46,47 @@
     "contributes": {
         "commands": [
             {
+                "command": "calva-fmt.forwardSexp",
+                "title": "Forward Sexp",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
+                "command": "calva-fmt.backwardSexp",
+                "title": "Backward Sexp",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
+                "command": "calva-fmt.forwardList",
+                "title": "Forward List",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
+                "command": "calva-fmt.backwardList",
+                "title": "Backward List",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
+                "command": "calva-fmt.downList",
+                "title": "Down List",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
+                "command": "calva-fmt.upList",
+                "title": "Up List",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
+                "command": "calva-fmt.backwardUpList",
+                "title": "Backward Up List",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            {
+                "command": "calva-fmt.argumentPosition",
+                "title": "Dump Argument Position",
+                "category": "Calva Format (restartable-formatter)"
+            },
+            
+            {
                 "command": "calva-fmt.formatCurrentForm",
                 "title": "Format Current Form (strict formatting)",
                 "category": "Calva Format"
