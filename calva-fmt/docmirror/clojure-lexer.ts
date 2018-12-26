@@ -34,6 +34,7 @@ toplevel.terminal('"([^"\\\\]|\\\\.)*"', (l, m) => ({ type: "str"}))
 
 // begin a multiline string
 toplevel.terminal('"([^"\\\\]|\\\\.)*', (l, m) => ({ type: "str-start"}))
+toplevel.terminal('.', (l, m) => ({ type: "junk" }))
 
 
 // Inside a multi-line string lexical grammar
