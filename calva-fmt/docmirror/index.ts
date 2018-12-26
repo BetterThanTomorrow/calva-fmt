@@ -359,7 +359,7 @@ class DocumentMirror {
         // the right side of the line unaffected by the edit.
         let right = this.lines[e.range.end.line].text.substr(e.range.end.character);
 
-        // we've nuked this lines, so. yay.
+        // we've nuked these lines, so update the dirty line array to correct the indices and delete affected ranges.
         this.removeDirty(e.range.start.line, e.range.end.line, replaceLines.length-1);
 
         let items: ClojureSourceLine[] = [];
@@ -598,6 +598,7 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
     let startLine = cursor.line;
     let exprsOnLine = 0;
     let lastLine = cursor.line;
+    let lastIndent = -1;
     let indents: IndentState[] = [];
     do {
         if(!cursor.backwardSexp()) {
@@ -627,11 +628,18 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
             argPos++;
             exprsOnLine++;
         }
+
+        if(!indents.length && cursor.clone().previous().line != cursor.line) {
+            lastIndent = cursor.position.character;
+        }
+
         if(cursor.line != lastLine) {
             exprsOnLine = 0;
             lastLine = cursor.line;
         }
-    } while(!cursor.atEnd() || startLine-cursor.line < maxLines || indents.length >= maxDepth);
+    } while(!cursor.atEnd() && (Math.abs(startLine-cursor.line) < maxLines) && indents.length < maxDepth);
+    if(!indents.length)
+        indents.push({argPos: 0, first: null, rules: [], exprsOnLine: 0, startIndent: lastIndent, firstItemIdent: lastIndent})
     return indents;
 }
 
