@@ -30,18 +30,18 @@ toplevel.terminal("~@|~|'|#'|#:|#_|\\^|`|#|\\^:", (l, m) => ({ type: "punc" }))
 // this is a REALLY lose symbol definition, but similar to how clojure really collects it. numbers/true/nil are all 
 toplevel.terminal("[^()[\\]\\{\\}#,~@'`^\"\\s]+", (l, m) => ({ type: "id" }))
 // complete string on a single line
-toplevel.terminal('"(\\\\.|[^"]+)*"', (l, m) => ({ type: "str"}))
+toplevel.terminal('"([^"\\\\]|\\\\.)*"', (l, m) => ({ type: "str"}))
 
 // begin a multiline string
-toplevel.terminal('"([^"]+|\\\\.)*', (l, m) => ({ type: "str-start"}))
+toplevel.terminal('"([^"\\\\]|\\\\.)*', (l, m) => ({ type: "str-start"}))
 
 
 // Inside a multi-line string lexical grammar
 let multstring = new LexicalGrammar()
 // end a multiline string
-multstring.terminal('([^"]|\\\\.)*"', (l, m) => ({ type: "str-end" }))
+multstring.terminal('([^"\\\\]|\\\\.)*"', (l, m) => ({ type: "str-end" }))
 // still within a multiline string
-multstring.terminal('([^"]|\\\\.)*', (l, m) => ({ type: "str-inside" }))
+multstring.terminal('([^"\\\\]|\\\\.)*', (l, m) => ({ type: "str-inside" }))
 
 /** The state of the scanner */
 export interface ScannerState {

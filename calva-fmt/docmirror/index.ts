@@ -136,7 +136,7 @@ class TokenCursor {
                     do {
                         this.next();
                         tk = this.getToken();
-                    } while(tk.type == "str-inside" || tk.type == "eol")
+                    } while(!this.atEnd() && (tk.type == "str-inside" || tk.type == "eol"))
                     continue;
                 case 'close':
                     delta--;
@@ -178,7 +178,7 @@ class TokenCursor {
                     do {
                         this.previous();
                         tk = this.getPrevToken();
-                    } while(tk.type == "str-inside")
+                    } while(!this.atStart() && tk.type == "str-inside")
                     continue;                    
                 case 'close':
                     delta++;
