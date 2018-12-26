@@ -629,17 +629,17 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
             exprsOnLine++;
         }
 
-        if(!indents.length && cursor.clone().previous().line != cursor.line) {
-            lastIndent = cursor.position.character;
-        }
-
         if(cursor.line != lastLine) {
+            let head = cursor.clone();
+            head.forwardSexp();
+            head.forwardWhitespace();
+            lastIndent = head.position.character;
             exprsOnLine = 0;
             lastLine = cursor.line;
         }
-    } while(!cursor.atEnd() && (Math.abs(startLine-cursor.line) < maxLines) && indents.length < maxDepth);
+    } while(!cursor.atEnd() && Math.abs(startLine-cursor.line) < maxLines && indents.length < maxDepth);
     if(!indents.length)
-        indents.push({argPos: 0, first: null, rules: [], exprsOnLine: 0, startIndent: lastIndent, firstItemIdent: lastIndent})
+        indents.push({argPos: 0, first: null, rules: [], exprsOnLine: 0, startIndent: lastIndent >= 0 ? lastIndent : 0, firstItemIdent: lastIndent >= 0 ? lastIndent : 0})
     return indents;
 }
 
