@@ -136,7 +136,7 @@ class TokenCursor {
                     do {
                         this.next();
                         tk = this.getToken();
-                    } while(tk.type == "str-inside" || tk.type == "eol")
+                    } while(!this.atEnd() && (tk.type == "str-inside" || tk.type == "eol"))
                     continue;
                 case 'close':
                     delta--;
@@ -178,7 +178,7 @@ class TokenCursor {
                     do {
                         this.previous();
                         tk = this.getPrevToken();
-                    } while(tk.type == "str-inside")
+                    } while(!this.atStart() && tk.type == "str-inside")
                     continue;                    
                 case 'close':
                     delta++;
@@ -359,7 +359,7 @@ class DocumentMirror {
         // the right side of the line unaffected by the edit.
         let right = this.lines[e.range.end.line].text.substr(e.range.end.character);
 
-        // we've nuked this lines, so. yay.
+        // we've nuked these lines, so update the dirty line array to correct the indices and delete affected ranges.
         this.removeDirty(e.range.start.line, e.range.end.line, replaceLines.length-1);
 
         let items: ClojureSourceLine[] = [];
@@ -598,6 +598,7 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
     let startLine = cursor.line;
     let exprsOnLine = 0;
     let lastLine = cursor.line;
+    let lastIndent = -1;
     let indents: IndentState[] = [];
     do {
         if(!cursor.backwardSexp()) {
@@ -627,11 +628,18 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
             argPos++;
             exprsOnLine++;
         }
+
         if(cursor.line != lastLine) {
+            let head = cursor.clone();
+            head.forwardSexp();
+            head.forwardWhitespace();
+            lastIndent = head.position.character;
             exprsOnLine = 0;
             lastLine = cursor.line;
         }
-    } while(!cursor.atEnd() || startLine-cursor.line < maxLines || indents.length >= maxDepth);
+    } while(!cursor.atEnd() && Math.abs(startLine-cursor.line) < maxLines && indents.length < maxDepth);
+    if(!indents.length)
+        indents.push({argPos: 0, first: null, rules: [], exprsOnLine: 0, startIndent: lastIndent >= 0 ? lastIndent : 0, firstItemIdent: lastIndent >= 0 ? lastIndent : 0})
     return indents;
 }
 
