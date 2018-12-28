@@ -27,8 +27,14 @@ toplevel.terminal("\\)|\\]|\\}", (l, m) => ({ type: "close" }))
 
 // punctuators
 toplevel.terminal("~@|~|'|#'|#:|#_|\\^|`|#|\\^:", (l, m) => ({ type: "punc" }))
+
+toplevel.terminal("true|false|nil", (l, m) => ({type: "lit"}))
+toplevel.terminal("[0-9]+[rR][0-9a-zA-Z]+", (l, m) => ({ type: "lit" }))
+toplevel.terminal("[-+]?[0-9]+(\\.[0-9]+)?([eE][-+]?[0-9]+)?", (l, m) => ({ type: "lit" }))
+
+toplevel.terminal(":[^()[\\]\\{\\}#,~@'`^\"\\s]+", (l, m) => ({ type: "lit" }))
 // this is a REALLY lose symbol definition, but similar to how clojure really collects it. numbers/true/nil are all 
-toplevel.terminal("[^()[\\]\\{\\}#,~@'`^\"\\s]+", (l, m) => ({ type: "id" }))
+toplevel.terminal("[^()[\\]\\{\\}#,~@'`^\"\\s:][^()[\\]\\{\\}#,~@'`^\"\\s]*", (l, m) => ({ type: "id" }))
 // complete string on a single line
 toplevel.terminal('"([^"\\\\]|\\\\.)*"', (l, m) => ({ type: "str"}))
 

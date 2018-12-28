@@ -125,6 +125,7 @@ class TokenCursor {
             let tk = this.getToken();
             switch(tk.type) {
                 case 'id':
+                case 'lit':
                 case 'str':
                 case 'str-end':
                     this.next();
@@ -167,6 +168,7 @@ class TokenCursor {
             let tk = this.getPrevToken();
             switch(tk.type) {
                 case 'id':
+                case 'lit':
                 case 'str':
                 case 'str-start':
                     this.previous();
@@ -590,7 +592,9 @@ interface IndentState {
     exprsOnLine: number;
 }
 
-let OPEN_LIST = new Set(["#(", "#?(", "("])
+// If a token's raw string is in this set, then it counts as an 'open list'. An open list is something that could be
+// considered code, so special formatting rules apply.
+let OPEN_LIST = new Set(["#(", "#?(", "(", "#?@("])
 
 export function collectIndentState(document: vscode.TextDocument, position: vscode.Position, maxDepth: number = 3, maxLines: number = 20): IndentState[] {
     let cursor = getDocument(document).getTokenCursor(position);
@@ -612,7 +616,8 @@ export function collectIndentState(document: vscode.TextDocument, position: vsco
             nextCursor.forwardSexp()
             nextCursor.forwardWhitespace();
 
-            let firstItemIdent = nextCursor.line == cursor.line && OPEN_LIST.has(prevToken.raw) ? nextCursor.position.character : cursor.position.character;
+            // iff the first item of this list is a an identifier, and the second item is on the same line, indent to that second item. otherwise indent to the open paren.
+            let firstItemIdent = cursor.getToken().type == "id" && nextCursor.line == cursor.line && OPEN_LIST.has(prevToken.raw) ? nextCursor.position.character : cursor.position.character;
 
 
             let token = cursor.getToken().raw;
