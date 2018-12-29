@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.31",
+    "version": "0.0.33",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -45,47 +45,6 @@
     "main": "./out/calva-fmt/extension",
     "contributes": {
         "commands": [
-            {
-                "command": "calva-fmt.forwardSexp",
-                "title": "Forward Sexp",
-                "category": "Calva Format (restartable-formatter)"
-            },
-            {
-                "command": "calva-fmt.backwardSexp",
-                "title": "Backward Sexp",
-                "category": "Calva Format (restartable-formatter)"
-            },
-            {
-                "command": "calva-fmt.forwardList",
-                "title": "Forward List",
-                "category": "Calva Format (restartable-formatter)"
-            },
-            {
-                "command": "calva-fmt.backwardList",
-                "title": "Backward List",
-                "category": "Calva Format (restartable-formatter)"
-            },
-            {
-                "command": "calva-fmt.downList",
-                "title": "Down List",
-                "category": "Calva Format (restartable-formatter)"
-            },
-            {
-                "command": "calva-fmt.upList",
-                "title": "Up List",
-                "category": "Calva Format (restartable-formatter)"
-            },
-            {
-                "command": "calva-fmt.backwardUpList",
-                "title": "Backward Up List",
-                "category": "Calva Format (restartable-formatter)"
-            },
-            {
-                "command": "calva-fmt.argumentPosition",
-                "title": "Dump Argument Position",
-                "category": "Calva Format (restartable-formatter)"
-            },
-            
             {
                 "command": "calva-fmt.formatCurrentForm",
                 "title": "Format Current Form",
@@ -174,6 +133,11 @@
                         "default": true,
                         "description": "Auto-adjust indentation and format as you type (only on enter, currently)?"
                     },
+                    "calva.fmt.newIndentEngine": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Help beta test the new indent engine (it is MUCH faster than the previous one)."
+                    },
                     "calva.fmt.allgnMapItems": {
                         "type": "boolean",
                         "default": false,
@@ -212,10 +176,10 @@
         "vscode": "^1.1.21"
     },
     "dependencies": {
-        "@cospaia/calva-lib": "0.0.18",
+        "@cospaia/calva-lib": "0.0.21",
         "immutable": "^3.8.1",
         "immutable-cursor": "^2.0.1",
-        "npm": "^6.4.1"
+        "npm": "^6.5.0"
     },
     "license": "MIT"
 }

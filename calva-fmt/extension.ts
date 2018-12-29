@@ -25,14 +25,14 @@ function activate(context: vscode.ExtensionContext) {
     docmirror.activate();
     vscode.languages.setLanguageConfiguration("clojure", ClojureLanguageConfiguration);
     // this doesn't actually grow anything yet, but just jumps to the start of the enclosing expression.
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.forwardSexp', docmirror.forwardSexp))
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardSexp', docmirror.backwardSexp))
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.forwardList', docmirror.forwardList))
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardList', docmirror.backwardList))
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.downList', docmirror.downList))
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.upList', docmirror.upList))
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardUpList', docmirror.backwardUpList))
-    
+    // context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.forwardSexp', docmirror.forwardSexp))
+    // context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardSexp', docmirror.backwardSexp))
+    // context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.forwardList', docmirror.forwardList))
+    // context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardList', docmirror.backwardList))
+    // context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.downList', docmirror.downList))
+    // context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.upList', docmirror.upList))
+    // context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.backwardUpList', docmirror.backwardUpList))
+
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.formatCurrentForm', formatter.formatPositionCommand));
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.alignCurrentForm', formatter.alignPositionCommand));
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('calva-fmt.inferParens', inferer.inferParensCommand));
@@ -41,9 +41,7 @@ function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new FormatOnTypeEditProvider, "\r", "\n"));
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new RangeEditProvider));
     vscode.window.onDidChangeActiveTextEditor(inferer.updateState);
-    // vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
-    //     console.log(e);
-    // });
+
     const api = {
         formatPosition: formatter.formatPosition,
         formatRange: formatter.formatRange,
