@@ -53,7 +53,7 @@ Built with [Shadow CLJS](http://shadow-cljs.org/).
 We are committed to make the Clojure experience in VS Code pruductive and pleasurable.
 
 * [Peter Strömberg](https://github.com/PEZ)
-* [Matt Eddon](https://github.com/mseddon)
+* [Matt Seddon](https://github.com/mseddon)
 * You?
 
 
