@@ -125,7 +125,7 @@
 					"name": "storage.control.clojure"
 				},
 				{
-					"match": "(?<=(\\s|\\(|\\[|\\{))(declare-?|(in-)?ns|import|use|require|load|compile|(def[\\p{Ll}\\-]*))(?=(\\s|\\)|\\]|\\}))",
+					"match": "(?<=(\\s|\\(|\\[|\\{))(declare-?|(in-)?ns|import|use|require|load|compile|(def(?!ault)[\\p{Ll}\\-]*))(?=(\\s|\\)|\\]|\\}))",
 					"name": "keyword.control.clojure"
 				}
 			]
