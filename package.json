@@ -171,7 +171,8 @@
         "compile": "tsc -p ./",
         "vscode:prepublish": "npm run release",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
+        "test": "node ./node_modules/vscode/bin/test",
+        "update-grammar": "node ./build/update-grammar.js PEZ/language-clojure grammars/clojure.cson ./clojure.tmLanguage.json"
     },
     "devDependencies": {
         "@types/mocha": "^5.2.5",
@@ -180,7 +181,9 @@
         "eslint": "^5.9.0",
         "mocha": "^5.2.0",
         "typescript": "^3.1.6",
-        "vscode": "^1.1.21"
+        "vscode": "^1.1.21",
+        "cson-parser": "^1.3.3",
+        "fast-plist": "^0.1.2"
     },
     "dependencies": {
         "@cospaia/calva-lib": "0.0.21",
