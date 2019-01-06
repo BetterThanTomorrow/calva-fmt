@@ -335,7 +335,7 @@
 					"include": "#sexp"
 				},
 				{
-					"match": "(?<=\\()(.+?)(?=\\s|\\))",
+					"match": "(?<=\\()([^\"]+?)(?=\\s|\\))",
 					"captures": {
 						"1": {
 							"name": "entity.name.function.clojure"
