@@ -10,4 +10,3 @@ out/
 lib/
 test-out/
 .vscode/settings.json
-package-lock.json
