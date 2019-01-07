@@ -40,6 +40,9 @@
     'include': '#comment'
   }
   {
+    'include': '#comment-token'
+  }
+  {
     'include': '#shebang-comment'
   }
   {
@@ -58,13 +61,22 @@
     'include': '#string'
   }
   {
+    'include': '#comment-string'
+  }
+  {
     'include': '#vector'
+  }
+  {
+    'include': '#comment-vector'
   }
   {
     'include': '#set'
   }
   {
     'include': '#map'
+  }
+  {
+    'include': "#comment-map"
   }
   {
     'include': '#regexp'
@@ -97,6 +109,18 @@
         'name': 'punctuation.definition.comment.clojure'
     'end': '$'
     'name': 'comment.line.semicolon.clojure'
+  'comment-token':
+    'patterns':
+      [
+        {
+          'match': '#_\\s*[^\\s,#"\\(\\)\\[\\]\\{\\}]+'
+          'name': 'meta.comment-expression.clojure'
+        }
+        {
+          'match': '#_\\s*\'*#[^\\s,#"\\(\\)\\[\\]\\{\\}]+'
+          'name': 'meta.comment-expression.clojure'
+        }
+      ]
   'constants':
     'patterns': [
       {
@@ -177,6 +201,23 @@
         'include': '$self'
       }
     ]
+  'comment-map':
+    'begin': '(#_\\s*\\#*\\{)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.section.map.begin.clojure'
+    'end': '(\\}(?=[\\}\\]\\)\\s]*(?:;|$)))|(\\})'
+    'endCaptures':
+      '1':
+        'name': 'punctuation.section.map.end.trailing.clojure'
+      '2':
+        'name': 'punctuation.section.map.end.clojure'
+    'name': 'meta.comment-expression.clojure'
+    'patterns': [
+      {
+        'include': '$self'
+      }
+    ]
   'metadata':
     'patterns': [
       {
@@ -243,6 +284,21 @@
     'patterns': [
       {
         'include': '#regexp_escaped_char'
+      }
+    ]
+  'comment-string':
+    'begin': '#_\\s*#?"'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.section.comment.begin.clojure'
+    'end': '"'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.section.comment.end.clojure'
+    'name': 'meta.comment-expression.clojure'
+    'patterns': [
+      {
+        'include': '$self'
       }
     ]
   'regexp_escaped_char':
@@ -341,6 +397,7 @@
       }
     ]
   'comment-sexp':
+    # 'begin': '(#_\\s*[\'``]?\\()'
     'begin': '(#_\\s*\\()'
     'beginCaptures':
       '1':
