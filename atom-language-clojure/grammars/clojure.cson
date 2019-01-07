@@ -49,6 +49,9 @@
     'include': '#sexp'
   }
   {
+    'include': '#comment-sexp'
+  }
+  {
     'include': '#keyfn'
   }
   {
@@ -333,6 +336,25 @@
           }
         ]
       }
+      {
+        'include': '$self'
+      }
+    ]
+  'comment-sexp':
+    'begin': '(#_\\s*\\()'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.section.expression.begin.clojure'
+    'end': '(\\))$|(\\)(?=[\\}\\]\\)\\s]*(?:;|$)))|(\\))'
+    'endCaptures':
+      '1':
+        'name': 'punctuation.section.expression.end.trailing.clojure'
+      '2':
+        'name': 'punctuation.section.expression.end.trailing.clojure'
+      '3':
+        'name': 'punctuation.section.expression.end.clojure'
+    'name': 'meta.comment-expression.clojure'
+    'patterns': [
       {
         'include': '$self'
       }
