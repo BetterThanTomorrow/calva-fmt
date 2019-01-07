@@ -83,11 +83,11 @@
 		"comment-token": {
 			"patterns": [
 				{
-					"match": "#_\\s*[^\\s,#\"\\(\\)\\[\\]\\{\\}]+",
+					"match": "#_\\s*'?[^\\s',#\"\\(\\)\\[\\]\\{\\}]+",
 					"name": "meta.comment-expression.clojure"
 				},
 				{
-					"match": "#_\\s*'*#[^\\s,#\"\\(\\)\\[\\]\\{\\}]+",
+					"match": "#_\\s*'?#[^\\s',#\"\\(\\)\\[\\]\\{\\}]+",
 					"name": "meta.comment-expression.clojure"
 				}
 			]

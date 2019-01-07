@@ -1,6 +1,10 @@
 
 #_{:åkerö} {:åkerö}
 
+{:foo #_bar :bar #_foo'foo #_'foo'bar #_'#foo'bar}
+
+#_:foo:bar :foo:bar
+
 #_'foo 'foo
 
 #_foo foo
