@@ -3,7 +3,7 @@
 
 {:foo #_bar :bar #_foo'foo #_'foo'bar #_'#foo'bar}
 
-#_:foo:bar :foo:bar
+#_:foobar :foobar
 
 #_1.2M 1.2M
 
@@ -13,10 +13,10 @@
 
 #_#foo #foo
 
-        #_#?(:cljs foo
-             :clj bar)
-        #?(:cljs foo
-           :clj bar)
+#_#?(:cljs foo
+     :clj bar)
+    #?(:cljs foo
+       :clj bar)
 
 #_(:cljs foo
          :clj bar)
@@ -31,8 +31,15 @@
 
 #_#"foo\sbar" #"foo\sbar"
 
-#_(defn foo []
-    :bar)
+(defn foo []
+    :bar
+    #_{:foo :bar
+        (comment
+          #"\sfoo" bar)
+
+        '(foo :bar ["foo" #"\s*"]) {:bar}}
+    (foo))
+
 (defn foo [])
 
 #_[:bar
