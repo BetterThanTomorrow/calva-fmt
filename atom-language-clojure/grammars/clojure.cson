@@ -118,10 +118,6 @@
     'name': 'meta.comment-expression.clojure'
     'patterns':
       [
-        # {
-        #   'match': '.+'
-        #   'name': 'meta.comment-expression.clojure'
-        # }
         {
           'include': '#constants'
         }
