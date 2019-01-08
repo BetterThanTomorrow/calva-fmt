@@ -5,6 +5,8 @@
 
 #_:foo:bar :foo:bar
 
+#_1.2M 1.2M
+
 #_'foo 'foo
 
 #_foo foo

@@ -95,6 +95,7 @@ describe "Clojure grammar", ->
       "meta.map.clojure": ["{:foo}"]
       "meta.vector.clojure": ["[:foo]"]
       "meta.quoted-expression.clojure": ["'(:foo)", "`(:foo)"]
+      "meta.comment-expression.clojure": ["#_:foo"]
 
     for metaScope, lines of tests
       for line in lines

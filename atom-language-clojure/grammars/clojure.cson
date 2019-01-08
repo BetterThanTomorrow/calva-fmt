@@ -40,7 +40,7 @@
     'include': '#comment'
   }
   {
-    'include': '#comment-token'
+    'include': '#comment-constants'
   }
   {
     'include': '#shebang-comment'
@@ -109,16 +109,21 @@
         'name': 'punctuation.definition.comment.clojure'
     'end': '$'
     'name': 'comment.line.semicolon.clojure'
-  'comment-token':
+  'comment-constants':
+    'begin': '#_\\s*(?=\'?#?[^\\s\',"\\(\\)\\[\\]\\{\\}]+)'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.begin.clojure'
+    'end': '(?=[\\s\',"\\(\\)\\[\\]\\{\\}])'
+    'name': 'meta.comment-expression.clojure'
     'patterns':
       [
+        # {
+        #   'match': '.+'
+        #   'name': 'meta.comment-expression.clojure'
+        # }
         {
-          'match': '#_\\s*\'?[^\\s\',#"\\(\\)\\[\\]\\{\\}]+'
-          'name': 'meta.comment-expression.clojure'
-        }
-        {
-          'match': '#_\\s*\'?#[^\\s\',#"\\(\\)\\[\\]\\{\\}]+'
-          'name': 'meta.comment-expression.clojure'
+          'include': '#constants'
         }
       ]
   'constants':
