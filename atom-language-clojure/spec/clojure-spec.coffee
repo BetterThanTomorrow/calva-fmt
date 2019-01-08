@@ -76,6 +76,23 @@ describe "Clojure grammar", ->
         {tokens} = grammar.tokenizeLine num
         expect(tokens[0]).toEqual value: num, scopes: ["source.clojure", scope]
 
+  # it "tokenizes ignored numeric forms", ->
+  #   numbers =
+  #     "constant.numeric.ratio.clojure": ["#_1/2"]
+  #     "constant.numeric.arbitrary-radix.clojure": ["#_2R1011"]
+  #     "constant.numeric.hexadecimal.clojure": ["#_0xDEADBEEF"]
+  #     "constant.numeric.octal.clojure": ["#_0123"]
+  #     "constant.numeric.bigdecimal.clojure": ["#_123.456M"]
+  #     "constant.numeric.double.clojure": ["#_123.45"]
+  #     "constant.numeric.bigint.clojure": ["#_123N"]
+  #     "constant.numeric.long.clojure": ["#_123"]
+  #
+  #   for scope, nums of numbers
+  #     for num in nums
+  #       {tokens} = grammar.tokenizeLine num
+  #       expect(tokens[0]).toEqual value: num, scopes: ["source.clojure", "meta.comment-expression", scope]
+
+
   it "tokenizes booleans", ->
     booleans =
       "constant.language.boolean.clojure": ["true", "false"]
