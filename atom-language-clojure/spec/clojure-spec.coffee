@@ -116,6 +116,16 @@ describe "Clojure grammar", ->
       {tokens} = grammar.tokenizeLine "(#{keyfn})"
       expect(tokens[1]).toEqual value: keyfn, scopes: ["source.clojure", "meta.expression.clojure", "keyword.control.clojure"]
 
+  it "does not tokenize `default...`s as keyfn (keyword control)", ->
+    { tokens } = grammar.tokenizeLine "(defnormal foo)"
+    expect(tokens[1].scopes).toContain "keyword.control.clojure"
+    { tokens } = grammar.tokenizeLine "(normaldef foo)"
+    expect(tokens[1].scopes).not.toContain "keyword.control.clojure"
+    { tokens } = grammar.tokenizeLine "(default foo)"
+    expect(tokens[1].scopes).not.toContain "keyword.control.clojure"
+    { tokens } = grammar.tokenizeLine "(defaultfoo ba)"
+    expect(tokens[1].scopes).not.toContain "keyword.control.clojure"
+
   it "tokenizes keyfns (storage control)", ->
     keyfns = ["if", "when", "for", "cond", "do", "let", "binding", "loop", "recur", "fn", "throw", "try", "catch", "finally", "case"]
 
