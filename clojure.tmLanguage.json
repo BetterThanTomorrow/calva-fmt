@@ -1,7 +1,9 @@
 {
 	"information_for_contributors": [
-		"This file is generated from ./atom-language-clojure/grammars/clojure.cson"
+		"This file has been converted from https://github.com/PEZ/language-clojure/blob/calva/grammars/clojure.cson",
+		"If you want to provide a fix or improvement, please create a pull request there."
 	],
+	"version": "https://github.com/PEZ/language-clojure/commit/ecc790326bc8e14220e4d2d72a392a30876c3219",
 	"name": "Clojure",
 	"scopeName": "source.clojure",
 	"patterns": [
@@ -333,7 +335,7 @@
 					"include": "#sexp"
 				},
 				{
-					"match": "(?<=\\()([^\"]+?)(?=\\s|\\))",
+					"match": "(?<=\\()(.+?)(?=\\s|\\))",
 					"captures": {
 						"1": {
 							"name": "entity.name.function.clojure"
