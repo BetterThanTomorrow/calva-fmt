@@ -399,18 +399,14 @@
     ]
   'comment-sexp':
     # 'begin': '(#_\\s*[\'``]?\\()'
-    'begin': '(#_\\s*\\()'
+    'begin': '#_\\s*(?=\\()'
     'beginCaptures':
-      '1':
-        'name': 'punctuation.section.expression.begin.clojure'
-    'end': '(\\))$|(\\)(?=[\\}\\]\\)\\s]*(?:;|$)))|(\\))'
+      '0':
+        'name': 'punctuation.section.comment.begin.clojure'
+    'end': '(?=(\\))$|(\\)(?=[\\}\\]\\)\\s]*(?:;|$)))|(\\)))'
     'endCaptures':
-      '1':
-        'name': 'punctuation.section.expression.end.trailing.clojure'
-      '2':
-        'name': 'punctuation.section.expression.end.trailing.clojure'
-      '3':
-        'name': 'punctuation.section.expression.end.clojure'
+      '0':
+        'name': 'punctuation.section.comment.end.clojure'
     'name': 'meta.comment-expression.clojure'
     'patterns': [
       {

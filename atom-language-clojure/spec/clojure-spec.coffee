@@ -177,6 +177,8 @@ describe "Clojure grammar", ->
     for expr in expressions
       {tokens} = grammar.tokenizeLine expr
       expect(tokens[1]).toEqual value: "foo", scopes: ["source.clojure", "meta.expression.clojure", "entity.name.function.clojure"]
+      {tokens} = grammar.tokenizeLine "#_#{expr}"
+      expect(tokens[2]).toEqual value: "foo", scopes: ["source.clojure", "meta.comment-expression.clojure", "meta.expression.clojure", "entity.name.function.clojure"]
 
     #non-ASCII letters
     {tokens} = grammar.tokenizeLine "(Öπ 2 20)"
