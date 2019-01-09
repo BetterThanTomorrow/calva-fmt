@@ -62,11 +62,11 @@ describe "Clojure grammar", ->
 
   it "tokenizes numerics", ->
     numbers =
-      "constant.numeric.ratio.clojure": ["1/2", "123/456"]
+      "constant.numeric.ratio.clojure": ["1/2", "-1/2", "123/456"]
       "constant.numeric.arbitrary-radix.clojure": ["2R1011", "16rDEADBEEF", "56råäöÅÄÖπ"]
       "constant.numeric.hexadecimal.clojure": ["0xDEADBEEF", "0XDEADBEEF"]
       "constant.numeric.octal.clojure": ["0123"]
-      "constant.numeric.bigdecimal.clojure": ["123.456M"]
+      "constant.numeric.bigdecimal.clojure": ["123.456M", "-123.456M"]
       "constant.numeric.double.clojure": ["123.45", "123.45e6", "123.45E6"]
       "constant.numeric.bigint.clojure": ["123N"]
       "constant.numeric.long.clojure": ["123", "12321"]
@@ -76,22 +76,10 @@ describe "Clojure grammar", ->
         {tokens} = grammar.tokenizeLine num
         expect(tokens[0]).toEqual value: num, scopes: ["source.clojure", scope]
 
-  # it "tokenizes ignored numeric forms", ->
-  #   numbers =
-  #     "constant.numeric.ratio.clojure": ["#_1/2"]
-  #     "constant.numeric.arbitrary-radix.clojure": ["#_2R1011"]
-  #     "constant.numeric.hexadecimal.clojure": ["#_0xDEADBEEF"]
-  #     "constant.numeric.octal.clojure": ["#_0123"]
-  #     "constant.numeric.bigdecimal.clojure": ["#_123.456M"]
-  #     "constant.numeric.double.clojure": ["#_123.45"]
-  #     "constant.numeric.bigint.clojure": ["#_123N"]
-  #     "constant.numeric.long.clojure": ["#_123"]
-  #
-  #   for scope, nums of numbers
-  #     for num in nums
-  #       {tokens} = grammar.tokenizeLine num
-  #       expect(tokens[0]).toEqual value: num, scopes: ["source.clojure", "meta.comment-expression", scope]
-
+    for scope, nums of numbers
+      for num in nums
+        {tokens} = grammar.tokenizeLine "#_#{num}"
+        expect(tokens[1]).toEqual value: num, scopes: ["source.clojure", "meta.comment-expression.clojure", scope]
 
   it "tokenizes booleans", ->
     booleans =
@@ -105,6 +93,8 @@ describe "Clojure grammar", ->
   it "tokenizes nil", ->
     {tokens} = grammar.tokenizeLine "nil"
     expect(tokens[0]).toEqual value: "nil", scopes: ["source.clojure", "constant.language.nil.clojure"]
+    {tokens} = grammar.tokenizeLine "#_nil"
+    expect(tokens[1]).toEqual value: "nil", scopes: ["source.clojure", "meta.comment-expression.clojure", "constant.language.nil.clojure"]
 
   it "tokenizes keywords", ->
     tests =
