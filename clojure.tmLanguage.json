@@ -424,7 +424,7 @@
 			]
 		},
 		"comment-sexp": {
-			"begin": "#_\\s*(?=\\()",
+			"begin": "#_\\s*['``]?(?=\\()",
 			"beginCaptures": {
 				"0": {
 					"name": "punctuation.section.comment.begin.clojure"

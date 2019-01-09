@@ -6,7 +6,7 @@
 
 #_nil nil
 
-#_{:åkerö} {:åkerö}
+#_{:åkerö foo} {:åkerö foo}
 
 {:foo #_bar :bar #_foo'foo #_'foo'bar #_'#foo'bar}
 
@@ -21,6 +21,13 @@
 #_@foo @foo
 
 #_@(foo bar)  @(foo bar)
+
+#_'(foo bar) '(foo bar)
+
+#_`(foo bar) '(foo bar)
+
+#_~(foo bar) '(foo bar)
+
 
 (defn scroll-to-bottom [state]
                    #_#?(:cljs

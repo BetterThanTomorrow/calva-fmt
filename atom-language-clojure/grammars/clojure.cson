@@ -254,7 +254,7 @@
       }
     ]
   'quoted-sexp':
-    'begin': '([\'``]\\()'
+    'begin': '([\'`]\\()'
     'beginCaptures':
       '1':
         'name': 'punctuation.section.expression.begin.clojure'
@@ -398,7 +398,7 @@
       }
     ]
   'comment-sexp':
-    'begin': '#_\\s*(?=\\()'
+    'begin': '#_\\s*[\'`]?(?=\\()'
     'beginCaptures':
       '0':
         'name': 'punctuation.section.comment.begin.clojure'
