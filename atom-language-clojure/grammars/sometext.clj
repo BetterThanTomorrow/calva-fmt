@@ -8,6 +8,11 @@
 
 #_{:åkerö foo} {:åkerö foo}
 
+#_#{:åkerö foo} #{:åkerö foo}
+
+#_^{:åkerö foo} ^{:åkerö foo}
+
+
 {:foo #_bar :bar #_foo'foo #_'foo'bar #_'#foo'bar}
 
 #_:foobar :foobar
@@ -16,32 +21,41 @@
 
 #_(default default) (default defallt)
 
-#_(FOOBAR :bar) (FOOBAR :bar)
-
 #_@foo @foo
+
+#_(foo bar) (foo bar)
+
+#_ (foo bar) (foo bar)
 
 #_@(foo bar)  @(foo bar)
 
 #_'(foo bar) '(foo bar)
 
-#_`(foo bar) '(foo bar)
+#_`(foo bar) `(foo bar)
 
-#_~(foo bar) '(foo bar)
+#_~(foo bar) ~(foo bar)
+
+#_(FOOBAR :bar) (FOOBAR :bar)
 
 
 (defn scroll-to-bottom [state]
                    #_#?(:cljs
-                      (let [comp (:rum/react-component state)
-                            message-box (js/ReactDOM.findDOMNode comp)
-                            scroll-height (.-scrollHeight message-box)]
-                        (set! (.-scrollTop message-box) scroll-height)))
+                        (let [comp (:rum/react-component state)
+                              message-box (js/ReactDOM.findDOMNode comp)
+                              scroll-height (.-scrollHeight message-box)]
+                          (set! (.-scrollTop message-box) scroll-height)))
                  state)
-
-#_'foo 'foo
 
 #_foo foo
 
+#_'foo 'foo
+
 #_#foo #foo
+
+#_@foo @foo
+
+#_~foo ~foo
+
 
 #_#?(:cljs foo
      :clj bar)

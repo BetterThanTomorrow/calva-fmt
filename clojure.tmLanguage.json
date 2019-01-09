@@ -9,9 +9,6 @@
 			"include": "#comment"
 		},
 		{
-			"include": "#comment-constants"
-		},
-		{
 			"include": "#shebang-comment"
 		},
 		{
@@ -19,9 +16,6 @@
 		},
 		{
 			"include": "#sexp"
-		},
-		{
-			"include": "#comment-sexp"
 		},
 		{
 			"include": "#keyfn"
@@ -45,9 +39,6 @@
 			"include": "#map"
 		},
 		{
-			"include": "#comment-map"
-		},
-		{
 			"include": "#regexp"
 		},
 		{
@@ -67,6 +58,15 @@
 		},
 		{
 			"include": "#symbol"
+		},
+		{
+			"include": "#ignore-non-listy"
+		},
+		{
+			"include": "#ignore-list"
+		},
+		{
+			"include": "#ignore-map"
 		}
 	],
 	"repository": {
@@ -80,18 +80,58 @@
 			"end": "$",
 			"name": "comment.line.semicolon.clojure"
 		},
-		"comment-constants": {
-			"begin": "#_\\s*(?=(?:'?#?|-?)[^\\s',\"\\(\\)\\[\\]\\{\\}]+)",
+		"ignore-list": {
+			"begin": "#_\\s*[#\\?'`@~]*\\s*(?=\\()",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.begin.clojure"
+				}
+			},
+			"end": "(?<=\\))",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.end.clojure"
+				}
+			},
+			"name": "meta.comment-expression.clojure"
+		},
+		"ignore-map": {
+			"begin": "#_[\\s#^]*(?=\\{)",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.begin.clojure"
+				}
+			},
+			"end": "(?<=\\})",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.end.clojure"
+				}
+			},
+			"name": "meta.comment-expression.clojure",
+			"patterns": [
+				{
+					"include": "$self"
+				}
+			]
+		},
+		"ignore-non-listy": {
+			"begin": "#_[\\s'`@^]*(?=[^\\(\\[\\{]+)",
 			"beginCaptures": {
 				"0": {
 					"name": "punctuation.definition.comment.begin.clojure"
 				}
 			},
 			"end": "(?=[\\s',\"\\(\\)\\[\\]\\{\\}])",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.end.clojure"
+				}
+			},
 			"name": "meta.comment-expression.clojure",
 			"patterns": [
 				{
-					"include": "#constants"
+					"include": "$self"
 				}
 			]
 		},
@@ -185,29 +225,6 @@
 				}
 			]
 		},
-		"comment-map": {
-			"begin": "(#_\\s*\\#*\\{)",
-			"beginCaptures": {
-				"1": {
-					"name": "punctuation.section.map.begin.clojure"
-				}
-			},
-			"end": "(\\}(?=[\\}\\]\\)\\s]*(?:;|$)))|(\\})",
-			"endCaptures": {
-				"1": {
-					"name": "punctuation.section.map.end.trailing.clojure"
-				},
-				"2": {
-					"name": "punctuation.section.map.end.clojure"
-				}
-			},
-			"name": "meta.comment-expression.clojure",
-			"patterns": [
-				{
-					"include": "$self"
-				}
-			]
-		},
 		"metadata": {
 			"patterns": [
 				{
@@ -249,7 +266,7 @@
 			]
 		},
 		"quoted-sexp": {
-			"begin": "(['``]\\()",
+			"begin": "(['`]\\()",
 			"beginCaptures": {
 				"1": {
 					"name": "punctuation.section.expression.begin.clojure"
@@ -418,26 +435,6 @@
 						}
 					]
 				},
-				{
-					"include": "$self"
-				}
-			]
-		},
-		"comment-sexp": {
-			"begin": "#_\\s*['``]?(?=\\()",
-			"beginCaptures": {
-				"0": {
-					"name": "punctuation.section.comment.begin.clojure"
-				}
-			},
-			"end": "(?<=\\))",
-			"endCaptures": {
-				"0": {
-					"name": "punctuation.section.comment.end.clojure"
-				}
-			},
-			"name": "meta.comment-expression.clojure",
-			"patterns": [
 				{
 					"include": "$self"
 				}

@@ -230,6 +230,19 @@ describe "Clojure grammar", ->
     for token in mid
       expect(token.scopes.slice(0, 2)).toEqual ["source.clojure", "meta.#{metaScope}.clojure"]
 
+    # Ignored expression
+    {tokens} = grammar.tokenizeLine "#_#{startsWith}foo, bar#{endsWith}"
+
+    [ignoreStart, start, mid..., end] = tokens
+
+    expect(ignoreStart).toEqual value: "#_", scopes: ["source.clojure", "meta.comment-expression.clojure", "punctuation.definition.comment.begin.clojure"]
+    expect(start).toEqual value: startsWith, scopes: ["source.clojure", "meta.comment-expression.clojure", "meta.#{metaScope}.clojure", "punctuation.section.#{puncScope}.begin.clojure"]
+    expect(end).toEqual value: endsWith, scopes: ["source.clojure", "meta.comment-expression.clojure", "meta.#{metaScope}.clojure", "punctuation.section.#{puncScope}.end.trailing.clojure"]
+
+    for token in mid
+      expect(token.scopes.slice(0, 3)).toEqual ["source.clojure", "meta.comment-expression.clojure", "meta.#{metaScope}.clojure"]
+
+
     # Expression broken over multiple lines.
     tokens = grammar.tokenizeLines("#{startsWith}foo\n bar#{endsWith}")
 
