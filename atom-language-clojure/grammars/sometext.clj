@@ -19,6 +19,18 @@
 
 #_1.2M 1.2M
 
+#_[:div#foo.bar
+   [:p "foo"]]
+
+[:div#foo.bar
+   [:p "foo"]]
+
+[:div#foo.bar
+ #_[:p "foo"
+    [:span [:a {:href "#"}]]]
+ [:span [:i "bar"]]]
+
+
 #_(default default) (default defallt)
 
 #_@foo @foo
@@ -38,13 +50,15 @@
 #_(FOOBAR :bar) (FOOBAR :bar)
 
 
-(defn scroll-to-bottom [state]
-                   #_#?(:cljs
-                        (let [comp (:rum/react-component state)
-                              message-box (js/ReactDOM.findDOMNode comp)
-                              scroll-height (.-scrollHeight message-box)]
-                          (set! (.-scrollTop message-box) scroll-height)))
-                 state)
+#_(defn scroll-to-bottom [state]
+    (:cljs
+     (let [comp (:rum/react-component state)
+           message-box (js/ReactDOM.findDOMNode comp)
+           scroll-height (.-scrollHeight message-box)]
+       (set! (.-scrollTop message-box) scroll-height)))
+    state)
+
+(def foo :bar)
 
 #_foo foo
 

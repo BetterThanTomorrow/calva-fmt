@@ -61,9 +61,6 @@
     'include': '#vector'
   }
   {
-    'include': '#comment-vector'
-  }
-  {
     'include': '#set'
   }
   {
@@ -99,6 +96,9 @@
   {
     'include': '#ignore-map'
   }
+  {
+    'include': '#ignore-vector'
+  }
 ]
 'repository':
   'comment':
@@ -109,6 +109,21 @@
         'name': 'punctuation.definition.comment.clojure'
     'end': '$'
     'name': 'comment.line.semicolon.clojure'
+  'ignore-non-listy':
+    'begin': '#_[\\s\'`@^]*(?=[^\\(\\[\\{]+)'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.begin.clojure'
+    'end': '(?=[\\s\',"\\(\\)\\[\\]\\{\\}])'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.end.clojure'
+    'name': 'meta.comment-expression.clojure'
+    'patterns': [
+      {
+        'include': '$self'
+      }
+    ]
   'ignore-list':
     'begin': '#_\\s*[#\\?\'`@~]*\\s*(?=\\()'
     'beginCaptures':
@@ -139,12 +154,12 @@
         'include': '$self'
       }
     ]
-  'ignore-non-listy':
-    'begin': '#_[\\s\'`@^]*(?=[^\\(\\[\\{]+)'
+  'ignore-vector':
+    'begin': '#_\\s*(?=\\[)'
     'beginCaptures':
       '0':
         'name': 'punctuation.definition.comment.begin.clojure'
-    'end': '(?=[\\s\',"\\(\\)\\[\\]\\{\\}])'
+    'end': '(?<=\\])'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.comment.end.clojure'
