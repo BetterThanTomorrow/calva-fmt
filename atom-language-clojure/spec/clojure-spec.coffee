@@ -75,9 +75,6 @@ describe "Clojure grammar", ->
       for num in nums
         {tokens} = grammar.tokenizeLine num
         expect(tokens[0]).toEqual value: num, scopes: ["source.clojure", scope]
-
-    for scope, nums of numbers
-      for num in nums
         {tokens} = grammar.tokenizeLine "#_#{num}"
         expect(tokens[1]).toEqual value: num, scopes: ["source.clojure", "meta.comment-expression.clojure", scope]
 
@@ -89,6 +86,8 @@ describe "Clojure grammar", ->
       for bool in bools
         {tokens} = grammar.tokenizeLine bool
         expect(tokens[0]).toEqual value: bool, scopes: ["source.clojure", scope]
+        {tokens} = grammar.tokenizeLine "#_#{bool}"
+        expect(tokens[1]).toEqual value: bool, scopes: ["source.clojure", "meta.comment-expression.clojure", scope]
 
   it "tokenizes nil", ->
     {tokens} = grammar.tokenizeLine "nil"

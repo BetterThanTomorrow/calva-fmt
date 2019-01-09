@@ -1,3 +1,10 @@
+(default default) (defallt defallt)
+
+#_1.2M 1.2M
+
+#_true true #_false false
+
+#_nil nil
 
 #_{:åkerö} {:åkerö}
 
