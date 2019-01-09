@@ -398,12 +398,11 @@
       }
     ]
   'comment-sexp':
-    # 'begin': '(#_\\s*[\'``]?\\()'
     'begin': '#_\\s*(?=\\()'
     'beginCaptures':
       '0':
         'name': 'punctuation.section.comment.begin.clojure'
-    'end': '(?=(\\))$|(\\)(?=[\\}\\]\\)\\s]*(?:;|$)))|(\\)))'
+    'end': '(?<=\\))'
     'endCaptures':
       '0':
         'name': 'punctuation.section.comment.end.clojure'

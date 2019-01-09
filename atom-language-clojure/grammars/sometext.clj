@@ -14,7 +14,21 @@
 
 #_1.2M 1.2M
 
-(default default) (defallt defallt)
+#_(default default) (default defallt)
+
+#_(FOOBAR :bar) (FOOBAR :bar)
+
+#_@foo @foo
+
+#_@(foo bar)  @(foo bar)
+
+(defn scroll-to-bottom [state]
+                   #_#?(:cljs
+                      (let [comp (:rum/react-component state)
+                            message-box (js/ReactDOM.findDOMNode comp)
+                            scroll-height (.-scrollHeight message-box)]
+                        (set! (.-scrollTop message-box) scroll-height)))
+                 state)
 
 #_'foo 'foo
 
