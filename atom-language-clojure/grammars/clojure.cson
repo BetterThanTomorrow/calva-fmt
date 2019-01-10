@@ -91,9 +91,6 @@
     'include': '#ignore-regexp'
   }
   {
-    'include': '#ignore-non-listy'
-  }
-  {
     'include': '#ignore-list'
   }
   {
@@ -101,6 +98,9 @@
   }
   {
     'include': '#ignore-vector'
+  }
+  {
+    'include': '#ignore-non-listy'
   }
 ]
 'repository':
@@ -167,7 +167,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.comment.end.clojure'
-    'name': 'meta.comment-expression.clojure'
+    'name': 'meta.ignore.clojure'
     'patterns': [
       {
         'include': '#string'
@@ -182,14 +182,14 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.comment.end.clojure'
-    'name': 'meta.comment-expression.clojure'
+    'name': 'meta.ignore.clojure'
     'patterns': [
       {
         'include': '#regexp'
       }
     ]
   'ignore-non-listy':
-    'begin': '#_\\s*(?=[\'`@^#]*[^\\(\\[\\{]+)'
+    'begin': '#_\\s*(?=[\'`@^#]*.+)'
     'beginCaptures':
       '0':
         'name': 'punctuation.definition.comment.begin.clojure'
@@ -197,7 +197,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.comment.end.clojure'
-    'name': 'meta.comment-expression.clojure'
+    'name': 'meta.ignore.clojure'
     'patterns': [
       {
         'include': '#var'
@@ -224,7 +224,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.comment.end.clojure'
-    'name': 'meta.comment-expression.clojure'
+    'name': 'meta.ignore.clojure'
     'patterns': [
       {
         'include': '$self'
@@ -239,7 +239,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.comment.end.clojure'
-    'name': 'meta.comment-expression.clojure'
+    'name': 'meta.ignore.clojure'
     'patterns': [
       {
         'include': '$self'
@@ -254,7 +254,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.comment.end.clojure'
-    'name': 'meta.comment-expression.clojure'
+    'name': 'meta.ignore.clojure'
     'patterns': [
       {
         'include': '$self'
