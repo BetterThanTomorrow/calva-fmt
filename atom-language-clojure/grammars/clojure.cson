@@ -55,9 +55,6 @@
     'include': '#string'
   }
   {
-    'include': '#comment-string'
-  }
-  {
     'include': '#vector'
   }
   {
@@ -88,6 +85,12 @@
     'include': '#symbol'
   }
   {
+    'include': '#ignore-string'
+  }
+  {
+    'include': '#ignore-regexp'
+  }
+  {
     'include': '#ignore-non-listy'
   }
   {
@@ -109,8 +112,84 @@
         'name': 'punctuation.definition.comment.clojure'
     'end': '$'
     'name': 'comment.line.semicolon.clojure'
+  'constants':
+    'patterns': [
+      {
+        'match': '(nil)(?=(\\s|\\)|\\]|\\}))'
+        'name': 'constant.language.nil.clojure'
+      }
+      {
+        'match': '(true|false)'
+        'name': 'constant.language.boolean.clojure'
+      }
+      {
+        'match': '(-?\\d+/\\d+)'
+        'name': 'constant.numeric.ratio.clojure'
+      }
+      {
+        'match': '(-?\\d+[rR]\\w+)'
+        'name': 'constant.numeric.arbitrary-radix.clojure'
+      }
+      {
+        'match': '(-?0[xX][0-9a-fA-F]+)'
+        'name': 'constant.numeric.hexadecimal.clojure'
+      }
+      {
+        'match': '(-?0\\d+)'
+        'name': 'constant.numeric.octal.clojure'
+      }
+      {
+        'match': '(-?\\d+\\.\\d+([eE][+-]?\\d+)?M)'
+        'name': 'constant.numeric.bigdecimal.clojure'
+      }
+      {
+        'match': '(-?\\d+\\.\\d+([eE][+-]?\\d+)?)'
+        'name': 'constant.numeric.double.clojure'
+      }
+      {
+        'match': '(-?\\d+N)'
+        'name': 'constant.numeric.bigint.clojure'
+      }
+      {
+        'match': '(-?\\d+)'
+        'name': 'constant.numeric.long.clojure'
+      }
+      { # separating the pattern for reuse
+        'include': '#keyword'
+      }
+    ]
+  'ignore-string':
+    'begin': '#_\\s*(?=")'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.begin.clojure'
+    'end': '(?=")'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.end.clojure'
+    'name': 'meta.comment-expression.clojure'
+    'patterns': [
+      {
+        'include': '#string'
+      }
+    ]
+  'ignore-regexp':
+    'begin': '#_\\s*(?=#")'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.begin.clojure'
+    'end': '(?=")'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.end.clojure'
+    'name': 'meta.comment-expression.clojure'
+    'patterns': [
+      {
+        'include': '#regexp'
+      }
+    ]
   'ignore-non-listy':
-    'begin': '#_[\\s\'`@^]*(?=[^\\(\\[\\{]+)'
+    'begin': '#_\\s*(?=[\'`@^#]*[^\\(\\[\\{]+)'
     'beginCaptures':
       '0':
         'name': 'punctuation.definition.comment.begin.clojure'
@@ -121,7 +200,19 @@
     'name': 'meta.comment-expression.clojure'
     'patterns': [
       {
-        'include': '$self'
+        'include': '#var'
+      }
+      {
+        'include': '#constants'
+      }
+      {
+        'include': '#dynamic-variables'
+      }
+      {
+        'include': '#namespace-symbol'
+      }
+      {
+        'include': '#symbol'
       }
     ]
   'ignore-list':
@@ -167,52 +258,6 @@
     'patterns': [
       {
         'include': '$self'
-      }
-    ]
-  'constants':
-    'patterns': [
-      {
-        'match': '(nil)(?=(\\s|\\)|\\]|\\}))'
-        'name': 'constant.language.nil.clojure'
-      }
-      {
-        'match': '(true|false)'
-        'name': 'constant.language.boolean.clojure'
-      }
-      {
-        'match': '(-?\\d+/\\d+)'
-        'name': 'constant.numeric.ratio.clojure'
-      }
-      {
-        'match': '(-?\\d+[rR]\\w+)'
-        'name': 'constant.numeric.arbitrary-radix.clojure'
-      }
-      {
-        'match': '(-?0[xX][0-9a-fA-F]+)'
-        'name': 'constant.numeric.hexadecimal.clojure'
-      }
-      {
-        'match': '(-?0\\d+)'
-        'name': 'constant.numeric.octal.clojure'
-      }
-      {
-        'match': '(-?\\d+\\.\\d+([eE][+-]?\\d+)?M)'
-        'name': 'constant.numeric.bigdecimal.clojure'
-      }
-      {
-        'match': '(-?\\d+\\.\\d+([eE][+-]?\\d+)?)'
-        'name': 'constant.numeric.double.clojure'
-      }
-      {
-        'match': '(-?\\d+N)'
-        'name': 'constant.numeric.bigint.clojure'
-      }
-      {
-        'match': '(-?\\d+)'
-        'name': 'constant.numeric.long.clojure'
-      }
-      { # separating the pattern for reuse
-        'include': '#keyword'
       }
     ]
   'keyword':
@@ -315,21 +360,6 @@
     'patterns': [
       {
         'include': '#regexp_escaped_char'
-      }
-    ]
-  'comment-string':
-    'begin': '#_\\s*#?"'
-    'beginCaptures':
-      '0':
-        'name': 'punctuation.section.comment.begin.clojure'
-    'end': '"'
-    'endCaptures':
-      '0':
-        'name': 'punctuation.section.comment.end.clojure'
-    'name': 'meta.comment-expression.clojure'
-    'patterns': [
-      {
-        'include': '$self'
       }
     ]
   'regexp_escaped_char':

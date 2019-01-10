@@ -33,6 +33,13 @@ describe "Clojure grammar", ->
     expect(tokens[1]).toEqual value: 'foo bar', scopes: ["source.clojure", "string.quoted.double.clojure"]
     expect(tokens[2]).toEqual value: '"', scopes: ["source.clojure", "string.quoted.double.clojure", "punctuation.definition.string.end.clojure"]
 
+  it "tokenizes ignored strings", ->
+    {tokens} = grammar.tokenizeLine '#_"foo bar"'
+    expect(tokens[0]).toEqual value: '#_', scopes: ["source.clojure", "meta.comment-expression.clojure", "punctuation.definition.comment.begin.clojure"]
+    expect(tokens[1]).toEqual value: '"', scopes: ["source.clojure", "meta.comment-expression.clojure", "string.quoted.double.clojure", "punctuation.definition.string.begin.clojure"]
+    expect(tokens[2]).toEqual value: 'foo bar', scopes: ["source.clojure", "meta.comment-expression.clojure", "string.quoted.double.clojure"]
+    expect(tokens[3]).toEqual value: '"', scopes: ["source.clojure", "meta.comment-expression.clojure", "string.quoted.double.clojure", "punctuation.definition.string.end.clojure"]
+
   it "tokenizes character escape sequences", ->
     {tokens} = grammar.tokenizeLine '"\\n"'
     expect(tokens[0]).toEqual value: '"', scopes: ["source.clojure", "string.quoted.double.clojure", "punctuation.definition.string.begin.clojure"]
@@ -44,6 +51,13 @@ describe "Clojure grammar", ->
     expect(tokens[0]).toEqual value: '#"', scopes: ["source.clojure", "string.regexp.clojure", "punctuation.definition.regexp.begin.clojure"]
     expect(tokens[1]).toEqual value: 'foo', scopes: ["source.clojure", "string.regexp.clojure"]
     expect(tokens[2]).toEqual value: '"', scopes: ["source.clojure", "string.regexp.clojure", "punctuation.definition.regexp.end.clojure"]
+
+  it "tokenizes ignored regexes", ->
+    {tokens} = grammar.tokenizeLine '#_#"foo *bar"'
+    expect(tokens[0]).toEqual value: '#_', scopes: ["source.clojure", "meta.comment-expression.clojure", "punctuation.definition.comment.begin.clojure"]
+    expect(tokens[1]).toEqual value: '#"', scopes: ["source.clojure", "meta.comment-expression.clojure", "string.regexp.clojure", "punctuation.definition.regexp.begin.clojure"]
+    expect(tokens[2]).toEqual value: 'foo *bar', scopes: ["source.clojure", "meta.comment-expression.clojure", "string.regexp.clojure"]
+    expect(tokens[3]).toEqual value: '"', scopes: ["source.clojure", "meta.comment-expression.clojure", "string.regexp.clojure", "punctuation.definition.regexp.end.clojure"]
 
   it "tokenizes backslash escape character in regexes", ->
     {tokens} = grammar.tokenizeLine '#"\\\\" "/"'
