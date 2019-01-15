@@ -6,7 +6,7 @@ import * as inferer from './infer';
 import * as docmirror from "./docmirror"
 
 const ClojureLanguageConfiguration: vscode.LanguageConfiguration = {
-    wordPattern: /[^\s#()[\]{};"\\]+/,
+    wordPattern: /[^\s,#()[\]{};"\\]+/,
     onEnterRules: [
         // This is madness, but the only way to stop vscode from indenting new lines
         {
