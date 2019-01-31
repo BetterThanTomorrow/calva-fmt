@@ -14,6 +14,16 @@
       "problemMatcher": []
     },
     {
+      "label": "Watch CLJS",
+      "type": "npm",
+      "script": "watch-cljs",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Compile",
       "type": "npm",
       "script": "compile",

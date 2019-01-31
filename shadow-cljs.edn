@@ -1,0 +1,22 @@
+{:dependencies [[pez/cljfmt "0.0.3-SNAPSHOT"]
+                [cider/cider-nrepl "0.20.0-SNAPSHOT"]]
+
+ :source-paths ["cljs-lib/src" "cljs-lib/test"]
+
+ :builds       {:calva-fmt-lib
+                {:target    :node-library
+                 :exports   {:formatText calva.fmt.formatter/format-text
+                             :formatTextAtRange calva.fmt.formatter/format-text-at-range
+                             :formatTextAtIdx calva.fmt.formatter/format-text-at-idx
+                             :formatTextAtIdxOnType calva.fmt.formatter/format-text-at-idx-on-type
+                             :inferIndents calva.fmt.inferer/infer-indents
+                             :inferParens calva.fmt.inferer/infer-parens
+                             :jsify calva.js-utils/jsify
+                             :cljify calva.js-utils/cljify}
+                 :output-to "calva-fmt/cljs-lib.js"}
+                :test
+                {:target    :node-test
+                 :output-to "test-out/cljs-fmt-tests.js"
+                 :ns-regexp "-test$"
+                 :autorun   true}}}
+
