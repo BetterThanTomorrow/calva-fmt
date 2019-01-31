@@ -4,10 +4,10 @@
         "target": "es6",
         "outDir": "out",
         "lib": [
-            "es7"
+            "es6"
         ],
         "sourceMap": true,
-        "rootDir": "."
+        "rootDir": "calva-fmt"
     },
     "exclude": [
         "node_modules",

@@ -1,3 +1,4 @@
+.vscode/settings.json
 node_modules
 .vscode-test/
 *.vsix
@@ -7,7 +8,5 @@ pom.xml
 *.idea/
 *.DS_Store
 out/
-lib/
 test-out/
-.vscode/settings.json
-calva-fmt/cljs-lib.js
+cljs-out/

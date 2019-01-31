@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-const inferer = require('@cospaia/calva-lib/lib/calva.fmt.inferer');
+const { inferParens, inferIndents } = require('../cljs-out/calva-fmt/cljs-lib');
+
 
 interface CFEdit {
     edit: string,
@@ -25,7 +26,7 @@ export function inferParensCommand(editor: vscode.TextEditor) {
     const position: vscode.Position = editor.selection.active,
         document = editor.document,
         currentText = document.getText(),
-        r: ResultOptions = inferer.infer_parens({
+        r: ResultOptions = inferParens({
             "text": currentText,
             "line": position.line,
             "character": position.character,
@@ -63,7 +64,7 @@ export function indentCommand(editor: vscode.TextEditor, spacing: string, forwar
         if (doEdit) {
             const position: vscode.Position = editor.selection.active,
                 currentText = document.getText(),
-                r: ResultOptions = inferer.infer_indents({
+                r: ResultOptions = inferIndents({
                     "text": currentText,
                     "line": position.line,
                     "character": position.character,

@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 import * as config from './config';
-// const formatter = require('@cospaia/calva-lib/lib/calva.fmt.formatter');
-const { formatTextAtRange, formatTextAtIdx, formatTextAtIdxOnType, cljify, jsify } = require('./cljs-lib');
-//const jsUtils = require('@cospaia/calva-lib/lib/calva.js_utils');
+const { formatTextAtRange, formatTextAtIdx, formatTextAtIdxOnType, cljify, jsify } = require('../cljs-out/calva-fmt/cljs-lib');
 
 export function formatRangeEdits(document: vscode.TextDocument, range: vscode.Range): vscode.TextEdit[] {
     const text: string = document.getText(range),
