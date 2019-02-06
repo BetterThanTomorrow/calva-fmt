@@ -22,6 +22,15 @@ const ClojureLanguageConfiguration: vscode.LanguageConfiguration = {
 
 
 function activate(context: vscode.ExtensionContext) {
+    let calva = vscode.extensions.getExtension('cospaia.clojure4vscode'),
+        calvaApi = calva.exports;
+    if (calvaApi && calvaApi.hasFormatter) {
+        console.log("calva-fmt: Not registering any commands since Calva w/ Formatter is installed.");
+        return;
+    } else {
+        console.log("calva-fmt: Registering commands siince Calva does not have Formatter yet.");
+    }
+
     docmirror.activate();
     vscode.languages.setLanguageConfiguration("clojure", ClojureLanguageConfiguration);
     // this doesn't actually grow anything yet, but just jumps to the start of the enclosing expression.
@@ -41,13 +50,6 @@ function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider("clojure", new FormatOnTypeEditProvider, "\r", "\n"));
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider("clojure", new RangeEditProvider));
     vscode.window.onDidChangeActiveTextEditor(inferer.updateState);
-
-    const api = {
-        formatPosition: formatter.formatPosition,
-        formatRange: formatter.formatRange,
-    };
-
-    return api;
 }
 
 module.exports = {

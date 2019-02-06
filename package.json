@@ -2,7 +2,7 @@
     "name": "calva-fmt",
     "displayName": "Calva Clojure Formatter",
     "description": "Clojure and ClojureScript formatter for Visual Studio Code",
-    "version": "0.0.37",
+    "version": "0.0.38",
     "publisher": "cospaia",
     "engines": {
         "vscode": "^1.20.0"
@@ -176,19 +176,23 @@
     },
     "devDependencies": {
         "@types/mocha": "^5.2.5",
-        "@types/node": "^10.12.9",
-        "ajv": "^6.5.5",
-        "eslint": "^5.9.0",
+        "@types/node": "^10.12.21",
+        "ajv": "^6.8.1",
+        "eslint": "^5.13.0",
         "mocha": "^5.2.0",
-        "typescript": "^3.1.6",
+        "typescript": "^3.3.1",
         "vscode": "^1.1.21",
-        "cson-parser": "^1.3.3"
+        "cson-parser": "^4.0.1",
+        "event-stream": "^4.0.1"
     },
     "dependencies": {
         "@cospaia/calva-lib": "0.0.21",
-        "immutable": "^3.8.1",
+        "immutable": "^4.0.0-rc.12",
         "immutable-cursor": "^2.0.1",
-        "npm": "^6.5.0"
+        "npm": "^6.7.0"
     },
+    "extensionDependencies": [
+        "cospaia.clojure4vscode"
+    ],
     "license": "MIT"
 }
