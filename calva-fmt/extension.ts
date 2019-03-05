@@ -28,7 +28,7 @@ function activate(context: vscode.ExtensionContext) {
         console.log("calva-fmt: Not registering any commands since Calva w/ Formatter is installed.");
         return;
     } else {
-        console.log("calva-fmt: Registering commands siince Calva does not have Formatter yet.");
+        console.log("calva-fmt: Registering commands since Calva does not have Formatter yet.");
     }
 
     docmirror.activate();
